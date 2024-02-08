@@ -47,3 +47,5 @@ next-env.d.ts
 /node_modules
 /package*.json
 /yarn.lock
+
+firebaseSecretKey.json
