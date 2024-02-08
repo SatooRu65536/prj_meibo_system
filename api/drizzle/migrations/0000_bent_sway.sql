@@ -15,6 +15,7 @@ CREATE TABLE `external` (
 --> statement-breakpoint
 CREATE TABLE `member` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`member_id` integer NOT NULL,
 	`icon_url` text NOT NULL,
 	`first_name` text NOT NULL,
 	`last_name` text NOT NULL,
