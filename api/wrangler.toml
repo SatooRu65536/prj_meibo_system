@@ -1,0 +1,8 @@
+name = "meibo-system"
+compatibility_date = "2023-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "meibo_db"
+database_id = "97265c7e-0a42-4083-8601-c55ec4abf07c"
+migrations_dir = "drizzle/migrations"
