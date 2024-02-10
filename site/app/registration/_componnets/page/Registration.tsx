@@ -2,8 +2,10 @@
 
 import { useUserState } from '@/globalStates/firebaseUserState';
 import styles from './registration.module.scss';
-import { HTMLProps } from 'react';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Icon from '@/components/ui/Icon';
+import Select from '@/components/ui/Select';
 
 export default function RegistrationPage() {
   const user = useUserState();
@@ -184,49 +186,6 @@ function Wrapper(props: WrapperProps) {
       </div>
 
       <div>{children}</div>
-    </div>
-  );
-}
-
-type InputProps = HTMLProps<HTMLInputElement> & {
-  supplement?: string;
-};
-
-function Input(props: InputProps) {
-  const { className, supplement, ...others } = props;
-
-  return (
-    <div {...others} className={`${styles.input_container} ${className}`}>
-      <input {...others} className={styles.input} />
-      {supplement && <p className={styles.supplement}>{supplement}</p>}
-    </div>
-  );
-}
-
-type SelectProps = HTMLProps<HTMLSelectElement> & {
-  options: string[];
-};
-
-function Select(props: SelectProps) {
-  const { options, ...others } = props;
-
-  return (
-    <select {...others} className={styles.select}>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function Icon(props: { src: string | undefined }) {
-  const { src } = props;
-
-  return (
-    <div className={styles.icon_wrapper}>
-      {src && <img src={src} alt="アイコン" className={styles.icon} />}
     </div>
   );
 }
