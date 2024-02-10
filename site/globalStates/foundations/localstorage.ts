@@ -1,4 +1,4 @@
-type Keys = 'editMember';
+type Keys = 'editMember' | 'isLivingWithParents';
 
 export default function getLocalstorage<T>(key: Keys, defaultValue: T) {
   if (typeof window === 'undefined') return defaultValue;
