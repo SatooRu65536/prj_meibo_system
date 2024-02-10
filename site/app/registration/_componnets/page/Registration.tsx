@@ -142,11 +142,11 @@ export default function RegistrationPage() {
   return (
     <main className={styles.registration}>
       <section className={styles.registration_section}>
-        <Wrapper titile="アイコン">
+        <Wrapper title="アイコン">
           <Icon src={user?.photoURL ?? undefined} />
         </Wrapper>
 
-        <Wrapper titile="名前">
+        <Wrapper title="名前">
           <Input
             type="text"
             value={
@@ -161,7 +161,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="名前(フリガナ)">
+        <Wrapper title="名前(フリガナ)">
           <Input
             type="text"
             value={
@@ -176,7 +176,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="Slack表示名">
+        <Wrapper title="Slack表示名">
           <Input
             type="text"
             value={editMember.slackName ?? ''}
@@ -186,7 +186,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="卒業(予定)年度">
+        <Wrapper title="卒業(予定)年度">
           <Input
             type="number"
             value={editMember.graduationYear || ''}
@@ -196,7 +196,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="技術スタック" supplement="触った事がある技術など">
+        <Wrapper title="技術スタック" supplement="触った事がある技術など">
           <Input
             type="text"
             value={editMember.skills.join(', ')}
@@ -207,7 +207,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="タイプ">
+        <Wrapper title="タイプ">
           <Select<MemberType[]>
             options={[
               { key: null, value: '' },
@@ -254,7 +254,7 @@ export default function RegistrationPage() {
           <p>以下の項目は本人と役員以外には非公開となります</p>
         </div>
 
-        <Wrapper titile="性別">
+        <Wrapper title="性別">
           <Select
             options={[
               { key: '', value: '' },
@@ -268,7 +268,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="生年月日">
+        <Wrapper title="生年月日">
           <Input
             type="date"
             value={editMember.privateInfo.birthdate ?? ''}
@@ -277,7 +277,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="電話番号(携帯)">
+        <Wrapper title="電話番号(携帯)">
           <Input
             type="text"
             value={editMember.privateInfo.phoneNumber ?? ''}
@@ -288,7 +288,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="メールアドレス">
+        <Wrapper title="メールアドレス">
           <Input
             type="email"
             value={editMember.privateInfo.email ?? ''}
@@ -299,7 +299,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="現在の郵便番号">
+        <Wrapper title="現在の郵便番号">
           <Input
             type="text"
             value={editMember.privateInfo.currentAddress.postalCode ?? ''}
@@ -310,7 +310,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="現在の住所">
+        <Wrapper title="現在の住所">
           <Input
             type="text"
             value={editMember.privateInfo.currentAddress.address ?? ''}
@@ -321,7 +321,7 @@ export default function RegistrationPage() {
         </Wrapper>
 
         <Wrapper
-          titile="実家の郵便番号"
+          title="実家の郵便番号"
           supplement="実家暮らしの場合は現在と同じ"
         >
           <Input
@@ -334,7 +334,7 @@ export default function RegistrationPage() {
           />
         </Wrapper>
 
-        <Wrapper titile="実家の住所" supplement="実家暮らしの場合は現在と同じ">
+        <Wrapper title="実家の住所" supplement="実家暮らしの場合は現在と同じ">
           <Input
             type="text"
             value={editMember.privateInfo.homeAddress.address ?? ''}
@@ -379,7 +379,7 @@ function ActiveMember(props: ActiveMemberProps) {
 
   return (
     <div className={styles.type_box} data-active={active}>
-      <Wrapper titile="学年">
+      <Wrapper title="学年">
         <Select
           options={[
             { key: '', value: '' },
@@ -397,7 +397,7 @@ function ActiveMember(props: ActiveMemberProps) {
         />
       </Wrapper>
 
-      <Wrapper titile="学籍番号" supplement="現在の学籍番号">
+      <Wrapper title="学籍番号" supplement="現在の学籍番号">
         <Input
           type="text"
           value={studentNumber ?? ''}
@@ -407,7 +407,7 @@ function ActiveMember(props: ActiveMemberProps) {
         />
       </Wrapper>
 
-      <Wrapper titile="役職" supplement="現在の役職">
+      <Wrapper title="役職" supplement="現在の役職">
         <Input
           type="text"
           value={position ?? ''}
@@ -444,7 +444,7 @@ function OBOGMember(props: OBOGMemberProps) {
 
   return (
     <div className={styles.type_box} data-active={active}>
-      <Wrapper titile="学籍番号" supplement="卒業時の学籍番号">
+      <Wrapper title="学籍番号" supplement="卒業時の学籍番号">
         <Input
           type="text"
           value={oldStudentNumber ?? ''}
@@ -454,7 +454,7 @@ function OBOGMember(props: OBOGMemberProps) {
         />
       </Wrapper>
 
-      <Wrapper titile="旧役職" supplement="最終的な役職">
+      <Wrapper title="旧役職" supplement="最終的な役職">
         <Input
           type="text"
           value={oldPosition ?? ''}
@@ -464,7 +464,7 @@ function OBOGMember(props: OBOGMemberProps) {
         />
       </Wrapper>
 
-      <Wrapper titile="就職先(任意)">
+      <Wrapper title="就職先(任意)">
         <Input
           type="text"
           value={employment ?? ''}
@@ -490,7 +490,7 @@ function ExternalMember(props: ExternalMemberProps) {
 
   return (
     <div className={styles.type_box} data-active={active}>
-      <Wrapper titile="学校">
+      <Wrapper title="学校">
         <Input
           type="text"
           value={school ?? ''}
@@ -500,7 +500,7 @@ function ExternalMember(props: ExternalMemberProps) {
         />
       </Wrapper>
 
-      <Wrapper titile="所属団体">
+      <Wrapper title="所属団体">
         <Input
           type="text"
           value={organization ?? ''}
@@ -514,18 +514,18 @@ function ExternalMember(props: ExternalMemberProps) {
 }
 
 type WrapperProps = {
-  titile: string;
+  title: string;
   supplement?: string;
   children: React.ReactNode;
 };
 
 function Wrapper(props: WrapperProps) {
-  const { titile, supplement, children } = props;
+  const { title, supplement, children } = props;
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.title_container}>
-        <h3 className={styles.title}>{titile}</h3>
+        <h3 className={styles.title}>{title}</h3>
         {supplement && <p className={styles.supplement}>{supplement}</p>}
       </div>
 
