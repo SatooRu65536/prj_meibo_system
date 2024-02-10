@@ -5,7 +5,7 @@
     display: grid;
     grid-template-columns: 200px 1fr;
 
-    .descript_container {
+    .descript_wrapper {
       padding: 20px 10px;
       grid-column: 1/-1;
       text-align: center;
@@ -27,6 +27,22 @@
         right: 0;
         z-index: 10;
         border-bottom: 1px dashed var(--primary);
+      }
+    }
+
+    .living_wrapper {
+      display: flex;
+      gap: 10px;
+
+      .checkbox {
+        margin-left: 10px;
+        height: 50px;
+        width: 1.3rem;
+      }
+
+      label {
+        line-height: 50px;
+        font-size: 1.1rem;
       }
     }
   }
