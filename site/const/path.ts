@@ -18,6 +18,10 @@ export const ROUTES: Routes = {
     name: '新規登録',
     path: '/registration',
   },
+  payment: {
+    name: '支払い',
+    path: '/registration/payment',
+  },
   user: {
     name: 'ユーザーページ',
     path: '/user',

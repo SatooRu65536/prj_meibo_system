@@ -14,6 +14,7 @@ import getLocalstorage, {
 } from '@/globalStates/foundations/localstorage';
 import { validateMember } from '@/components/validation';
 import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/const/path';
 
 export default function RegistrationPage() {
   const [loaded, setLoaded] = useState(false);
@@ -88,7 +89,7 @@ export default function RegistrationPage() {
       return;
     }
 
-    router.push('/registration/payment');
+    router.push(ROUTES.payment.path);
   }
 
   return (
