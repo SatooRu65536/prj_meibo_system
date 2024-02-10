@@ -1,19 +1,18 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { useUserState } from '@/globalStates/firebaseUserState';
 import styles from './loginCheck.module.scss';
-import { login } from '@/components/firebase/auth';
+import { login, useIsSigned } from '@/components/firebase/auth';
 
 type Props = { children: React.ReactNode };
 
 export default function LoginCheck(props: Props) {
   const { children } = props;
 
-  const user = useUserState();
+  const isSigned = useIsSigned();
 
-  if (user === null) return <Loading />;
-  if (user) return children;
+  if (isSigned === undefined) return <Loading />;
+  if (isSigned) return children;
   return <Login />;
 }
 
