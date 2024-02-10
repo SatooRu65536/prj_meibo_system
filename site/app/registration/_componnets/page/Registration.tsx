@@ -13,6 +13,7 @@ import getLocalstorage, {
   setLocalstorage,
 } from '@/globalStates/foundations/localstorage';
 import { validateMember } from '@/components/validation';
+import { useRouter } from 'next/navigation';
 
 export default function RegistrationPage() {
   const [loaded, setLoaded] = useState(false);
@@ -21,10 +22,10 @@ export default function RegistrationPage() {
     boolean | undefined
   >(undefined);
   const user = useUserState();
+  const router = useRouter();
   const [
     editMember,
     {
-      setId,
       setName,
       setKana,
       setSkills,
@@ -87,7 +88,7 @@ export default function RegistrationPage() {
       return;
     }
 
-    console.log('submit', editMember);
+    router.push('/registration/payment');
   }
 
   return (

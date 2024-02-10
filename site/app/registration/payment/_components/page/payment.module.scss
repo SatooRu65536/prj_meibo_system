@@ -1,0 +1,31 @@
+.payment {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .wrapper {
+    width: fit-content;
+    text-align: center;
+
+    .select {
+      margin-inline: auto;
+      width: 200px;
+
+      & select {
+        text-align: center;
+      }
+    }
+
+    .submit {
+      margin-top: 20px;
+    }
+
+    .error_wrapper {
+      height: 2rem;
+
+      .error {
+        color: var(--red);
+      }
+    }
+  }
+}
