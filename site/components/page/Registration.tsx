@@ -16,7 +16,13 @@ import { validateMember } from '@/components/validation';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/const/path';
 
-export default function RegistrationPage() {
+type Porps = {
+  isEditing: boolean;
+};
+
+export default function RegistrationPage(props: Porps) {
+  const { isEditing } = props;
+
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState<MemberError>({});
   const [isLivingWithParents, setIsLivingWithParents] = useState<
@@ -89,7 +95,8 @@ export default function RegistrationPage() {
       return;
     }
 
-    router.push(ROUTES.payment.path);
+    if (isEditing) alert('変更しました');
+    else router.push(ROUTES.payment.path);
   }
 
   return (
@@ -317,7 +324,7 @@ export default function RegistrationPage() {
 
       <section className={styles.buttons_section}>
         <Button className={styles.next} onClick={handleSubmit}>
-          次へ
+          {isEditing ? '変更' : '次へ'}
         </Button>
       </section>
     </main>

@@ -1,5 +1,6 @@
 import { Member } from '@/type/member';
 import styles from './Cards.module.scss';
+import { getMemberInfo } from '@/components/util';
 
 type Props = {
   member: Member;
@@ -8,17 +9,6 @@ type Props = {
 export default function Card(props: Props) {
   const { member } = props;
 
-  function getSubtitle(member: Member) {
-    switch (member.type) {
-      case 'active':
-        return `[${member.grade}] ${member.studentNumber}`;
-      case 'obog':
-        return member.employment ? `${member.employment}(OB・OG)` : 'OB・OG';
-      case 'external':
-        return `${member.organization}(外部)`;
-    }
-  }
-
   return (
     <div className={styles.card}>
       <div className={styles.icon_wrapper}>
@@ -26,7 +16,7 @@ export default function Card(props: Props) {
       </div>
 
       <div className={styles.card_body}>
-        <p className={styles.subtitle}>{getSubtitle(member)}</p>
+        <p className={styles.subtitle}>{getMemberInfo(member)}</p>
 
         <h2 className={styles.name}>
           {member.lastName} {member.firstName}

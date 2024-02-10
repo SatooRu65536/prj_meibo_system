@@ -1,4 +1,5 @@
-import { MemberKeysWithPrivateInfo } from './type/member';
+import { Member } from '@/type/member';
+import { MemberKeysWithPrivateInfo } from '@/type/member';
 
 /**
  * カラム名を取得する
@@ -51,12 +52,17 @@ export const toColumnName = (key: MemberKeysWithPrivateInfo): string => {
 };
 
 /**
- * オブジェクトのキーを取得する
- * @param obj オブジェクト
- * @returns キーの配列
+ * 簡単なメンバー情報を取得する
+ * @param member メンバー情報
+ * @returns ユーザー情報
  */
-const objectKeys = <T extends { [key: string]: unknown }>(
-  obj: T,
-): (keyof T)[] => {
-  return Object.keys(obj);
-};
+export function getMemberInfo(member: Member) {
+  switch (member.type) {
+    case 'active':
+      return `[${member.grade}] ${member.studentNumber}`;
+    case 'obog':
+      return member.employment ? `${member.employment}(OB・OG)` : 'OB・OG';
+    case 'external':
+      return `${member.organization}(外部)`;
+  }
+}

@@ -4,6 +4,8 @@ import Button from '@/components/ui/Button';
 import styles from './payment.module.scss';
 import Select from '@/components/ui/Select';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/const/path';
 
 const SAMPLE_PAYEES = [
   { key: 0, value: '' },
@@ -15,6 +17,7 @@ const SAMPLE_PAYEES = [
 export default function PayeePage() {
   const [payee, setPayee] = useState<number | undefined>(undefined);
   const [error, setError] = useState('');
+  const router = useRouter();
 
   function handleSubmit() {
     if (payee === undefined) {
@@ -22,7 +25,7 @@ export default function PayeePage() {
       return;
     }
 
-    console.log(`Payee: ${payee}`);
+    router.push(ROUTES.user.path);
   }
 
   return (

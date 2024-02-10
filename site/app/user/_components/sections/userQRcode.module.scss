@@ -1,0 +1,17 @@
+.qrcode_section {
+  text-align: center;
+
+  .qr_wrapper {
+    margin: 20px 0;
+    height: 300px;
+
+    .qrcode {
+      width: 200px;
+      height: 200px;
+    }
+
+    .info {
+      margin-top: 20px;
+    }
+  }
+}
