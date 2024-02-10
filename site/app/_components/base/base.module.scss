@@ -41,6 +41,10 @@
   text-align: center;
   color: var(--on-primary);
   background-color: var(--primary);
+
+  a {
+    color: var(--on-primary);
+  }
 }
 
 .user {
