@@ -12,7 +12,7 @@ export default function RegistrationPage() {
     <main className={styles.registration}>
       <section className={styles.registration_section}>
         <Wrapper titile="アイコン">
-          <Icon src={user?.photoURL ?? ''} />
+          <Icon src={user?.photoURL ?? undefined} />
         </Wrapper>
 
         <Wrapper titile="名前">
@@ -221,12 +221,12 @@ function Select(props: SelectProps) {
   );
 }
 
-function Icon(props: { src: string }) {
+function Icon(props: { src: string | undefined }) {
   const { src } = props;
 
   return (
     <div className={styles.icon_wrapper}>
-      <img src={src} alt="アイコン" className={styles.icon} />
+      {src && <img src={src} alt="アイコン" className={styles.icon} />}
     </div>
   );
 }
