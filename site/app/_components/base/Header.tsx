@@ -1,3 +1,4 @@
+import User from './User';
 import styles from './base.module.scss';
 
 export default function Header() {
@@ -12,8 +13,12 @@ export default function Header() {
 
       <nav className={styles.menus}>
         {menus.map((menu) => (
-          <a href={menu.path} className={styles.menu}>{menu.name}</a>
+          <a href={menu.path} className={styles.menu}>
+            {menu.name}
+          </a>
         ))}
+
+        <User />
       </nav>
     </header>
   );

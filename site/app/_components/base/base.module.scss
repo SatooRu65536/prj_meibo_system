@@ -37,3 +37,61 @@
   color: var(--on-primary);
   background-color: var(--primary);
 }
+
+.user {
+  --size: 2rem;
+
+  width: var(--size);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .loading {
+    height: var(--size);
+    font-size: var(--size);
+    border: solid 2px transparent;
+    border-radius: 10000px;
+    cursor: pointer;
+  }
+
+  .icon {
+    height: var(--size);
+    border: solid 2px var(--on-primary);
+    border-radius: 10000px;
+    cursor: pointer;
+  }
+}
+
+.user_menu {
+  padding: 5px;
+  width: 110px;
+  border-radius: 5px;
+  background-color: var(--on-primary);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  position: absolute;
+  right: -3px;
+  top: calc(var(--header-height) - 3px);
+  z-index: 10001;
+  transition: all 0.1s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+
+  &[data-opened='true'] {
+    pointer-events: all;
+    opacity: 1;
+  }
+
+  * {
+    line-height: 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}

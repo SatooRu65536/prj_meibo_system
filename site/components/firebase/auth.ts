@@ -22,7 +22,7 @@ export const useIsSigned = (): boolean | undefined => {
   const { setUserState } = useUserMutators();
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserState(user);
         setIsSigned(true);
