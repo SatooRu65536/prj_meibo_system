@@ -1,8 +1,16 @@
 :root {
   font-size: 16px;
 
-  --primary: #2ba1eb;
-  --on-primary: #f9f3f3;
+  --primary: #ef6d8b;
+  --on-primary: #fefefe;
+  --background: #fefefe;
+  --text: #333;
+
+  --header-height: 50px;
+  --footer-height: 25px;
+
+  --shadow: rgba(0, 0, 0, 0.4);
+  --box-shadow: 2px 2px 3px var(--shadow);
 }
 
 * {
@@ -11,6 +19,17 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  background-color: var(--background);
+  color: var(--text);
+}
+
 main {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding: 10px;
+
+  @media (700px < width) {
+    padding: 30px;
+  }
 }

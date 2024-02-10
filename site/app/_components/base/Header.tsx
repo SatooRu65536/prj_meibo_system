@@ -1,9 +1,9 @@
-import styles from './header.module.scss';
+import styles from './base.module.scss';
 
 export default function Header() {
   return (
     <header className={styles.header}>
-      <p className={styles.title}>Header</p>
+      <h1 className={styles.title}>名簿システム</h1>
     </header>
   );
 }

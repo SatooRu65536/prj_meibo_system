@@ -1,5 +1,5 @@
-// import styles from './page.module.scss';
+import TopPage from './_components/page/Top';
 
 export default function Home() {
-  return <main>a</main>;
+  return <TopPage />;
 }
