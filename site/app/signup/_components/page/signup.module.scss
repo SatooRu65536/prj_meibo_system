@@ -1,0 +1,29 @@
+.signup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .container {
+    height: fit-content;
+
+    .qrcode {
+      margin-inline: auto;
+      width: 100px;
+      height: 100px;
+      display: block;
+    }
+
+    .registration {
+      margin-top: 50px;
+      padding: 8px 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      color: var(--on-primary);
+      background-color: var(--primary);
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: var(--box-shadow);
+    }
+  }
+}

@@ -1,7 +1,6 @@
 .header {
   height: var(--header-height);
   padding: 0 20px;
-  font-size: 0.6rem;
   line-height: var(--header-height);
   color: var(--on-primary);
   background-color: var(--primary);
@@ -11,6 +10,22 @@
   left: 0;
   right: 0;
   z-index: 10000;
+  display: flex;
+
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .menus {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+
+    .menu {
+      color: var(--on-primary);
+      text-decoration: none;
+    }
+  }
 }
 
 .footer {
