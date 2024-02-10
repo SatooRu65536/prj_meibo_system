@@ -19,21 +19,18 @@ export const privateInfoKeys = [
   'currentAddress',
   'homeAddress',
 ] as const;
-export const addressKeys = [
-  'postalCode',
-  'address',
-] as const;
+export const addressKeys = ['postalCode', 'address'] as const;
 
 // キーの型
-export type MemberKeys = typeof memberKeys[number];
-export type PrivateInfoKeys = typeof privateInfoKeys[number];
-export type AddressKeys = typeof addressKeys[number];
+export type MemberKeys = (typeof memberKeys)[number];
+export type PrivateInfoKeys = (typeof privateInfoKeys)[number];
+export type AddressKeys = (typeof addressKeys)[number];
 
 // 住所と郵便番号
 export type Address = {
   postalCode: string;
   address: string;
-}
+};
 
 // 非公開の情報
 export type PrivateInfo = {
@@ -43,7 +40,7 @@ export type PrivateInfo = {
   email: string;
   currentAddress: Address;
   homeAddress: Address;
-}
+};
 
 // 現役部員
 export type ActiveMember = {
@@ -51,7 +48,7 @@ export type ActiveMember = {
   studentNumber: string;
   position: string;
   grade: string;
-}
+};
 
 // OB・OG
 export type OBOGMember = {
@@ -59,19 +56,19 @@ export type OBOGMember = {
   oldPosition: string;
   oldStudentNumber: string;
   employment: string;
-}
+};
 
 // 外部
 export type ExternalMember = {
   type: 'external';
   school: string;
   organization: string;
-}
+};
 
 // 未選択
 export type UnselectedMember = {
   type: null;
-}
+};
 
 export type MemberBase = {
   id: number;
@@ -85,39 +82,49 @@ export type MemberBase = {
   iconUrl: string;
   updatedAt: string;
   createdAt: string;
-}
+};
 
-export type Member = MemberBase & (ActiveMember | OBOGMember | ExternalMember | UnselectedMember);
+export type Member = MemberBase &
+  (ActiveMember | OBOGMember | ExternalMember | UnselectedMember);
 
 export type MemberWithPrivateInfo = Member & {
   privateInfo: PrivateInfo;
 };
 
-export type MemberKeysWithPrivateInfo = MemberKeys | PrivateInfoKeys | AddressKeys;
+export type MemberKeysWithPrivateInfo =
+  | MemberKeys
+  | PrivateInfoKeys
+  | AddressKeys;
 
-export type MemberType = ActiveMember['type'] | OBOGMember['type'] | ExternalMember['type'] | UnselectedMember['type'];
+export type MemberType =
+  | ActiveMember['type']
+  | OBOGMember['type']
+  | ExternalMember['type']
+  | UnselectedMember['type'];
 
-export type MemberAll = MemberBase
-  & { privateInfo: PrivateInfo }
-  & Omit<ActiveMember, 'type'>
-  & Omit<OBOGMember, 'type'>
-  & Omit<ExternalMember, 'type'>
-  & { type: MemberType };
+export type MemberAll = MemberBase & { privateInfo: PrivateInfo } & Omit<
+    ActiveMember,
+    'type'
+  > &
+  Omit<OBOGMember, 'type'> &
+  Omit<ExternalMember, 'type'> & { type: MemberType };
 
 export type Nullable<T> = {
   [K in keyof T]: T[K] extends object
-  ? T[K] extends any[] ? T[K] : Nullable<T[K]>
-  : T[K] | null
+    ? T[K] extends any[]
+      ? T[K]
+      : Nullable<T[K]>
+    : T[K] | null;
 };
 
 export type MemberError = {
   [K in
-  | MemberKeysWithPrivateInfo
-  | keyof ActiveMember
-  | keyof OBOGMember
-  | keyof ExternalMember
-  | 'name'
-  | 'kana'
-  | 'currentPostalCode'
-  | 'homePostalCode']?: string;
+    | MemberKeysWithPrivateInfo
+    | keyof ActiveMember
+    | keyof OBOGMember
+    | keyof ExternalMember
+    | 'name'
+    | 'kana'
+    | 'currentPostalCode'
+    | 'homePostalCode']?: string;
 };

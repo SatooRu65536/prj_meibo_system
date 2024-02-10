@@ -1,11 +1,13 @@
-import { MemberAll, MemberError, Nullable } from "@/type/member";
+import { MemberAll, MemberError, Nullable } from '@/type/member';
 
 /**
  * メンバー情報のバリデーション
  * @param member メンバー情報
  * @returns {[boolean, string[]]} [バリデーション結果, エラーメッセージ]
  */
-export function validateMember(member: Nullable<MemberAll>): [boolean, MemberError] {
+export function validateMember(
+  member: Nullable<MemberAll>,
+): [boolean, MemberError] {
   const errors: MemberError = {};
 
   const KANA_REGEXP = /[ァ-ンー　]+$/;
