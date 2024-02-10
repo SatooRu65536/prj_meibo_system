@@ -4,11 +4,11 @@ import styles from './select.module.scss';
 type SelectProps<T extends any[]> = HTMLProps<HTMLSelectElement> & {
   options: { key: T[number]; value: string }[];
   set: (value: T[number]) => void;
-  error: string | undefined;
+  error?: string | undefined;
 };
 
 export default function Select<T extends any[]>(props: SelectProps<T>) {
-  const { options, set, error, ...others } = props;
+  const { options, set, error, className, ...others } = props;
 
   const initValue = options.find((o) => o.key === props.value)?.value;
   const [value, setValue] = useState(initValue || '');
@@ -29,7 +29,7 @@ export default function Select<T extends any[]>(props: SelectProps<T>) {
   }, [error]);
 
   return (
-    <div className={styles.select_container}>
+    <div className={`${styles.select_container} ${className}`}>
       <select
         {...others}
         className={styles.select}
