@@ -1,0 +1,14 @@
+.logincheck {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  .center {
+    width: fit-content;
+
+    * {
+      margin: 10px;
+    }
+  }
+}
