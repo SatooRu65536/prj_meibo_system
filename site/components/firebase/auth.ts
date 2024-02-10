@@ -1,16 +1,17 @@
 import {
   GoogleAuthProvider,
-  signInWithRedirect,
   signOut,
   onAuthStateChanged,
+  signInWithPopup,
+  UserCredential,
 } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { auth } from './client';
 import { useUserMutators } from '@/globalStates/firebaseUserState';
 
-export const login = (): Promise<void> => {
+export const login = (): Promise<UserCredential> => {
   const provider = new GoogleAuthProvider();
-  return signInWithRedirect(auth, provider);
+  return signInWithPopup(auth, provider);
 };
 
 export const logout = (): Promise<void> => {
