@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import '@/components/firebase/client';
+import Header from './_components/base/Header';
+import Footer from './_components/base/Footer';
+import RecoilProvider from './recoilProvider';
+import LoginCheck from './_components/base/LoginCheck';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,8 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
+    <RecoilProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <Header />
+          <LoginCheck>{children}</LoginCheck>
+          <Footer />
+        </body>
+      </html>
+    </RecoilProvider>
   );
 }
