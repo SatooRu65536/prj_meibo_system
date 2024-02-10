@@ -68,3 +68,13 @@
     }
   }
 }
+
+.type_box {
+  grid-column: 1/-1;
+  grid-template-columns: subgrid;
+  display: none;
+
+  &[data-active='true'] {
+    display: grid;
+  }
+}
