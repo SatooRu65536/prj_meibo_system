@@ -1,13 +1,21 @@
-import { HTMLProps, useState } from 'react';
+import {
+  Dispatch,
+  HTMLProps,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import styles from './input.module.scss';
+import { MemberError } from '@/type/member';
 
 type InputProps = HTMLProps<HTMLInputElement> & {
   set: (value: string) => void;
   supplement?: string;
+  error: string | undefined;
 };
 
 export default function Input(props: InputProps) {
-  const { className, supplement, set, ...others } = props;
+  const { className, supplement, set, error, ...others } = props;
 
   const [value, setValue] = useState(props.value);
 
@@ -25,6 +33,10 @@ export default function Input(props: InputProps) {
         onChange={handleChange}
       />
       {supplement && <p className={styles.supplement}>{supplement}</p>}
+
+      <div className={styles.error_wrapper}>
+        <p className={styles.error}>{error}</p>
+      </div>
     </div>
   );
 }

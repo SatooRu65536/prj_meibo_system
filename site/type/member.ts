@@ -109,3 +109,15 @@ export type Nullable<T> = {
   ? T[K] extends any[] ? T[K] : Nullable<T[K]>
   : T[K] | null
 };
+
+export type MemberError = {
+  [K in
+  | MemberKeysWithPrivateInfo
+  | keyof ActiveMember
+  | keyof OBOGMember
+  | keyof ExternalMember
+  | 'name'
+  | 'kana'
+  | 'currentPostalCode'
+  | 'homePostalCode']?: string;
+};
