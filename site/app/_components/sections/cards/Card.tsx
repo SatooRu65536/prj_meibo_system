@@ -6,7 +6,7 @@ type Props = {
 };
 
 export default function Card(props: Props) {
-  const { member } = props; 
+  const { member } = props;
 
   function getSubtitle(member: Member) {
     switch (member.type) {

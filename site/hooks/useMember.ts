@@ -52,7 +52,7 @@ export default function useMember() {
    */
   function setSkills(skillStr: string) {
     const skills = skillStr.split(/[,、][ 　]*/);
-    setEditMemberState((prev) => ({ ...prev, skills, }));
+    setEditMemberState((prev) => ({ ...prev, skills }));
   }
 
   /**
@@ -82,7 +82,7 @@ export default function useMember() {
   /**
    * typeをセットする
    * @param type {string}
-    */
+   */
   function setType(type: MemberType) {
     setEditMemberState((prev) => ({ ...prev, type }));
   }
@@ -187,11 +187,11 @@ export default function useMember() {
   /**
    * genderをセットする
    * @param gender {string}
-    */
+   */
   function setGender(gender: string) {
     setEditMemberState((prev) => ({
       ...prev,
-      privateInfo: { ...prev.privateInfo, gender }
+      privateInfo: { ...prev.privateInfo, gender },
     }));
   }
 
@@ -253,34 +253,37 @@ export default function useMember() {
 
   useEffect(() => {
     console.log(editMember);
-    setLocalstorage("editMember", editMember);
+    setLocalstorage('editMember', editMember);
   }, [editMember]);
 
-  return [editMember, {
-    setMember,
-    setId,
-    setName,
-    setKana,
-    setSkills,
-    setGraduationYear,
-    setSlackName,
-    setIconUrl,
-    setType,
-    setStudentNumber,
-    setPosition,
-    setGrade,
-    setOldPosition,
-    setOldStudentNumber,
-    setEmployment,
-    setSchool,
-    setOrganization,
-    setEmail,
-    setPhoneNumber,
-    setBirthdate,
-    setGender,
-    setCurrentAddressPostalCode,
-    setCurrentAddressAddress,
-    setHomeAddressPostalCode,
-    setHomeAddressAddress
-  }] as const;
+  return [
+    editMember,
+    {
+      setMember,
+      setId,
+      setName,
+      setKana,
+      setSkills,
+      setGraduationYear,
+      setSlackName,
+      setIconUrl,
+      setType,
+      setStudentNumber,
+      setPosition,
+      setGrade,
+      setOldPosition,
+      setOldStudentNumber,
+      setEmployment,
+      setSchool,
+      setOrganization,
+      setEmail,
+      setPhoneNumber,
+      setBirthdate,
+      setGender,
+      setCurrentAddressPostalCode,
+      setCurrentAddressAddress,
+      setHomeAddressPostalCode,
+      setHomeAddressAddress,
+    },
+  ] as const;
 }

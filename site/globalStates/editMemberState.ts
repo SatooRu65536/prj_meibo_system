@@ -1,6 +1,6 @@
-import { MemberAll, Nullable } from "@/type/member";
-import { atom, useRecoilValue, useSetRecoilState } from "recoil";
-import getLocalstorage from "./foundations/localstorage";
+import { MemberAll, Nullable } from '@/type/member';
+import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
+import getLocalstorage from './foundations/localstorage';
 
 const init: Nullable<MemberAll> = {
   id: null,
@@ -39,13 +39,13 @@ const init: Nullable<MemberAll> = {
     homeAddress: {
       postalCode: null,
       address: null,
-    }
-  }
-}
+    },
+  },
+};
 
 const editMemberState = atom<Nullable<MemberAll>>({
   key: 'editMemberState',
-  default: getLocalstorage<Nullable<MemberAll>>("editMember", init),
+  default: getLocalstorage<Nullable<MemberAll>>('editMember', init),
 });
 
 export const useEditMemberState = () => {

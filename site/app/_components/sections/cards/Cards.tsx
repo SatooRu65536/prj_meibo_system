@@ -55,7 +55,7 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
       employment: '株式会社ちょうながいかいしゃめい',
     },
     {
@@ -73,7 +73,8 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
+      employment: '株式会社ちょうながいかいしゃめい',
     },
     {
       id: 5,
@@ -125,7 +126,7 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
       employment: '株式会社ペンギンズ',
     },
     {
@@ -143,7 +144,8 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
+      employment: '株式会社ペンギンズ',
     },
     {
       id: 9,
@@ -195,7 +197,8 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
+      employment: '',
     },
     {
       id: 12,
@@ -212,7 +215,7 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
       employment: '株式会社ペンギンズ',
     },
     {
@@ -230,7 +233,8 @@ const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
       createdAt: '1600-04-04T00:00:00Z',
       type: 'obog',
       oldPosition: '会長',
-      studentNumber: 'k11000',
+      oldStudentNumber: 'k11000',
+      employment: '株式会社ペンギンズ',
     },
     {
       id: 14,

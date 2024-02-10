@@ -3,7 +3,7 @@ type Routes = {
     name: string;
     path: string;
   };
-}
+};
 
 export const ROUTES: Routes = {
   top: {
