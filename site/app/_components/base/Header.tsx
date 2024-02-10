@@ -1,11 +1,9 @@
+import { ROUTES } from '@/const/path';
 import User from './User';
 import styles from './base.module.scss';
 
 export default function Header() {
-  const menus = [
-    { name: 'トップ', path: '/' },
-    { name: '新規登録', path: '/signup' },
-  ];
+  const menus = [ROUTES.top, ROUTES.signup];
 
   return (
     <header className={styles.header}>

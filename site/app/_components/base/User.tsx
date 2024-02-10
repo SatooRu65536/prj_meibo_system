@@ -3,6 +3,7 @@
 import styles from './base.module.scss';
 import { login, logout, useIsSigned } from '@/components/firebase/auth';
 import { AccountCircle } from '@/components/icons';
+import { ROUTES } from '@/const/path';
 import { useUserState } from '@/globalStates/firebaseUserState';
 import { useReducer } from 'react';
 
@@ -44,7 +45,7 @@ function UserMenu(props: UserMenuProps) {
   return (
     <div className={styles.user_menu} data-opened={opened}>
       <p>
-        <a href="/user">ユーザー情報</a>
+        <a href={ROUTES.user.path}>{ROUTES.user.name}</a>
       </p>
       <p onClick={handleLogout}>ログアウト</p>
     </div>
