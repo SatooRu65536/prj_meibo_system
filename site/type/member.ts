@@ -57,8 +57,8 @@ export type ActiveMember = {
 export type OBOGMember = {
   type: 'obog';
   oldPosition: string;
-  studentNumber: string;
-  employment?: string;
+  oldStudentNumber: string;
+  employment: string;
 }
 
 // 外部
@@ -68,7 +68,12 @@ export type ExternalMember = {
   organization: string;
 }
 
-export type Member = {
+// 未選択
+export type UnselectedMember = {
+  type: null;
+}
+
+export type MemberBase = {
   id: number;
   firstName: string;
   lastName: string;
@@ -80,10 +85,27 @@ export type Member = {
   iconUrl: string;
   updatedAt: string;
   createdAt: string;
-} & (ActiveMember | OBOGMember | ExternalMember);
+}
+
+export type Member = MemberBase & (ActiveMember | OBOGMember | ExternalMember | UnselectedMember);
 
 export type MemberWithPrivateInfo = Member & {
   privateInfo: PrivateInfo;
 };
 
 export type MemberKeysWithPrivateInfo = MemberKeys | PrivateInfoKeys | AddressKeys;
+
+export type MemberType = ActiveMember['type'] | OBOGMember['type'] | ExternalMember['type'] | UnselectedMember['type'];
+
+export type MemberAll = MemberBase
+  & { privateInfo: PrivateInfo }
+  & Omit<ActiveMember, 'type'>
+  & Omit<OBOGMember, 'type'>
+  & Omit<ExternalMember, 'type'>
+  & { type: MemberType };
+
+export type Nullable<T> = {
+  [K in keyof T]: T[K] extends object
+  ? T[K] extends any[] ? T[K] : Nullable<T[K]>
+  : T[K] | null
+};
