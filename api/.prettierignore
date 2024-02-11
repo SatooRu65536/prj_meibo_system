@@ -1,29 +1,19 @@
-node_modules
-dist
-.wrangler
-.dev.vars
-
-# Change them to your taste:
-package-lock.json
-pnpm-lock.yaml
-
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules
-.pnp
+/node_modules
+/.pnp
 .pnp.js
-.yarn/install-state.gz
 
 # testing
-coverage
+/coverage
 
 # next.js
-.next/
-out/
+/.next/
+/out/
 
 # production
-build
+/build
 
 # misc
 .DS_Store
@@ -44,11 +34,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/node_modules
-/package*.json
-/yarn.lock
+/public/*
 
-firebaseSecretKey.json
-
-.env
-/api/sql
+/drizzle/*
+/.vscode/*
+/.wrangler/*

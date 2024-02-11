@@ -1,8 +1,22 @@
 name = "meibo-system"
 compatibility_date = "2023-12-01"
 
+[vars]
+PUBLIC_JWK_CACHE_KEY="public-jwk-cache-key"
+EMAIL_ADDRESS = "test@example.com"
+PASSWORD = "test1234"
+FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099"
+
+[dev]
+port = 8000
+
 [[d1_databases]]
 binding = "DB"
 database_name = "meibo_db"
 database_id = "97265c7e-0a42-4083-8601-c55ec4abf07c"
 migrations_dir = "drizzle/migrations"
+
+[[kv_namespaces]]
+binding = "meibo_system_auth"
+id = "79ba18cd87ec45f99b5a89e8d5aecf44"
+preview_id = "2d6abfd50f164d37a502b0738c58d0af"

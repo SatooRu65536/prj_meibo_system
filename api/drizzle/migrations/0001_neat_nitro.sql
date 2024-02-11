@@ -1,1 +1,0 @@
-ALTER TABLE `active_member` RENAME TO `active`;

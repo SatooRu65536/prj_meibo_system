@@ -5,12 +5,19 @@ import { login, logout, useIsSigned } from '@/components/firebase/auth';
 import { AccountCircle } from '@/components/icons';
 import { ROUTES } from '@/const/path';
 import { useUserState } from '@/globalStates/firebaseUserState';
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 
 export default function User() {
   const isSigned = useIsSigned();
   const user = useUserState();
   const [opened, toggle] = useReducer((state) => !state, false);
+
+  useEffect(() => {
+    (async () => {
+      if (user && process.env.NODE_ENV === 'development')
+        console.log(await user.getIdToken());
+    })();
+  }, [user]);
 
   return (
     <div className={styles.user}>
