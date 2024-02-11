@@ -4,6 +4,8 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const memberTable = sqliteTable('member', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
+  is_approved: integer('is_approved').notNull().default(0),
+  createdAt: integer('created_at').notNull(),
   deletedAt: integer('deleted_at'),
 });
 
@@ -44,7 +46,9 @@ export const memberPropertyTable = sqliteTable('property', {
   // 現役部員
   studentNumber: text('student_number'),
   position: text('position'),
-  grade: text('grade'),
+  grade: text('grade', {
+    enum: ['B1', 'B2', 'B3', 'B4', 'M1', 'M2', 'D1', 'D2', 'その他'],
+  }),
 
   // OB・OG
   oldPosition: text('old_position'),

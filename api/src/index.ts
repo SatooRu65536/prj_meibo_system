@@ -6,8 +6,14 @@ import {
   VerifyFirebaseAuthConfig,
   verifyFirebaseAuth,
 } from '@hono/firebase-auth';
-import { CreateUserSchema, createUserSchema, zodHook } from './validation';
+import {
+  CreateUserSchema,
+  createUserSchema,
+  paramValidator,
+  zodHook,
+} from './validation';
 import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
 const config: VerifyFirebaseAuthConfig = {
   projectId: 'meibo-system',
@@ -21,7 +27,7 @@ app.use('/api/*', verifyFirebaseAuth(config));
 // デバッグ用
 app.get('/', (c) => c.text('Hello Hono!'));
 
-// ユーザー登録
+// [POST] /api/users ユーザー登録
 app.post(
   '/api/users',
   zValidator(
@@ -31,6 +37,9 @@ app.post(
   ),
   async (c) => await UserController.createUser(c),
 );
+
+// [GET] /api/users/:id ユーザー情報取得
+app.get('/api/users/:id/detail', async (c) => await UserController.getUser(c));
 
 app.all('*', (c) => c.text('Not Found', 404));
 

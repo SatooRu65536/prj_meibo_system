@@ -31,6 +31,8 @@ CREATE TABLE `property` (
 CREATE TABLE `member` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`uid` text NOT NULL,
+	`is_approved` integer DEFAULT 0 NOT NULL,
+	`created_at` integer NOT NULL,
 	`deleted_at` integer
 );
 --> statement-breakpoint

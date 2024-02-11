@@ -2,7 +2,7 @@ import { CustomContext } from '@/types/context';
 import { createUserSchema, CreateUserSchema } from './createUser';
 import { TypedResponse } from 'hono';
 import { ResError } from '@/types/response';
-import { ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 
 export { createUserSchema, CreateUserSchema };
 
