@@ -3,10 +3,12 @@ import { MemberAll, MemberError, Nullable } from '@/type/member';
 /**
  * メンバー情報のバリデーション
  * @param member メンバー情報
+ * @param isLivingWithParents 実家暮らしか
  * @returns {[boolean, string[]]} [バリデーション結果, エラーメッセージ]
  */
 export function validateMember(
   member: Nullable<MemberAll>,
+  isLivingWithParents: boolean
 ): [boolean, MemberError] {
   const errors: MemberError = {};
 
@@ -67,12 +69,15 @@ export function validateMember(
     errors.currentPostalCode = '現在の郵便番号の形式が正しくありません';
   if (!member.privateInfo.currentAddress.address)
     errors.currentAddress = '現在の住所を入力してください';
-  if (!member.privateInfo.homeAddress.postalCode)
-    errors.homePostalCode = '実家の郵便番号を入力してください';
-  if (!member.privateInfo.homeAddress.postalCode?.match(POSTAL_CODE_REGEXP))
-    errors.homePostalCode = '実家の郵便番号の形式が正しくありません';
-  if (!member.privateInfo.homeAddress.address)
-    errors.homeAddress = '実家の住所を入力してください';
+
+  if (!isLivingWithParents) {
+    if (!member.privateInfo.homeAddress.postalCode)
+      errors.homePostalCode = '実家の郵便番号を入力してください';
+    if (!member.privateInfo.homeAddress.postalCode?.match(POSTAL_CODE_REGEXP))
+      errors.homePostalCode = '実家の郵便番号の形式が正しくありません';
+    if (!member.privateInfo.homeAddress.address)
+      errors.homeAddress = '実家の住所を入力してください';
+  }
 
   const ok = Object.keys(errors).length === 0;
   return [ok, errors];

@@ -30,66 +30,30 @@ export default function RegistrationPage(props: Porps) {
   >(undefined);
   const user = useUserState();
   const router = useRouter();
-  const [
-    editMember,
-    {
-      setName,
-      setKana,
-      setSkills,
-      setGraduationYear,
-      setSlackName,
-      setIconUrl,
-      setType,
-      setStudentNumber,
-      setPosition,
-      setGrade,
-      setOldPosition,
-      setOldStudentNumber,
-      setEmployment,
-      setSchool,
-      setOrganization,
-      setEmail,
-      setPhoneNumber,
-      setBirthdate,
-      setGender,
-      setCurrentAddressPostalCode,
-      setCurrentAddressAddress,
-      setHomeAddressPostalCode,
-      setHomeAddressAddress,
-    },
-  ] = useMember();
+  const [editMember, dispatch] = useMember();
 
   useEffect(() => {
     const iconUrl = user?.photoURL;
     if (!iconUrl) return;
-    setIconUrl(iconUrl);
-    setEmail(user?.email ?? '');
+    dispatch.setIconUrl(iconUrl);
+    dispatch.setEmail(user?.email ?? '');
     setLoaded(true);
   }, [user]);
 
   useEffect(() => {
-    if (isLivingWithParents === undefined) {
-      const value = getLocalstorage<boolean>('isLivingWithParents', false);
-      setIsLivingWithParents(value);
+    if (isLivingWithParents !== undefined) {
+      setLocalstorage<boolean>('isLivingWithParents', isLivingWithParents);
       return;
     }
 
-    if (isLivingWithParents) {
-      const { address, postalCode } = editMember.privateInfo.currentAddress;
-      setHomeAddressAddress(address ?? '');
-      setHomeAddressPostalCode(postalCode ?? '');
-    } else {
-      setHomeAddressAddress('');
-      setHomeAddressPostalCode('');
-    }
-
-    setLocalstorage<boolean>('isLivingWithParents', isLivingWithParents);
+    const value = getLocalstorage<boolean>('isLivingWithParents', false);
+    setIsLivingWithParents(value);
   }, [isLivingWithParents, editMember.privateInfo.currentAddress]);
 
   function handleSubmit() {
-    console.log(editMember);
-    const [isValid, errors] = validateMember(editMember);
-    console.log(errors);
+    if (isLivingWithParents === undefined) return;
+
+    const [isValid, errors] = validateMember(editMember, isLivingWithParents);
 
     if (!isValid) {
       setErrors(errors);
@@ -115,7 +79,7 @@ export default function RegistrationPage(props: Porps) {
                 ? `${editMember.lastName} ${editMember.firstName}`
                 : ''
             }
-            set={(v) => setName(v)}
+            set={(v) => dispatch.setName(v)}
             placeholder="佐藤 智"
             supplement="姓と名の間には空白を入れてください"
             error={errors.name}
@@ -130,7 +94,7 @@ export default function RegistrationPage(props: Porps) {
                 ? `${editMember.lastNameKana} ${editMember.firstNameKana}`
                 : ''
             }
-            set={(v) => setKana(v)}
+            set={(v) => dispatch.setKana(v)}
             placeholder="サトウ サトル"
             supplement="姓と名の間には空白を入れてください"
             error={errors.kana}
@@ -141,7 +105,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="text"
             value={editMember.slackName ?? ''}
-            set={(v) => setSlackName(v)}
+            set={(v) => dispatch.setSlackName(v)}
             placeholder="学籍番号_名前 or 団体名_名前"
             error={errors.slackName}
           />
@@ -151,7 +115,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="number"
             value={editMember.graduationYear || ''}
-            set={(v) => setGraduationYear(Number(v))}
+            set={(v) => dispatch.setGraduationYear(Number(v))}
             placeholder={String(new Date().getFullYear() + 5)}
             error={errors.graduationYear}
           />
@@ -161,7 +125,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="text"
             value={editMember.skills.join(', ')}
-            set={(v) => setSkills(v)}
+            set={(v) => dispatch.setSkills(v)}
             placeholder="C言語, Web制作, Next.js"
             supplement="「,」で区切ってください"
             error={errors.skills}
@@ -177,7 +141,7 @@ export default function RegistrationPage(props: Porps) {
               { key: 'external', value: '外部' },
             ]}
             value={editMember.type ?? ''}
-            set={(v) => setType(v)}
+            set={(v) => dispatch.setType(v)}
             error={errors.type}
           />
         </Wrapper>
@@ -186,9 +150,9 @@ export default function RegistrationPage(props: Porps) {
           grade={editMember.grade}
           position={editMember.position}
           studentNumber={editMember.studentNumber}
-          setGrade={setGrade}
-          setPosition={setPosition}
-          setStudentNumber={setStudentNumber}
+          setGrade={dispatch.setGrade}
+          setPosition={dispatch.setPosition}
+          setStudentNumber={dispatch.setStudentNumber}
           active={loaded && editMember.type === 'active'}
           errors={errors}
         />
@@ -196,17 +160,17 @@ export default function RegistrationPage(props: Porps) {
           employment={editMember.employment}
           oldPosition={editMember.oldPosition}
           oldStudentNumber={editMember.oldStudentNumber}
-          setEmployment={setEmployment}
-          setOldPosition={setOldPosition}
-          setOldStudentNumber={setOldStudentNumber}
+          setEmployment={dispatch.setEmployment}
+          setOldPosition={dispatch.setOldPosition}
+          setOldStudentNumber={dispatch.setOldStudentNumber}
           active={loaded && editMember.type === 'obog'}
           errors={errors}
         />
         <ExternalMember
           organization={editMember.organization}
           school={editMember.school}
-          setOrganization={setOrganization}
-          setSchool={setSchool}
+          setOrganization={dispatch.setOrganization}
+          setSchool={dispatch.setSchool}
           active={loaded && editMember.type === 'external'}
           errors={errors}
         />
@@ -224,7 +188,7 @@ export default function RegistrationPage(props: Porps) {
               { key: 'その他', value: 'その他' },
             ]}
             value={editMember.privateInfo.gender ?? ''}
-            set={(v) => setGender(v)}
+            set={(v) => dispatch.setGender(v)}
             error={errors.gender}
           />
         </Wrapper>
@@ -233,7 +197,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="date"
             value={editMember.privateInfo.birthdate ?? ''}
-            set={(v) => setBirthdate(v)}
+            set={(v) => dispatch.setBirthdate(v)}
             error={errors.birthdate}
           />
         </Wrapper>
@@ -242,7 +206,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="text"
             value={editMember.privateInfo.phoneNumber ?? ''}
-            set={(v) => setPhoneNumber(v)}
+            set={(v) => dispatch.setPhoneNumber(v)}
             supplement="「-」で区切ってください"
             placeholder="xxx-xxxx-xxxx"
             error={errors.phoneNumber}
@@ -256,7 +220,7 @@ export default function RegistrationPage(props: Porps) {
             <Input
               type="email"
               value={editMember.privateInfo.email ?? ''}
-              set={(v) => setEmail(v)}
+              set={(v) => dispatch.setEmail(v)}
               supplement="愛工大アカウント以外を入力してください"
               placeholder="xxx@xxx.xxx"
               error={errors.email}
@@ -268,7 +232,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="text"
             value={editMember.privateInfo.currentAddress.postalCode ?? ''}
-            set={(v) => setCurrentAddressPostalCode(v)}
+            set={(v) => dispatch.setCurrentAddressPostalCode(v)}
             supplement="「-」で区切ってください"
             placeholder="xxx-xxxx"
             error={errors.currentPostalCode}
@@ -279,7 +243,7 @@ export default function RegistrationPage(props: Porps) {
           <Input
             type="text"
             value={editMember.privateInfo.currentAddress.address ?? ''}
-            set={(v) => setCurrentAddressAddress(v)}
+            set={(v) => dispatch.setCurrentAddressAddress(v)}
             placeholder="x県x市x町x-xx-xx"
             error={errors.currentAddress}
           />
@@ -306,7 +270,7 @@ export default function RegistrationPage(props: Porps) {
               <Input
                 type="text"
                 value={editMember.privateInfo.homeAddress.postalCode ?? ''}
-                set={(v) => setHomeAddressPostalCode(v)}
+                set={(v) => dispatch.setHomeAddressPostalCode(v)}
                 supplement="「-」で区切ってください"
                 placeholder="xxx-xxxx"
                 error={errors.homePostalCode}
@@ -317,7 +281,7 @@ export default function RegistrationPage(props: Porps) {
               <Input
                 type="text"
                 value={editMember.privateInfo.homeAddress.address ?? ''}
-                set={(v) => setHomeAddressAddress(v)}
+                set={(v) => dispatch.setHomeAddressAddress(v)}
                 supplement=""
                 placeholder="x県x市x町x-xx-xx"
                 error={errors.homeAddress}
