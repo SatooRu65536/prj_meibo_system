@@ -1,4 +1,4 @@
-import { Grade } from "./member";
+import { Grade } from './member';
 
 export type Id = {
   id: number;

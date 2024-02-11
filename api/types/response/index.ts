@@ -1,4 +1,4 @@
-import { TypedResponse } from "hono";
+import { TypedResponse } from 'hono';
 
 export type ResSuccess<T> = {
   success: true;
@@ -9,4 +9,5 @@ export type ResError = {
   message: string;
 };
 
-export type CustomResponse<T> = Response & TypedResponse<ResSuccess<T> | ResError>;
+export type CustomResponse<T> = Response &
+  TypedResponse<ResSuccess<T> | ResError>;

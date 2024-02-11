@@ -6,14 +6,8 @@ import {
   VerifyFirebaseAuthConfig,
   verifyFirebaseAuth,
 } from '@hono/firebase-auth';
-import {
-  CreateUserSchema,
-  createUserSchema,
-  paramValidator,
-  zodHook,
-} from './validation';
+import { CreateUserSchema, createUserSchema, zodHook } from './validation';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
 
 const config: VerifyFirebaseAuthConfig = {
   projectId: 'meibo-system',
