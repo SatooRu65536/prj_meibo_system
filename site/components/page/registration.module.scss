@@ -66,6 +66,10 @@
   display: grid;
   grid-template-columns: subgrid;
 
+  & > div:last-of-type > p {
+    line-height: 50px;
+  }
+
   .title_container {
     height: 50px;
     display: flex;

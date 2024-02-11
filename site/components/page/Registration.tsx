@@ -63,6 +63,7 @@ export default function RegistrationPage(props: Porps) {
     const iconUrl = user?.photoURL;
     if (!iconUrl) return;
     setIconUrl(iconUrl);
+    setEmail(user?.email ?? '');
     setLoaded(true);
   }, [user]);
 
@@ -249,14 +250,18 @@ export default function RegistrationPage(props: Porps) {
         </Wrapper>
 
         <Wrapper title="メールアドレス">
-          <Input
-            type="email"
-            value={editMember.privateInfo.email ?? ''}
-            set={(v) => setEmail(v)}
-            supplement="愛工大アカウント以外を入力してください"
-            placeholder="xxx@xxx.xxx"
-            error={errors.email}
-          />
+          {user ? (
+            <p>{user.email}</p>
+          ) : (
+            <Input
+              type="email"
+              value={editMember.privateInfo.email ?? ''}
+              set={(v) => setEmail(v)}
+              supplement="愛工大アカウント以外を入力してください"
+              placeholder="xxx@xxx.xxx"
+              error={errors.email}
+            />
+          )}
         </Wrapper>
 
         <Wrapper title="現在の郵便番号">
