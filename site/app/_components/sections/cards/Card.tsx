@@ -1,5 +1,5 @@
 import { Member } from '@/type/member';
-import styles from './Cards.module.scss';
+import styles from './card.module.scss';
 import { getMemberInfo } from '@/components/util';
 
 type Props = {
