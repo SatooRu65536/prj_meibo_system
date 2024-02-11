@@ -13,7 +13,7 @@ export default function Header() {
 
       <nav className={styles.menus}>
         {menus.map((menu) => (
-          <a href={menu.path} className={styles.menu}>
+          <a key={menu.path} href={menu.path} className={styles.menu}>
             {menu.name}
           </a>
         ))}
