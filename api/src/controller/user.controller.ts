@@ -14,11 +14,164 @@ import { CreatedAt, Id, MemberPropertyTable, MemberTable } from '@/types/table';
 import { UserDetailRes, UserRes } from '@/types/response/user';
 import { MemberBase, MemberType, PrivateInfo } from '@/types/member';
 import { toDateISO } from '@/util';
+import { adminOrSelf, registered, notRegistered } from '@/src/decorator';
 
 /**
  * @private
  */
 export class UserController {
+  /**
+   * ユーザー登録
+   */
+  static async createUser(
+    c: CustomContext<'/api/users'>,
+  ): Promise<CustomResponse<UserDetailRes>> {
+    const { member } = await c.req.json<CreateUserSchema>();
+
+    const user = AuthService.getUser(c);
+    if (!user) return this.error(c, '認証に失敗しました');
+
+    const db = drizzle(c.env.DB);
+
+    // uid が存在するか確認
+    const registeredMembers = await drizzle(c.env.DB)
+      .select()
+      .from(memberTable)
+      .where(eq(memberTable.uid, user.uid));
+
+    if (registeredMembers.length > 0)
+      return this.error(c, '既に登録されています');
+
+    const now = Date.now();
+    // ユーザー情報を登録
+    const [ids] = await db.batch([
+      db
+        .insert(memberTable)
+        .values({ uid: user.uid, createdAt: now })
+        .returning({ id: memberTable.id }),
+
+      db.insert(stackTable).values(
+        member.skills.map((s) => ({
+          uid: user.uid,
+          name: s,
+          createdAt: now,
+        })),
+      ),
+      db
+        .insert(memberPropertyTable)
+        .values(this.toFlatUser(member, user.uid, now)),
+    ]);
+
+    const res = { ...ids[0], ...member };
+    return c.json({ success: true, member: res });
+  }
+
+  /**
+   * ユーザー情報詳細取得
+   */
+  @adminOrSelf()
+  @registered()
+  static async getUserDetail(
+    c: CustomContext<'/api/users/:id/detail'>,
+  ): Promise<CustomResponse<UserDetailRes>> {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) return this.error(c, 'IDが不正です');
+
+    const user = AuthService.getUser(c);
+    if (!user) return this.error(c, '認証に失敗しました');
+    const db = drizzle(c.env.DB);
+
+    // user.uid が一致するユーザー情報を取得
+    const [memberData] = await db
+      .select()
+      .from(memberTable)
+      .where(eq(memberTable.id, idNum));
+
+    if (!memberData) return this.error(c, 'ユーザーが見つかりません');
+
+    // 役員か
+    const isOfficer = await db
+      .select()
+      .from(officerTable)
+      .where(
+        and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
+      );
+
+    if (isOfficer.length === 0 && user.uid !== memberData.uid)
+      return this.error(c, '権限がありません');
+
+    // スキルを取得
+    const skillsMap = await db
+      .select({ name: stackTable.name })
+      .from(stackTable)
+      .where(eq(stackTable.uid, memberData.uid));
+    const skills = skillsMap.map((s) => s.name);
+
+    // ユーザー情報を取得
+    const [propaty] = await db
+      .select()
+      .from(memberPropertyTable)
+      .where(eq(memberPropertyTable.uid, memberData.uid));
+
+    return c.json({
+      success: true,
+      member: this.toStructUserDetail(
+        memberData,
+        propaty as MemberPropertyTable<CreatedAt>,
+        skills,
+      ),
+    });
+  }
+
+  /**
+   * ユーザー情報取得
+   */
+  @registered()
+  static async getUser(
+    c: CustomContext<'/api/users/:id'>,
+  ): Promise<CustomResponse<UserRes>> {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) return this.error(c, 'IDが不正です');
+
+    const user = AuthService.getUser(c);
+    if (!user) return this.error(c, '認証に失敗しました');
+    const db = drizzle(c.env.DB);
+
+    // user.uid が一致するユーザー情報を取得
+    const [memberData] = await db
+      .select()
+      .from(memberTable)
+      .where(eq(memberTable.id, idNum));
+
+    if (!memberData) return this.error(c, 'ユーザーが見つかりません');
+
+    // スキルを取得
+    const skillsMap = await db
+      .select({ name: stackTable.name })
+      .from(stackTable)
+      .where(eq(stackTable.uid, memberData.uid));
+    const skills = skillsMap.map((s) => s.name);
+
+    // ユーザー情報を取得
+    const [propaty] = await db
+      .select()
+      .from(memberPropertyTable)
+      .where(eq(memberPropertyTable.uid, memberData.uid));
+
+    return c.json({
+      success: true,
+      member: this.toStructUser(
+        memberData,
+        propaty as MemberPropertyTable<CreatedAt>,
+        skills,
+      ),
+    });
+  }
+
   /**
    * ユーザーが見つからないエラー
    */
@@ -205,152 +358,5 @@ export class UserController {
         ...base,
       };
     }
-  }
-
-  /**
-   * ユーザー登録
-   */
-  static async createUser(
-    c: CustomContext<'/api/users'>,
-  ): Promise<CustomResponse<UserDetailRes>> {
-    const { member } = await c.req.json<CreateUserSchema>();
-    const user = AuthService.getUser(c);
-    if (!user) return this.error(c, '認証に失敗しました');
-    const db = drizzle(c.env.DB);
-
-    // uid が存在するか確認
-    const registeredMembers = await drizzle(c.env.DB)
-      .select()
-      .from(memberTable)
-      .where(eq(memberTable.uid, user.uid));
-
-    if (registeredMembers.length > 0)
-      return this.error(c, '既に登録されています');
-
-    const now = Date.now();
-    // ユーザー情報を登録
-    const [ids] = await db.batch([
-      db
-        .insert(memberTable)
-        .values({ uid: user.uid, createdAt: now })
-        .returning({ id: memberTable.id }),
-
-      db.insert(stackTable).values(
-        member.skills.map((s) => ({
-          uid: user.uid,
-          name: s,
-          createdAt: now,
-        })),
-      ),
-      db
-        .insert(memberPropertyTable)
-        .values(this.toFlatUser(member, user.uid, now)),
-    ]);
-
-    const res = { ...ids[0], ...member };
-    return c.json({ success: true, member: res });
-  }
-
-  /**
-   * ユーザー情報詳細取得
-   */
-  static async getUserDetail(
-    c: CustomContext<'/api/users/:id/detail'>,
-  ): Promise<CustomResponse<UserDetailRes>> {
-    const { id } = c.req.param();
-    const idNum = Number(id);
-
-    if (isNaN(idNum)) return this.error(c, 'IDが不正です');
-
-    const user = AuthService.getUser(c);
-    if (!user) return this.error(c, '認証に失敗しました');
-    const db = drizzle(c.env.DB);
-
-    // user.uid が一致するユーザー情報を取得
-    const [memberData] = await db
-      .select()
-      .from(memberTable)
-      .where(eq(memberTable.id, idNum));
-
-    if (!memberData) return this.error(c, 'ユーザーが見つかりません');
-
-    // 役員か
-    const isOfficer = await db
-      .select()
-      .from(officerTable)
-      .where(
-        and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
-      );
-
-    if (isOfficer.length === 0 && user.uid !== memberData.uid)
-      return this.error(c, '権限がありません');
-
-    // スキルを取得
-    const skillsMap = await db
-      .select({ name: stackTable.name })
-      .from(stackTable)
-      .where(eq(stackTable.uid, memberData.uid));
-    const skills = skillsMap.map((s) => s.name);
-
-    // ユーザー情報を取得
-    const [propaty] = await db
-      .select()
-      .from(memberPropertyTable)
-      .where(eq(memberPropertyTable.uid, memberData.uid));
-
-    return c.json({
-      success: true,
-      member: this.toStructUserDetail(
-        memberData,
-        propaty as MemberPropertyTable<CreatedAt>,
-        skills,
-      ),
-    });
-  }
-
-  /**
-   * ユーザー情報取得
-   */
-  static async getUser(
-    c: CustomContext<'/api/users/:id'>,
-  ): Promise<CustomResponse<UserRes>> {
-    const { id } = c.req.param();
-    const idNum = Number(id);
-
-    if (isNaN(idNum)) return this.error(c, 'IDが不正です');
-
-    const user = AuthService.getUser(c);
-    if (!user) return this.error(c, '認証に失敗しました');
-    const db = drizzle(c.env.DB);
-
-    // user.uid が一致するユーザー情報を取得
-    const [memberData] = await db
-      .select()
-      .from(memberTable)
-      .where(eq(memberTable.id, idNum));
-
-    if (!memberData) return this.error(c, 'ユーザーが見つかりません');
-
-    // スキルを取得
-    const skillsMap = await db
-      .select({ name: stackTable.name })
-      .from(stackTable)
-      .where(eq(stackTable.uid, memberData.uid));
-    const skills = skillsMap.map((s) => s.name);
-
-    // ユーザー情報を取得
-    const [propaty] = await db
-      .select()
-      .from(memberPropertyTable)
-      .where(eq(memberPropertyTable.uid, memberData.uid));
-
-    return c.json({
-      success: true,
-      member: this.toStructUser(
-        memberData,
-        propaty as MemberPropertyTable<CreatedAt>,
-        skills,
-      ),
-    });
   }
 }
