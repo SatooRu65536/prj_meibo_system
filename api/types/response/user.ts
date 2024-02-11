@@ -1,8 +1,13 @@
 import { CreateUserSchema } from '@/src/validation';
 
-// [POST] /api/user
-export type UserRes = {
+export type UserDetailRes = {
   member: CreateUserSchema['member'] & {
+    id: number;
+  };
+};
+
+export type UserRes = {
+  member: Omit<CreateUserSchema['member'], 'privateInfo'> & {
     id: number;
   };
 };

@@ -32,8 +32,14 @@ app.post(
   async (c) => await UserController.createUser(c),
 );
 
-// [GET] /api/users/:id ユーザー情報取得
-app.get('/api/users/:id/detail', async (c) => await UserController.getUser(c));
+// [GET] /api/users/:id ユーザー情報詳細取得
+app.get('/api/users/:id', async (c) => await UserController.getUser(c));
+
+// [GET] /api/users/:id/detail ユーザー情報詳細取得
+app.get(
+  '/api/users/:id/detail',
+  async (c) => await UserController.getUserDetail(c),
+);
 
 app.all('*', (c) => c.text('Not Found', 404));
 

@@ -43,5 +43,10 @@ Content-Type: application/json
 }
 
 ### ユーザ取得
+GET {{host}}/api/users/1 HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+### ユーザ詳細取得
 GET {{host}}/api/users/1/detail HTTP/1.1
 Authorization: Bearer {{token}}
