@@ -1,16 +1,6 @@
 import { CustomContext } from '@/types/context';
 import { AuthService } from '../service/auth.service';
-import { drizzle } from 'drizzle-orm/d1';
-import {
-  memberPropertyTable,
-  memberTable,
-  officerTable,
-  stackTable,
-} from '../models/schema';
 import { CustomResponse } from '@/types/response';
-import { CreateUserSchema } from '../validation';
-import { eq } from 'drizzle-orm';
-import { CreatedAt, Id, MemberPropertyTable } from '@/types/table';
 import { UserDetailRes, UserRes } from '@/types/response/user';
 import { auth, adminOrSelf, registered, notRegistered } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
@@ -43,8 +33,8 @@ export class UserController {
   /**
    * ユーザー情報詳細取得
    */
-  @adminOrSelf
   @registered
+  @adminOrSelf
   static async getUserDetail(
     c: CustomContext<'/api/users/:id/detail'>,
   ): Promise<CustomResponse<UserDetailRes>> {

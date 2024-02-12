@@ -1,5 +1,10 @@
-import { memberPropertyTable, memberTable, stackTable } from '../models/schema';
-import { SQL, and, eq, isNull, max, sql } from 'drizzle-orm';
+import {
+  memberPropertyTable,
+  memberTable,
+  officerTable,
+  stackTable,
+} from '../models/schema';
+import { SQL, and, eq, isNull, max, or, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { UnwrapPromise, ReturnType } from '@/types';
@@ -75,6 +80,87 @@ export class UserRepository {
     ]);
 
     return this.getUserByIdWithPrivateInfo(c, ids[0].id);
+  }
+
+  /**
+   * 管理者権限があるか
+   */
+  static async isAdmin(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+
+    const [first] = await db
+      .select()
+      .from(memberTable)
+      .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .where(
+        and(
+          eq(officerTable.uid, uid),
+          isNull(officerTable.deletedAt),
+          isNull(memberTable.deletedAt),
+        ),
+      );
+
+    return first !== undefined;
+  }
+
+  /**
+   * 管理者権限があるか、または本人か
+   * @param c
+   * @param uid
+   * @param id
+   * @returns
+   */
+  static async isAdminOrSelf(
+    c: CustomContext<string>,
+    uid: string,
+    id: number,
+  ) {
+    const db = drizzle(c.env.DB);
+
+    const [first] = await db
+      .select()
+      .from(memberTable)
+      .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .where(
+        or(
+          and(
+            eq(memberTable.id, id),
+            eq(memberTable.uid, uid),
+            isNull(memberTable.deletedAt),
+          ),
+          and(
+            eq(officerTable.uid, uid),
+            isNull(officerTable.deletedAt),
+            isNull(memberTable.deletedAt),
+          ),
+        ),
+      );
+
+    console.log({ first });
+    return first !== undefined;
+  }
+
+  /**
+   * 登録済みか
+   * @param c
+   * @param uid
+   * @returns
+   */
+  static async isRegistered(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+
+    const [registeredMembers] = await db
+      .select()
+      .from(memberTable)
+      .where(
+        and(
+          eq(memberTable.uid, uid),
+          isNull(memberTable.deletedAt),
+          eq(memberTable.isApproved, 0),
+        ),
+      );
+
+    return registeredMembers !== undefined;
   }
 
   /**

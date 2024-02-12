@@ -1,8 +1,6 @@
 import { CustomContext } from '@/types/context';
 import { AuthService } from '../service/auth.service';
-import { drizzle } from 'drizzle-orm/d1';
-import { memberTable, officerTable } from '../models/schema';
-import { and, desc, eq, isNull } from 'drizzle-orm/sql';
+import { UserRepository } from '../repository/user.repository';
 
 /**
  * user が存在するか
@@ -44,16 +42,10 @@ export function admin(
       return c.json({ success: false, message: '認証に失敗しました' }, 401);
     }
 
-    const db = drizzle(c.env.DB);
-    // 役員か
-    const isOfficer = await db
-      .select()
-      .from(officerTable)
-      .where(
-        and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
-      );
+    const isAdmin = await UserRepository.isAdmin(c, user.uid);
+    console.log({ isAdmin });
 
-    if (isOfficer.length === 0) {
+    if (!isAdmin) {
       return c.json({ success: false, message: '管理者権限が必要です' }, 401);
     }
 
@@ -87,26 +79,10 @@ export function adminOrSelf(
       return c.json({ success: false, message: '認証に失敗しました' }, 401);
     }
 
-    const db = drizzle(c.env.DB);
-
     // 本人か
-    const [self] = await db
-      .select()
-      .from(memberTable)
-      .where(and(eq(memberTable.id, idNum), isNull(memberTable.deletedAt)));
-    const isSelf = self && self.uid === user.uid;
+    const isAdminOrSelf = await UserRepository.isAdminOrSelf(c, user.uid, idNum);
 
-    // 役員か
-    const officer = await db
-      .select()
-      .from(officerTable)
-      .where(
-        and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
-      );
-    const isOfficer = officer.length > 0;
-
-    console.log(user.uid);
-    if (!isOfficer && !isSelf) {
+    if (!isAdminOrSelf) {
       return c.json(
         { success: false, message: '本人もしくは管理者権限が必要です' },
         401,
@@ -136,15 +112,9 @@ export function registered(
       return c.json({ success: false, message: '認証に失敗しました' }, 401);
     }
 
-    const db = drizzle(c.env.DB);
+    const isRegistered = await UserRepository.isRegistered(c, user.uid);
 
-    const [registeredMembers] = await db
-      .select()
-      .from(memberTable)
-      .where(and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)))
-      .orderBy(desc(memberTable.createdAt));
-
-    if (!registeredMembers) {
+    if (!isRegistered) {
       return c.json({ success: false, message: '登録されていません' }, 401);
     }
 
@@ -171,14 +141,9 @@ export function notRegistered(
       return c.json({ success: false, message: '認証に失敗しました' }, 401);
     }
 
-    const db = drizzle(c.env.DB);
+    const isRegistered = await UserRepository.isRegistered(c, user.uid);
 
-    const registeredMembers = await db
-      .select()
-      .from(memberTable)
-      .where(and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)));
-
-    if (registeredMembers.length > 0) {
+    if (isRegistered) {
       return c.json({ success: false, message: '既に登録されています' }, 401);
     }
 
