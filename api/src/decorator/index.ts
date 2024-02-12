@@ -46,9 +46,11 @@ export function admin(
     }
 
     const isAdmin = await UserRepository.isAdmin(c, user.uid);
-    console.log({ isAdmin });
 
-    if (!isAdmin) {
+    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const includeAdmin = user?.email && initAdmins.includes(user?.email);
+
+    if (!isAdmin && !includeAdmin) {
       const err = ErrorService.auth.notAdmin();
       return c.json(err.err, err.status);
     }
@@ -92,7 +94,10 @@ export function adminOrSelf(
       idNum,
     );
 
-    if (!isAdminOrSelf) {
+    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const includeAdmin = user?.email && initAdmins.includes(user?.email);
+
+    if (!isAdminOrSelf && !includeAdmin) {
       const err = ErrorService.auth.notSelfOrAdmin();
       return c.json(err.err, err.status);
     }
