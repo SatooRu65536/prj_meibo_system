@@ -4,7 +4,7 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const memberTable = sqliteTable('member', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
-  is_approved: integer('is_approved').notNull().default(0),
+  isApproved: integer('is_approved').notNull().default(0),
   createdAt: integer('created_at').notNull(),
   deletedAt: integer('deleted_at'),
 });

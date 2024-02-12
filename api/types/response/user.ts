@@ -1,13 +1,10 @@
 import { CreateUserSchema } from '@/src/validation';
+import { MemberBase, MemberType, PrivateInfo } from '../member';
 
 export type UserDetailRes = {
-  member: CreateUserSchema['member'] & {
-    id: number;
-  };
+  member: MemberBase<PrivateInfo, MemberType>;
 };
 
 export type UserRes = {
-  member: Omit<CreateUserSchema['member'], 'privateInfo'> & {
-    id: number;
-  };
+  member: MemberBase<{}, MemberType>;
 };

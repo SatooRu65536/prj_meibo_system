@@ -51,7 +51,10 @@ type ExternalMember = {
 
 export type MemberType = ActiveMember | OBOGMember | ExternalMember;
 
-export type MemberBase<T extends PrivateInfo | {} = {}> = {
+export type MemberBase<
+  T extends PrivateInfo | {} = {},
+  U extends MemberType | {} = {},
+> = {
   id: number;
   firstName: string;
   lastName: string;
@@ -62,5 +65,5 @@ export type MemberBase<T extends PrivateInfo | {} = {}> = {
   slackName: string;
   iconUrl: string;
   updatedAt: string;
-  createdAt: string;
-} & (T extends PrivateInfo ? { privateInfo: T } : {});
+} & (T extends PrivateInfo ? { privateInfo: T } : {}) &
+  (U extends MemberType ? U : {});
