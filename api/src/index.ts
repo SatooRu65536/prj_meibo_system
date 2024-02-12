@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { UserController } from './controller';
+import { UserController } from './controller/user.controller';
 import { CustomContext, Env } from '@/types/context';
 import { VerifyFirebaseAuthConfig, verifyFirebaseAuth } from './auth';
 import { CreateUserSchema, createUserSchema, zodHook } from './validation';

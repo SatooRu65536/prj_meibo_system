@@ -7,9 +7,6 @@ import { UserRepository } from '../repository/user.repository';
 import { UserService } from '../service/user.service';
 import { ErrorService } from '../service/error.service';
 
-/**
- * @private
- */
 export class UserController {
   /**
    * ユーザー登録
