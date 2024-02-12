@@ -1,5 +1,5 @@
 import { CustomContext } from '@/types/context';
-import { getFirebaseToken } from '@hono/firebase-auth';
+import { getFirebaseToken } from '../auth';
 import { FirebaseIdToken } from 'firebase-auth-cloudflare-workers';
 
 export class AuthService {

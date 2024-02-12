@@ -2,10 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { UserController } from './controller';
 import { CustomContext, Env } from '@/types/context';
-import {
-  VerifyFirebaseAuthConfig,
-  verifyFirebaseAuth,
-} from '@hono/firebase-auth';
+import { VerifyFirebaseAuthConfig, verifyFirebaseAuth } from './auth';
 import { CreateUserSchema, createUserSchema, zodHook } from './validation';
 import { zValidator } from '@hono/zod-validator';
 
@@ -16,7 +13,7 @@ const config: VerifyFirebaseAuthConfig = {
 const app = new Hono<Env>();
 
 app.use('*', cors({ origin: '*' }));
-app.use('/api/*', verifyFirebaseAuth(config));
+app.use('*', verifyFirebaseAuth(config));
 
 // デバッグ用
 app.get('/', (c) => c.text('Hello Hono!'));

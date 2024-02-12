@@ -14,7 +14,7 @@ import { CreatedAt, Id, MemberPropertyTable, MemberTable } from '@/types/table';
 import { UserDetailRes, UserRes } from '@/types/response/user';
 import { MemberBase, MemberType, PrivateInfo } from '@/types/member';
 import { toDateISO } from '@/util';
-import { adminOrSelf, registered, notRegistered } from '@/src/decorator';
+import { auth, adminOrSelf, registered } from '@/src/decorator';
 
 /**
  * @private
@@ -23,6 +23,7 @@ export class UserController {
   /**
    * ユーザー登録
    */
+  @auth
   static async createUser(
     c: CustomContext<'/api/users'>,
   ): Promise<CustomResponse<UserDetailRes>> {
@@ -69,8 +70,8 @@ export class UserController {
   /**
    * ユーザー情報詳細取得
    */
-  @adminOrSelf()
-  @registered()
+  @adminOrSelf
+  @registered
   static async getUserDetail(
     c: CustomContext<'/api/users/:id/detail'>,
   ): Promise<CustomResponse<UserDetailRes>> {
@@ -128,7 +129,7 @@ export class UserController {
   /**
    * ユーザー情報取得
    */
-  @registered()
+  @registered
   static async getUser(
     c: CustomContext<'/api/users/:id'>,
   ): Promise<CustomResponse<UserRes>> {

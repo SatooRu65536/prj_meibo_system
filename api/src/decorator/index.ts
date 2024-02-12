@@ -7,194 +7,173 @@ import { and, desc, eq, isNull } from 'drizzle-orm/sql';
 /**
  * user が存在するか
  */
-export function user() {
-  return (
-    _target: any,
-    _propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) => {
-    descriptor.value = async function (
-      c: CustomContext<string>,
-      ...args: any[]
-    ) {
-      const user = AuthService.getUser(c);
+export function auth(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
 
-      if (!user) {
-        return c.json({ success: false, message: '認証に失敗しました' }, 401);
-      }
+  descriptor.value = function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
 
-      const originalMethod = descriptor.value;
-      return originalMethod.apply(this, [c, ...args]);
-    };
-    return descriptor;
+    if (!user) {
+      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
   };
+
+  return descriptor;
 }
 
 /**
  * 管理者権限を持っているか(user を包括)
  */
-export function admin() {
-  return (
-    _target: any,
-    _propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) => {
-    descriptor.value = async function (
-      c: CustomContext<string>,
-      ...args: any[]
-    ) {
-      const user = AuthService.getUser(c);
+export function admin(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
 
-      if (!user) {
-        return c.json({ success: false, message: '認証に失敗しました' }, 401);
-      }
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
 
-      const db = drizzle(c.env.DB);
-      // 役員か
-      const isOfficer = await db
-        .select()
-        .from(officerTable)
-        .where(
-          and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
-        );
+    if (!user) {
+      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+    }
 
-      if (isOfficer.length === 0) {
-        return c.json({ success: false, message: '管理者権限が必要です' }, 401);
-      }
+    const db = drizzle(c.env.DB);
+    // 役員か
+    const isOfficer = await db
+      .select()
+      .from(officerTable)
+      .where(
+        and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
+      );
 
-      const originalMethod = descriptor.value;
-      return originalMethod.apply(this, [c, ...args]);
-    };
-    return descriptor;
+    if (isOfficer.length === 0) {
+      return c.json({ success: false, message: '管理者権限が必要です' }, 401);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
   };
+
+  return descriptor;
 }
 
 /**
  * 本人か管理者権限を持っているか(user を包括)
  */
-export function adminOrSelf() {
-  return (
-    _target: any,
-    _propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) => {
-    descriptor.value = async function (
-      c: CustomContext<string>,
-      ...args: any[]
-    ) {
-      const user = AuthService.getUser(c);
+export function adminOrSelf(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
 
-      if (!user) {
-        return c.json({ success: false, message: '認証に失敗しました' }, 401);
-      }
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
 
-      const db = drizzle(c.env.DB);
+    if (!user) {
+      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+    }
 
-      // 本人か
-      const isSelf = await db
-        .select()
-        .from(memberTable)
-        .where(
-          and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)),
-        );
+    const db = drizzle(c.env.DB);
 
-      // 役員か
-      const isOfficer = await db
-        .select()
-        .from(officerTable)
-        .where(
-          and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
-        );
+    // 本人か
+    const isSelf = await db
+      .select()
+      .from(memberTable)
+      .where(and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)));
 
-      if (isOfficer.length === 0 && isSelf.length === 0) {
-        return c.json(
-          { success: false, message: '本人もしくは管理者権限が必要です' },
-          401,
-        );
-      }
+    // 役員か
+    const isOfficer = await db
+      .select()
+      .from(officerTable)
+      .where(
+        and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
+      );
 
-      const originalMethod = descriptor.value;
-      return originalMethod.apply(this, [c, ...args]);
-    };
-    return descriptor;
+    if (isOfficer.length === 0 && isSelf.length === 0) {
+      return c.json(
+        { success: false, message: '本人もしくは管理者権限が必要です' },
+        401,
+      );
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
   };
+
+  return descriptor;
 }
 
 /**
  * 登録済みか(user を包括)
  */
-export function registered() {
-  return (
-    _target: any,
-    _propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) => {
-    descriptor.value = async function (
-      c: CustomContext<string>,
-      ...args: any[]
-    ) {
-      const user = AuthService.getUser(c);
+export function registered(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
 
-      if (!user) {
-        return c.json({ success: false, message: '認証に失敗しました' }, 401);
-      }
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
 
-      const db = drizzle(c.env.DB);
+    if (!user) {
+      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+    }
 
-      const [registeredMembers] = await db
-        .select()
-        .from(memberTable)
-        .where(
-          and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)),
-        )
-        .orderBy(desc(memberTable.createdAt));
+    const db = drizzle(c.env.DB);
 
-      if (!registeredMembers) {
-        return c.json({ success: false, message: '登録されていません' }, 401);
-      }
+    const [registeredMembers] = await db
+      .select()
+      .from(memberTable)
+      .where(and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)))
+      .orderBy(desc(memberTable.createdAt));
 
-      const originalMethod = descriptor.value;
-      return originalMethod.apply(this, [c, ...args]);
-    };
-    return descriptor;
+    if (!registeredMembers) {
+      return c.json({ success: false, message: '登録されていません' }, 401);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
   };
+
+  return descriptor;
 }
 
 /**
  * 未登録か(user を包括)
  */
-export function notRegistered() {
-  return (
-    _target: any,
-    _propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) => {
-    descriptor.value = async function (
-      c: CustomContext<string>,
-      ...args: any[]
-    ) {
-      const user = AuthService.getUser(c);
+export function notRegistered(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
 
-      if (!user) {
-        return c.json({ success: false, message: '認証に失敗しました' }, 401);
-      }
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
 
-      const db = drizzle(c.env.DB);
+    if (!user) {
+      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+    }
 
-      const registeredMembers = await db
-        .select()
-        .from(memberTable)
-        .where(
-          and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)),
-        );
+    const db = drizzle(c.env.DB);
 
-      if (registeredMembers.length > 0) {
-        return c.json({ success: false, message: '既に登録されています' }, 401);
-      }
+    const registeredMembers = await db
+      .select()
+      .from(memberTable)
+      .where(and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)));
 
-      const originalMethod = descriptor.value;
-      return originalMethod.apply(this, [c, ...args]);
-    };
-    return descriptor;
+    if (registeredMembers.length > 0) {
+      return c.json({ success: false, message: '既に登録されています' }, 401);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
   };
+
+  return descriptor;
 }

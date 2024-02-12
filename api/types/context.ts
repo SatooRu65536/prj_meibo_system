@@ -1,4 +1,4 @@
-import { VerifyFirebaseAuthEnv } from '@hono/firebase-auth';
+import { VerifyFirebaseAuthEnv } from '../src/auth';
 import { Context, Input } from 'hono';
 
 type Bindings = {
