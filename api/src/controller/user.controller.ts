@@ -55,6 +55,8 @@ export class UserController {
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getUserByIdWithPrivateInfo(c, idNum);
 
+    if (member === undefined) return this.error(c, 'ユーザーが見つかりません');
+
     return c.json({
       success: true,
       member: UserService.toFormatDetail(member),
@@ -74,6 +76,8 @@ export class UserController {
 
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getUserById(c, idNum);
+
+    if (member === undefined) return this.error(c, 'ユーザーが見つかりません');
 
     return c.json({
       success: true,

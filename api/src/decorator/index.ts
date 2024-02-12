@@ -73,7 +73,14 @@ export function adminOrSelf(
 ) {
   const originalMethod = descriptor.value;
 
-  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) {
+      return c.json({ success: false, message: 'IDが不正です' }, 400);
+    }
+
     const user = AuthService.getUser(c);
 
     if (!user) {
@@ -83,20 +90,23 @@ export function adminOrSelf(
     const db = drizzle(c.env.DB);
 
     // 本人か
-    const isSelf = await db
+    const [self] = await db
       .select()
       .from(memberTable)
-      .where(and(eq(memberTable.uid, user.uid), isNull(memberTable.deletedAt)));
+      .where(and(eq(memberTable.id, idNum), isNull(memberTable.deletedAt)));
+    const isSelf = self && self.uid === user.uid;
 
     // 役員か
-    const isOfficer = await db
+    const officer = await db
       .select()
       .from(officerTable)
       .where(
         and(eq(officerTable.uid, user.uid), isNull(officerTable.deletedAt)),
       );
+    const isOfficer = officer.length > 0;
 
-    if (isOfficer.length === 0 && isSelf.length === 0) {
+    console.log(user.uid);
+    if (!isOfficer && !isSelf) {
       return c.json(
         { success: false, message: '本人もしくは管理者権限が必要です' },
         401,
