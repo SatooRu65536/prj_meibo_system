@@ -1,7 +1,6 @@
 import { CustomContext } from '@/types/context';
 import { AuthService } from '../service/auth.service';
-import { CustomResponse } from '@/types/response';
-import { UserDetailRes, UserRes } from '@/types/response/user';
+import { CustomResponse, UserDetailRes, UserRes } from '@/types/response';
 import { auth, adminOrSelf, registered, notRegistered } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
 import { UserService } from '../service/user.service';

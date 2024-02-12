@@ -1,4 +1,13 @@
 import { TypedResponse } from 'hono';
+import { MemberBase, MemberType, PrivateInfo } from './member';
+
+export type UserDetailRes = {
+  member: MemberBase<PrivateInfo, MemberType>;
+};
+
+export type UserRes = {
+  member: MemberBase<{}, MemberType>;
+};
 
 export type ResSuccess<T> = {
   success: true;
