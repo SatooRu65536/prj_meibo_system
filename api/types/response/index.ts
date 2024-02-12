@@ -5,8 +5,10 @@ export type ResSuccess<T> = {
 } & T;
 
 export type ResError = {
-  success: false;
+  key: string;
   message: string;
+  approach?: string;
+  success: false;
 };
 
 export type CustomResponse<T> = Response &

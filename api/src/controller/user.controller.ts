@@ -5,6 +5,7 @@ import { UserDetailRes, UserRes } from '@/types/response/user';
 import { auth, adminOrSelf, registered, notRegistered } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
 import { UserService } from '../service/user.service';
+import { ErrorService } from '../service/error.service';
 
 /**
  * @private
@@ -19,7 +20,10 @@ export class UserController {
     c: CustomContext<'/api/users'>,
   ): Promise<CustomResponse<UserDetailRes>> {
     const user = AuthService.getUser(c);
-    if (!user) return this.error(c, '認証に失敗しました');
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
     // ユーザー情報を登録
 
     const member = await UserRepository.createUser(c, user.uid);
@@ -40,12 +44,18 @@ export class UserController {
   ): Promise<CustomResponse<UserDetailRes>> {
     const { id } = c.req.param();
     const idNum = Number(id);
-    if (isNaN(idNum)) return this.error(c, 'IDが不正です');
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
 
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getUserByIdWithPrivateInfo(c, idNum);
 
-    if (member === undefined) return this.error(c, 'ユーザーが見つかりません');
+    if (member === undefined) {
+      const err = ErrorService.request.notFound('ユーザー');
+      return c.json(err.err, err.status);
+    }
 
     return c.json({
       success: true,
@@ -62,26 +72,22 @@ export class UserController {
   ): Promise<CustomResponse<UserRes>> {
     const { id } = c.req.param();
     const idNum = Number(id);
-    if (isNaN(idNum)) return this.error(c, 'IDが不正です');
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
 
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getUserById(c, idNum);
 
-    if (member === undefined) return this.error(c, 'ユーザーが見つかりません');
+    if (member === undefined) {
+      const err = ErrorService.request.notFound('ユーザー');
+      return c.json(err.err, err.status);
+    }
 
     return c.json({
       success: true,
       member: UserService.toFormat(member),
     });
-  }
-
-  /**
-   * ユーザーが見つからないエラー
-   */
-  private static error(
-    c: CustomContext<string>,
-    message: string,
-  ): CustomResponse<never> {
-    return c.json({ success: false, message }, 401);
   }
 }

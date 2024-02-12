@@ -1,6 +1,7 @@
 import { CustomContext } from '@/types/context';
 import { AuthService } from '../service/auth.service';
 import { UserRepository } from '../repository/user.repository';
+import { ErrorService } from '../service/error.service';
 
 /**
  * user が存在するか
@@ -16,7 +17,8 @@ export function auth(
     const user = AuthService.getUser(c);
 
     if (!user) {
-      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
     }
 
     return originalMethod.apply(this, [c, ...args]);
@@ -39,14 +41,16 @@ export function admin(
     const user = AuthService.getUser(c);
 
     if (!user) {
-      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
     }
 
     const isAdmin = await UserRepository.isAdmin(c, user.uid);
     console.log({ isAdmin });
 
     if (!isAdmin) {
-      return c.json({ success: false, message: '管理者権限が必要です' }, 401);
+      const err = ErrorService.auth.notAdmin();
+      return c.json(err.err, err.status);
     }
 
     return originalMethod.apply(this, [c, ...args]);
@@ -70,23 +74,27 @@ export function adminOrSelf(
     const idNum = Number(id);
 
     if (isNaN(idNum)) {
-      return c.json({ success: false, message: 'IDが不正です' }, 400);
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
     }
 
     const user = AuthService.getUser(c);
 
     if (!user) {
-      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
     }
 
     // 本人か
-    const isAdminOrSelf = await UserRepository.isAdminOrSelf(c, user.uid, idNum);
+    const isAdminOrSelf = await UserRepository.isAdminOrSelf(
+      c,
+      user.uid,
+      idNum,
+    );
 
     if (!isAdminOrSelf) {
-      return c.json(
-        { success: false, message: '本人もしくは管理者権限が必要です' },
-        401,
-      );
+      const err = ErrorService.auth.notSelfOrAdmin();
+      return c.json(err.err, err.status);
     }
 
     return originalMethod.apply(this, [c, ...args]);
@@ -109,13 +117,15 @@ export function registered(
     const user = AuthService.getUser(c);
 
     if (!user) {
-      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
     }
 
     const isRegistered = await UserRepository.isRegistered(c, user.uid);
 
     if (!isRegistered) {
-      return c.json({ success: false, message: '登録されていません' }, 401);
+      const err = ErrorService.auth.notRegistered();
+      return c.json(err.err, err.status);
     }
 
     return originalMethod.apply(this, [c, ...args]);
@@ -138,13 +148,15 @@ export function notRegistered(
     const user = AuthService.getUser(c);
 
     if (!user) {
-      return c.json({ success: false, message: '認証に失敗しました' }, 401);
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
     }
 
     const isRegistered = await UserRepository.isRegistered(c, user.uid);
 
     if (isRegistered) {
-      return c.json({ success: false, message: '既に登録されています' }, 401);
+      const err = ErrorService.auth.registered();
+      return c.json(err.err, err.status);
     }
 
     return originalMethod.apply(this, [c, ...args]);
