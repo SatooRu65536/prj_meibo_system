@@ -126,9 +126,9 @@ export function registered(
       return c.json(err.err, err.status);
     }
 
-    const isRegistered = await UserRepository.isRegistered(c, user.uid);
+    const isApproved = await UserRepository.isRegisteredByUid(c, user.uid);
 
-    if (!isRegistered) {
+    if (!isApproved) {
       const err = ErrorService.auth.notRegistered();
       return c.json(err.err, err.status);
     }
@@ -157,10 +157,74 @@ export function notRegistered(
       return c.json(err.err, err.status);
     }
 
-    const isRegistered = await UserRepository.isRegistered(c, user.uid);
+    const isApproved = await UserRepository.isRegisteredByUid(c, user.uid);
 
-    if (isRegistered) {
+    if (isApproved) {
       const err = ErrorService.auth.registered();
+      return c.json(err.err, err.status);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
+  };
+
+  return descriptor;
+}
+
+/**
+ * 承認済みか(user を包括)
+ */
+export function approved(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
+
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+
+    const isApproved = await UserRepository.isApprovedByUid(c, user.uid);
+    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const includeAdmin = user?.email && initAdmins.includes(user?.email);
+
+    if (!isApproved && !includeAdmin) {
+      const err = ErrorService.auth.notApproved();
+      return c.json(err.err, err.status);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
+  };
+
+  return descriptor;
+}
+
+/**
+ * 未承認か(user を包括)
+ */
+export function notApproved(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
+
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+
+    const isApproved = await UserRepository.isApprovedByUid(c, user.uid);
+
+    if (isApproved) {
+      const err = ErrorService.auth.approved();
       return c.json(err.err, err.status);
     }
 

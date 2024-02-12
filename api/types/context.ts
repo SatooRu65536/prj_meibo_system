@@ -7,6 +7,7 @@ type Bindings = {
   PUBLIC_JWK_CACHE_KEY: string;
   PUBLIC_JWK_CACHE_KV: KVNamespace;
   FIREBASE_AUTH_EMULATOR_HOST: string;
+  INIT_ADMINS: string;
 };
 
 export type Env = { Bindings: Bindings & VerifyFirebaseAuthEnv };

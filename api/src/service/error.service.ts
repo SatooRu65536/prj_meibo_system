@@ -50,7 +50,7 @@ const notRegistered = (): ErrorStruct => ({
     success: false,
     key: 'A4',
     message: 'ユーザー登録されていません',
-    approach: '登録したのちに、管理者に承認してもらう必要があります',
+    approach: 'ユーザー登録を行ってください',
   },
   status: 401,
 });
@@ -59,7 +59,26 @@ const registered = (): ErrorStruct => ({
   err: {
     success: false,
     key: 'A5',
-    message: 'すでにユーザー登録されています',
+    message: '登録済みです',
+  },
+  status: 401,
+});
+
+const notApproved = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'A4',
+    message: '承認されていません',
+    approach: '管理者が承認するまでお待ちください',
+  },
+  status: 401,
+});
+
+const approved = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'A5',
+    message: '承認済みです',
   },
   status: 401,
 });
@@ -67,10 +86,12 @@ const registered = (): ErrorStruct => ({
 const AuthError = {
   notFoundToken,
   failedAuth,
-  notAdmin,
   notRegistered,
-  notSelfOrAdmin,
   registered,
+  notAdmin,
+  notApproved,
+  notSelfOrAdmin,
+  approved,
 };
 
 type Type = '文字列' | '数値' | '真偽値' | 'オブジェクト' | '配列';
@@ -103,10 +124,21 @@ const notFound = (key: string): ErrorStruct => ({
   status: 404,
 });
 
+// すでに承認済み
+const alreadyApproved = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'C3',
+    message: 'すでに承認済みです',
+  },
+  status: 400,
+});
+
 const RequestError = {
   invalidRequest,
   validationError,
   notFound,
+  alreadyApproved,
 };
 
 export const ErrorService = {

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "58756338-c7f0-4157-95b4-847252a128fc",
+  "id": "4511c0bb-1f13-407a-8c71-c20817755d50",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "property": {
@@ -224,11 +224,24 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
+        },
+        "approve_by": {
+          "name": "approve_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

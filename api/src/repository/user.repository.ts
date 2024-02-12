@@ -21,12 +21,30 @@ export class UserRepository {
   static async getUserById(c: CustomContext<string>, id: number) {
     const filter = and(
       eq(memberTable.id, id),
-      eq(memberTable.isApproved, 0),
+      eq(memberTable.isApproved, 1),
       isNull(stackTable.deletedAt),
     );
 
     const [user] = await this.commonGetUer(c, filter);
-    console.log(user);
+
+    return user;
+  }
+
+  /**
+   * idが一致するユーザー情報を取得(承認済)
+   * @param c
+   * @param id
+   * @returns idが一致するユーザー情報を取得(承認済)
+   */
+  static async getUserByUid(c: CustomContext<string>, uid: string) {
+    const filter = and(
+      eq(memberTable.uid, uid),
+      eq(memberTable.isApproved, 1),
+      isNull(stackTable.deletedAt),
+    );
+
+    const [user] = await this.commonGetUer(c, filter);
+
     return user;
   }
 
@@ -37,6 +55,42 @@ export class UserRepository {
    * @returns idが一致するユーザー詳細情報を取得(承認済)
    */
   static async getUserByIdWithPrivateInfo(
+    c: CustomContext<string>,
+    id: number,
+  ) {
+    const filter = and(eq(memberTable.id, id), isNull(stackTable.deletedAt));
+
+    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
+    return user;
+  }
+
+  /**
+   * idが一致するユーザー詳細情報を取得(承認済)
+   * @param c
+   * @param id
+   * @returns idが一致するユーザー詳細情報を取得(承認済)
+   */
+  static async getApprovedUserByIdWithPrivateInfo(
+    c: CustomContext<string>,
+    id: number,
+  ) {
+    const filter = and(
+      eq(memberTable.id, id),
+      eq(memberTable.isApproved, 1),
+      isNull(stackTable.deletedAt),
+    );
+
+    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
+    return user;
+  }
+
+  /**
+   * idが一致するユーザー詳細情報を取得(承認済)
+   * @param c
+   * @param id
+   * @returns idが一致するユーザー詳細情報を取得(承認済)
+   */
+  static async getUnapprovedUserByIdWithPrivateInfo(
     c: CustomContext<string>,
     id: number,
   ) {
@@ -64,7 +118,7 @@ export class UserRepository {
     const [ids] = await db.batch([
       db
         .insert(memberTable)
-        .values({ uid: uid, createdAt: now })
+        .values({ uid: uid, createdAt: now, updatedAt: now, isApproved: 0 })
         .returning({ id: memberTable.id }),
 
       db.insert(stackTable).values(
@@ -79,7 +133,28 @@ export class UserRepository {
         .values(UserService.toFlatUser(member, uid, now)),
     ]);
 
-    return this.getUserByIdWithPrivateInfo(c, ids[0].id);
+    return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
+  }
+
+  /**
+   * ユーザー登録を承認する
+   * @param c
+   * @param id
+   */
+  static async approveUser(
+    c: CustomContext<string>,
+    adminId: number,
+    newUserId: number,
+  ) {
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+    const [member] = await db
+      .update(memberTable)
+      .set({ isApproved: 1, updatedAt: now, approveBy: adminId })
+      .where(eq(memberTable.id, newUserId))
+      .returning({ id: memberTable.id });
+
+    return this.getApprovedUserByIdWithPrivateInfo(c, member.id);
   }
 
   /**
@@ -136,29 +211,67 @@ export class UserRepository {
         ),
       );
 
-    console.log({ first });
     return first !== undefined;
   }
 
   /**
-   * 登録済みか
+   * 承認済みか
    * @param c
    * @param uid
    * @returns
    */
-  static async isRegistered(c: CustomContext<string>, uid: string) {
+  static async isApprovedById(c: CustomContext<string>, id: number) {
     const db = drizzle(c.env.DB);
 
-    const [registeredMembers] = await db
+    const [approvedMembers] = await db
+      .select()
+      .from(memberTable)
+      .where(
+        and(
+          eq(memberTable.id, id),
+          isNull(memberTable.deletedAt),
+          eq(memberTable.isApproved, 1),
+        ),
+      );
+
+    return approvedMembers !== undefined;
+  }
+
+  /**
+   * 承認済みか
+   * @param c
+   * @param uid
+   * @returns
+   */
+  static async isApprovedByUid(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+
+    const [approvedMembers] = await db
       .select()
       .from(memberTable)
       .where(
         and(
           eq(memberTable.uid, uid),
           isNull(memberTable.deletedAt),
-          eq(memberTable.isApproved, 0),
+          eq(memberTable.isApproved, 1),
         ),
       );
+
+    return approvedMembers !== undefined;
+  }
+
+  /**
+   * 登録済みか(user を包括)
+   * @param c
+   * @param uid
+   */
+  static async isRegisteredByUid(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+
+    const [registeredMembers] = await db
+      .select()
+      .from(memberTable)
+      .where(and(eq(memberTable.uid, uid), isNull(memberTable.deletedAt)));
 
     return registeredMembers !== undefined;
   }
@@ -290,5 +403,5 @@ export type UserRepoT = UnwrapPromise<
   ReturnType<typeof UserRepository.getUserById>
 >;
 export type UserRepoWithPrivateInfoT = UnwrapPromise<
-  ReturnType<typeof UserRepository.getUserByIdWithPrivateInfo>
+  ReturnType<typeof UserRepository.getApprovedUserByIdWithPrivateInfo>
 >;

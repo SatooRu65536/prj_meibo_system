@@ -2,16 +2,22 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 // 共通のテーブル定義
 export const memberTable = sqliteTable('member', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
-  isApproved: integer('is_approved').notNull().default(0),
+  isApproved: integer('is_approved').notNull(),
+  approveBy: integer('approve_by'),
   createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
   deletedAt: integer('deleted_at'),
 });
 
 // 技術スタック
 export const stackTable = sqliteTable('stack', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
   name: text('name').notNull(),
   createdAt: integer('created_at').notNull(),
@@ -20,7 +26,9 @@ export const stackTable = sqliteTable('stack', {
 
 // メンバープロパティ
 export const memberPropertyTable = sqliteTable('property', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
@@ -64,7 +72,9 @@ export const memberPropertyTable = sqliteTable('property', {
 
 // 役員
 export const officerTable = sqliteTable('officer', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull(),
@@ -73,7 +83,9 @@ export const officerTable = sqliteTable('officer', {
 
 // 部費の支払い
 export const paymentTable = sqliteTable('payment', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
   payee: text('payee').notNull(), // お金を受け取った人
   isConfirmed: integer('is_confirmed').notNull().default(0), // 会計が確認したか

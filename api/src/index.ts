@@ -38,6 +38,12 @@ app.get(
   async (c) => await UserController.getUserDetail(c),
 );
 
+// [GET] /api/users/:id/approve 承認
+app.get(
+  '/api/users/:id/approve',
+  async (c) => await UserController.approveUser(c),
+);
+
 app.all('*', (c) => c.text('Not Found', 404));
 
 export default app;
