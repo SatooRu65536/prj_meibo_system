@@ -1,10 +1,11 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { ReactNode } from 'react';
 import styles from './loginCheck.module.scss';
 import { login, useIsSigned } from '@/components/firebase/auth';
+import Button from '@/components/ui/Button';
 
-type Props = { children: React.ReactNode };
+type Props = { children: ReactNode };
 
 export default function LoginCheck(props: Props) {
   const { children } = props;

@@ -11,7 +11,7 @@ type Bindings = {
   PROJECT_ID: string;
   PUBLIC_JWK_CACHE_KEY: string;
   PUBLIC_JWK_CACHE_KV: KVNamespace;
-  INIT_ADMINS: string;
+  DEFAULT_ADMIN_EMAILS: string;
 };
 
 export type Env = { Bindings: Bindings & VerifyFirebaseAuthEnv };

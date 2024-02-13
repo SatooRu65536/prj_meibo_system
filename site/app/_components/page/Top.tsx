@@ -1,9 +1,9 @@
 'use client';
 
+import Card from '../sections/cards/Card';
 import styles from './top.module.scss';
 import { Member } from '@/type/member';
 import { MembersRes } from '@/type/response';
-import Card from '../sections/cards/Card';
 
 const SAMPLE_MEMBERS_RESPONSE: MembersRes<Member> = {
   members: [

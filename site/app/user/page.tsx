@@ -1,5 +1,5 @@
-import RegistrationPage from '@/components/page/Registration';
 import UserQRcode from './_components/sections/UserQRcode';
+import RegistrationPage from '@/components/page/Registration';
 
 export default function Page() {
   return (

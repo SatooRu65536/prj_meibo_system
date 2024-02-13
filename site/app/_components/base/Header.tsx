@@ -1,6 +1,6 @@
-import { ROUTES } from '@/const/path';
 import User from './User';
 import styles from './base.module.scss';
+import { ROUTES } from '@/const/path';
 
 export default function Header() {
   const menus = [ROUTES.top, ROUTES.signup];

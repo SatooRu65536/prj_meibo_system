@@ -1,8 +1,8 @@
 import {
   GoogleAuthProvider,
-  signOut,
   onAuthStateChanged,
   signInWithPopup,
+  signOut,
   UserCredential,
 } from 'firebase/auth';
 import { useEffect, useState } from 'react';

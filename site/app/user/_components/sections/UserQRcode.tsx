@@ -1,9 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import styles from './userQRcode.module.scss';
 import { getMemberInfo } from '@/components/util';
-import { useEffect, useState } from 'react';
 import { Member } from '@/type/member';
 
 const SAMPLE_MEMBER: Member = {

@@ -1,20 +1,20 @@
 'use client';
 
-import { useUserState } from '@/globalStates/firebaseUserState';
+import { useRouter } from 'next/navigation';
+import { ReactNode, useEffect, useState } from 'react';
 import styles from './registration.module.scss';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
 import Icon from '@/components/ui/Icon';
+import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
-import useMember from '@/hooks/useMember';
-import { useEffect, useState } from 'react';
-import { MemberError, MemberType } from '@/type/member';
+import { validateMember } from '@/components/validation';
+import { ROUTES } from '@/const/path';
+import { useUserState } from '@/globalStates/firebaseUserState';
 import getLocalstorage, {
   setLocalstorage,
 } from '@/globalStates/foundations/localstorage';
-import { validateMember } from '@/components/validation';
-import { useRouter } from 'next/navigation';
-import { ROUTES } from '@/const/path';
+import useMember from '@/hooks/useMember';
+import { MemberError, MemberType } from '@/type/member';
 
 type Porps = {
   isEditing: boolean;
@@ -38,7 +38,7 @@ export default function RegistrationPage(props: Porps) {
     dispatch.setIconUrl(iconUrl);
     dispatch.setEmail(user?.email ?? '');
     setLoaded(true);
-  }, [user]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (isLivingWithParents !== undefined) {
@@ -305,8 +305,11 @@ type ActiveMemberProps = {
   studentNumber: string | null;
   position: string | null;
   grade: string | null;
+  // eslint-disable-next-line no-unused-vars
   setStudentNumber: (value: string) => void;
+  // eslint-disable-next-line no-unused-vars
   setPosition: (value: string) => void;
+  // eslint-disable-next-line no-unused-vars
   setGrade: (value: string) => void;
   errors: MemberError;
 };
@@ -370,8 +373,11 @@ type OBOGMemberProps = {
   oldPosition: string | null;
   oldStudentNumber: string | null;
   employment: string | null;
+  // eslint-disable-next-line no-unused-vars
   setOldPosition: (value: string) => void;
+  // eslint-disable-next-line no-unused-vars
   setOldStudentNumber: (value: string) => void;
+  // eslint-disable-next-line no-unused-vars
   setEmployment: (value: string) => void;
   errors: MemberError;
 };
@@ -425,7 +431,9 @@ type ExternalMemberProps = {
   active: boolean;
   school: string | null;
   organization: string | null;
+  // eslint-disable-next-line no-unused-vars
   setSchool: (value: string) => void;
+  // eslint-disable-next-line no-unused-vars
   setOrganization: (value: string) => void;
   errors: MemberError;
 };
@@ -461,7 +469,7 @@ function ExternalMember(props: ExternalMemberProps) {
 type WrapperProps = {
   title: string;
   supplement?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 function Wrapper(props: WrapperProps) {

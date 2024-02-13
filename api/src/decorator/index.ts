@@ -48,7 +48,7 @@ export function admin(
 
     const isAdmin = await StateRepository.isAdmin(c, user.uid);
 
-    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const initAdmins = c.env?.DEFAULT_ADMIN_EMAILS.split(',') || '';
     const includeAdmin = user?.email && initAdmins.includes(user?.email);
 
     if (!isAdmin && !includeAdmin) {
@@ -95,7 +95,7 @@ export function adminOrSelf(
       idNum,
     );
 
-    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const initAdmins = c.env?.DEFAULT_ADMIN_EMAILS.split(',') || '';
     const includeAdmin = user?.email && initAdmins.includes(user?.email);
 
     if (!isAdminOrSelf && !includeAdmin) {
@@ -190,7 +190,7 @@ export function approved(
     }
 
     const isApproved = await StateRepository.isApprovedByUid(c, user.uid);
-    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const initAdmins = c.env?.DEFAULT_ADMIN_EMAILS.split(',') || '';
     const includeAdmin = user?.email && initAdmins.includes(user?.email);
 
     if (!isApproved && !includeAdmin) {

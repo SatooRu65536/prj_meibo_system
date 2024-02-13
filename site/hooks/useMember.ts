@@ -1,10 +1,10 @@
+import { useEffect } from 'react';
 import {
   useEditMemberMutators,
   useEditMemberState,
 } from '@/globalStates/editMemberState';
 import { setLocalstorage } from '@/globalStates/foundations/localstorage';
 import { MemberAll, MemberType } from '@/type/member';
-import { useEffect } from 'react';
 
 export default function useMember() {
   const editMember = useEditMemberState();
@@ -31,16 +31,18 @@ export default function useMember() {
    * @param name {string}
    */
   function setName(name: string) {
+    // eslint-disable-next-line no-irregular-whitespace
     const names = name.split(/[ 　]/);
     const [lastName, firstName] = names.filter((n) => n !== '');
     setEditMemberState((prev) => ({ ...prev, lastName, firstName }));
   }
-
+  
   /**
    * 読み仮名をセットする
    * @param kana {string}
-   */
-  function setKana(kana: string) {
+  */
+ function setKana(kana: string) {
+    // eslint-disable-next-line no-irregular-whitespace
     const kanas = kana.split(/[ 　]/);
     const [lastNameKana, firstNameKana] = kanas.filter((n) => n !== '');
     setEditMemberState((prev) => ({ ...prev, lastNameKana, firstNameKana }));
@@ -51,6 +53,7 @@ export default function useMember() {
    * @param skill {string}
    */
   function setSkills(skillStr: string) {
+    // eslint-disable-next-line no-irregular-whitespace
     const skills = skillStr.split(/[,、][ 　]*/);
     setEditMemberState((prev) => ({ ...prev, skills }));
   }

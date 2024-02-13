@@ -26,7 +26,7 @@ export class UserService {
     if (admin !== undefined) return admin.id;
 
     // 管理者初期ユーザーかどうか
-    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const initAdmins = c.env?.DEFAULT_ADMIN_EMAILS.split(',') || '';
     const isInitAdmin =
       user?.email !== undefined && initAdmins.includes(user?.email);
     if (isInitAdmin) return 0;

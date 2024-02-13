@@ -1,14 +1,8 @@
-import {
-  Dispatch,
-  HTMLProps,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import { ChangeEvent, HTMLProps, useState } from 'react';
 import styles from './input.module.scss';
-import { MemberError } from '@/type/member';
 
 type InputProps = HTMLProps<HTMLInputElement> & {
+  // eslint-disable-next-line no-unused-vars
   set: (value: string) => void;
   supplement?: string;
   error: string | undefined;
@@ -19,7 +13,7 @@ export default function Input(props: InputProps) {
 
   const [value, setValue] = useState(props.value);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
     if (set) set(e.currentTarget.value);
   }

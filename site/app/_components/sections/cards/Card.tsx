@@ -1,6 +1,6 @@
-import { Member } from '@/type/member';
 import styles from './card.module.scss';
 import { getMemberInfo } from '@/components/util';
+import { Member } from '@/type/member';
 
 type Props = {
   member: Member;

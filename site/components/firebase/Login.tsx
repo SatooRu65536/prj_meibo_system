@@ -3,12 +3,6 @@
 import { login, useIsSigned } from './auth';
 import { useUserState } from '@/globalStates/firebaseUserState';
 
-type UserInfo = {
-  photoURL: string;
-  displayName: string;
-  token: string;
-};
-
 export default function Login() {
   const isSigned = useIsSigned();
   const user = useUserState();

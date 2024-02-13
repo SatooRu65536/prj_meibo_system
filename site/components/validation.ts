@@ -8,10 +8,11 @@ import { MemberAll, MemberError, Nullable } from '@/type/member';
  */
 export function validateMember(
   member: Nullable<MemberAll>,
-  isLivingWithParents: boolean
+  isLivingWithParents: boolean,
 ): [boolean, MemberError] {
   const errors: MemberError = {};
 
+  // eslint-disable-next-line no-irregular-whitespace
   const KANA_REGEXP = /[ァ-ンー　]+$/;
   const STUDENT_NUMBER_REGEXP = /^[a-z]\d{5}$/;
   const EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;

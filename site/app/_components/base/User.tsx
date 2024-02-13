@@ -1,11 +1,11 @@
 'use client';
 
+import { useEffect, useReducer } from 'react';
 import styles from './base.module.scss';
 import { login, logout, useIsSigned } from '@/components/firebase/auth';
 import { AccountCircle } from '@/components/icons';
 import { ROUTES } from '@/const/path';
 import { useUserState } from '@/globalStates/firebaseUserState';
-import { useEffect, useReducer } from 'react';
 
 export default function User() {
   const isSigned = useIsSigned();

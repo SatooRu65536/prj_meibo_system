@@ -1,6 +1,6 @@
-import { ROUTES } from '@/const/path';
-import styles from './signup.module.scss';
 import QRCode from 'react-qr-code';
+import styles from './signup.module.scss';
+import { ROUTES } from '@/const/path';
 
 export default function SignupPage() {
   return (

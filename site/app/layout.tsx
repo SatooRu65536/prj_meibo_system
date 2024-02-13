@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import '@/components/firebase/client';
-import Header from './_components/base/Header';
+import { ReactNode } from 'react';
 import Footer from './_components/base/Footer';
-import RecoilProvider from './recoilProvider';
+import Header from './_components/base/Header';
 import LoginCheck from './_components/base/LoginCheck';
+import RecoilProvider from './recoilProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <RecoilProvider>
