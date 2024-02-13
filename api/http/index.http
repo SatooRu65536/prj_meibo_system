@@ -132,6 +132,10 @@ Authorization: Bearer {{token}}
 GET {{host}}/api/users/detail HTTP/1.1
 Authorization: Bearer {{token}}
 
+### ユーザ状態取得
+GET {{host}}/api/user/{{{{userId}}}}/state HTTP/1.1
+Authorization: Bearer {{token}}
+
 ### ユーザ承認
 PUT {{host}}/api/user/{{userId}}/approve HTTP/1.1
 Authorization: Bearer {{token}}

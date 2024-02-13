@@ -256,4 +256,31 @@ export class UserController {
       user: UserService.toFormatDetail(member),
     });
   }
+
+  /**
+   * ユーザーの状態取得
+   * @param c
+   * @returns
+   */
+  @adminOrSelf
+  static async state(c: CustomContext<':id'>): CustomResponse<{
+    state: 'unregistered' | 'deactivated' | 'unapproved' | 'registered';
+  }> {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const member = await UserRepository.getUserById(c, idNum);
+    if (member === undefined) {
+      const err = ErrorService.request.userNotFound();
+      return c.json(err.err, err.status);
+    }
+
+    const state = await StateRepository.getStateByUid(c, member.uid);
+
+    return c.json({ success: true, state });
+  }
 }

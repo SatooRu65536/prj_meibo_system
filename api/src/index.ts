@@ -60,7 +60,10 @@ app.get(
   async (c) => await UserController.getUserDetail(c),
 );
 
-// [GET] /api/user/:id/detail ユーザーの出席情報取得
+// [GET] /api/user/:id/state ユーザーの状態取得
+app.get('/api/user/:id/state', async (c) => await UserController.state(c));
+
+// [GET] /api/user/:id/detail ユーザーの詳細情報取得
 app.get(
   '/api/users/detail',
   async (c) => await UserController.getUsersDetail(c),

@@ -1,5 +1,5 @@
 import { memberTable, officerTable, paymentTable } from '../models/schema';
-import { and, eq, gte, isNull, lt, or } from 'drizzle-orm';
+import { and, desc, eq, gte, isNull, lt, or } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { getFYFirstdate } from '@/util';
@@ -211,5 +211,34 @@ export class StateRepository {
       );
 
     return member !== undefined;
+  }
+
+  /**
+   * 未登録・未承認・登録済・無効
+   */
+  static async getStateByUid(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
+    const [member] = await db
+      .select()
+      .from(memberTable)
+      .where(eq(memberTable.uid, uid))
+      .orderBy(desc(memberTable.updatedAt));
+
+    // 未登録
+    if (member === undefined) return 'unregistered';
+
+    // 削除済み
+    if (member.deletedAt !== null) return 'deactivated';
+
+    // 未承認
+    if (member.isApproved === 0) return 'unapproved';
+
+    // 無効
+    if (member.updatedAt < fyFirst) return 'deactivated';
+
+    // 登録済み
+    return 'registered';
   }
 }
