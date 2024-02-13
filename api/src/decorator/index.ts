@@ -130,7 +130,7 @@ export function registered(
     const isApproved = await StateRepository.isRegisteredByUid(c, user.uid);
 
     if (!isApproved) {
-      const err = ErrorService.auth.notRegistered();
+      const err = ErrorService.user.notRegistered();
       return c.json(err.err, err.status);
     }
 
@@ -161,7 +161,7 @@ export function notRegistered(
     const isApproved = await StateRepository.isRegisteredByUid(c, user.uid);
 
     if (isApproved) {
-      const err = ErrorService.auth.registered();
+      const err = ErrorService.user.registered();
       return c.json(err.err, err.status);
     }
 
@@ -194,7 +194,7 @@ export function approved(
     const includeAdmin = user?.email && initAdmins.includes(user?.email);
 
     if (!isApproved && !includeAdmin) {
-      const err = ErrorService.auth.notApproved();
+      const err = ErrorService.user.notApproved();
       return c.json(err.err, err.status);
     }
 
@@ -225,7 +225,7 @@ export function notApproved(
     const isApproved = await StateRepository.isApprovedByUid(c, user.uid);
 
     if (isApproved) {
-      const err = ErrorService.auth.approved();
+      const err = ErrorService.user.approved();
       return c.json(err.err, err.status);
     }
 
@@ -259,7 +259,8 @@ export function userPaidAndNotConfirned(
       return c.json(err.err, err.status);
     }
 
-    const isPaidAndNotConrifmed = await StateRepository.isPaidAndNotConfirmedByUid(c, user.uid);
+    const isPaidAndNotConrifmed =
+      await StateRepository.isPaidAndNotConfirmedByUid(c, user.uid);
     if (!isPaidAndNotConrifmed) {
       const err = ErrorService.payment.notAvailable();
       return c.json(err.err, err.status);
@@ -298,6 +299,76 @@ export function userNotPaid(
     const isPaid = await StateRepository.isPaidByUid(c, user.uid);
     if (isPaid) {
       const err = ErrorService.payment.alreadyPaid();
+      return c.json(err.err, err.status);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
+  };
+
+  return descriptor;
+}
+
+/**
+ * 無効化されているか
+ * @param _target
+ * @param _propertyKey
+ * @param descriptor
+ * @returns
+ */
+export function deactivated(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const isDeactivated = await StateRepository.isDeactivatedById(c, idNum);
+
+    if (!isDeactivated) {
+      const err = ErrorService.user.notDeactivated();
+      return c.json(err.err, err.status);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
+  };
+
+  return descriptor;
+}
+
+/**
+ * 無効化されていないか
+ * @param _target
+ * @param _propertyKey
+ * @param descriptor
+ * @returns
+ */
+export function notDeactivated(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const isDeactivated = await StateRepository.isDeactivatedById(c, idNum);
+
+    if (isDeactivated) {
+      const err = ErrorService.user.deactivated();
       return c.json(err.err, err.status);
     }
 

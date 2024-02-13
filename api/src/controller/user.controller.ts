@@ -6,6 +6,7 @@ import {
   approved,
   admin,
   notRegistered,
+  notDeactivated,
 } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
 import { UserService, UserServiceT } from '../service/user.service';
@@ -20,6 +21,7 @@ export class UserController {
    */
   @auth
   @notRegistered
+  @notDeactivated
   static async createUser(
     c: CustomContext<'/api/user'>,
   ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {

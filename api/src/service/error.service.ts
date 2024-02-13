@@ -45,53 +45,11 @@ const notSelfOrAdmin = (): ErrorStruct => ({
   status: 401,
 });
 
-const notRegistered = (): ErrorStruct => ({
-  err: {
-    success: false,
-    key: 'A4',
-    message: 'ユーザー登録されていません',
-    approach: 'ユーザー登録を行ってください',
-  },
-  status: 401,
-});
-
-const registered = (): ErrorStruct => ({
-  err: {
-    success: false,
-    key: 'A5',
-    message: '登録済みです',
-  },
-  status: 401,
-});
-
-const notApproved = (): ErrorStruct => ({
-  err: {
-    success: false,
-    key: 'A4',
-    message: '承認されていません',
-    approach: '管理者が承認するまでお待ちください',
-  },
-  status: 401,
-});
-
-const approved = (): ErrorStruct => ({
-  err: {
-    success: false,
-    key: 'A5',
-    message: '承認済みです',
-  },
-  status: 401,
-});
-
 const AuthError = {
   notFoundToken,
   failedAuth,
-  notRegistered,
-  registered,
   notAdmin,
-  notApproved,
   notSelfOrAdmin,
-  approved,
 };
 
 type Type = '文字列' | '数値' | '真偽値' | 'オブジェクト' | '配列';
@@ -284,8 +242,82 @@ const PaymentError = {
   notAvailable,
 };
 
+// 無効化されています
+const deactivated = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'E0',
+    message: '無効化されています',
+    approach: '継続登録を行なってください',
+  },
+  status: 400,
+});
+
+// 無効化されていません
+const notDeactivated = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'E1',
+    message: '無効化されていません',
+    approach: '新規登録を行ってください',
+  },
+  status: 400,
+});
+
+// ユーザー登録されていません
+const notRegistered = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'E2',
+    message: 'ユーザー登録されていません',
+    approach: 'ユーザー登録を行ってください',
+  },
+  status: 401,
+});
+
+// 登録済みです
+const registered = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'E3',
+    message: '登録済みです',
+  },
+  status: 401,
+});
+
+// 承認済みです
+const approved = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'E4',
+    message: '承認済みです',
+  },
+  status: 401,
+});
+
+// 承認されていません
+const notApproved = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'E4',
+    message: '承認されていません',
+    approach: '管理者が承認するまでお待ちください',
+  },
+  status: 401,
+});
+
+const UserError = {
+  deactivated,
+  notDeactivated,
+  notRegistered,
+  registered,
+  approved,
+  notApproved,
+};
+
 export const ErrorService = {
   auth: AuthError,
   request: RequestError,
   payment: PaymentError,
+  user: UserError,
 };

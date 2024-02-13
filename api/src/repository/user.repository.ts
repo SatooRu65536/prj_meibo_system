@@ -4,12 +4,13 @@ import {
   officerTable,
   stackTable,
 } from '../models/schema';
-import { SQL, and, desc, eq, isNotNull, isNull, max } from 'drizzle-orm';
+import { SQL, and, desc, eq, gte, isNotNull, isNull, max } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { UnwrapPromise, ReturnType } from '@/types';
 import { UserSchema } from '../validation';
 import { UserService } from '../service/user.service';
+import { getFYFirstdate } from '@/util';
 
 export class UserRepository {
   /**
@@ -23,11 +24,18 @@ export class UserRepository {
     id: number,
   ): Promise<string | undefined> {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [user] = await db
       .select({ uid: memberTable.uid })
       .from(memberTable)
-      .where(and(eq(memberTable.id, id), isNull(memberTable.deletedAt)));
+      .where(
+        and(
+          eq(memberTable.id, id),
+          isNull(memberTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
+        ),
+      );
 
     return user?.uid;
   }
@@ -272,6 +280,8 @@ export class UserRepository {
    */
   private static async commonGetUer(c: CustomContext<string>, filter?: SQL) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
     const propaties = await db
       .select({
         id: memberTable.id,
@@ -304,12 +314,14 @@ export class UserRepository {
         eq(memberTable.uid, memberPropertyTable.uid),
       )
       .groupBy(memberPropertyTable.uid)
-      .where(filter)
+      .where(and(filter, gte(memberTable.updatedAt, fyFirst)))
       .orderBy(desc(memberTable.id));
     const skills = await db
       .select({ skill: stackTable.name, uid: stackTable.uid })
       .from(stackTable)
-      .where(isNull(stackTable.deletedAt));
+      .where(
+        and(isNull(stackTable.deletedAt), gte(stackTable.createdAt, fyFirst)),
+      );
 
     return propaties.map((p) => {
       return {
@@ -330,6 +342,8 @@ export class UserRepository {
     filter?: SQL,
   ) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
     const propaties = await db
       .select({
         id: memberTable.id,
@@ -375,12 +389,14 @@ export class UserRepository {
         memberPropertyTable,
         eq(memberTable.uid, memberPropertyTable.uid),
       )
-      .where(filter)
+      .where(and(filter, gte(memberTable.updatedAt, fyFirst)))
       .orderBy(desc(memberTable.id));
     const skills = await db
       .select({ skill: stackTable.name, uid: stackTable.uid })
       .from(stackTable)
-      .where(isNull(stackTable.deletedAt));
+      .where(
+        and(isNull(stackTable.deletedAt), gte(stackTable.createdAt, fyFirst)),
+      );
 
     return propaties.map((p) => {
       const { address, privateInfo, ...m } = p;

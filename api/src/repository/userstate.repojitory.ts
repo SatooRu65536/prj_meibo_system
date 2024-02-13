@@ -1,5 +1,5 @@
 import { memberTable, officerTable, paymentTable } from '../models/schema';
-import { and, eq, gte, isNull, or } from 'drizzle-orm';
+import { and, eq, gte, isNull, lt, or } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { getFYFirstdate } from '@/util';
@@ -39,6 +39,7 @@ export class StateRepository {
     id: number,
   ) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [first] = await db
       .select()
@@ -50,6 +51,7 @@ export class StateRepository {
             eq(memberTable.id, id),
             eq(memberTable.uid, uid),
             isNull(memberTable.deletedAt),
+            gte(memberTable.updatedAt, fyFirst),
           ),
           and(
             eq(officerTable.uid, uid),
@@ -70,6 +72,7 @@ export class StateRepository {
    */
   static async isApprovedById(c: CustomContext<string>, id: number) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [approvedMembers] = await db
       .select()
@@ -79,6 +82,7 @@ export class StateRepository {
           eq(memberTable.id, id),
           isNull(memberTable.deletedAt),
           eq(memberTable.isApproved, 1),
+          gte(memberTable.updatedAt, fyFirst),
         ),
       );
 
@@ -93,6 +97,7 @@ export class StateRepository {
    */
   static async isApprovedByUid(c: CustomContext<string>, uid: string) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [approvedMembers] = await db
       .select()
@@ -102,6 +107,7 @@ export class StateRepository {
           eq(memberTable.uid, uid),
           isNull(memberTable.deletedAt),
           eq(memberTable.isApproved, 1),
+          gte(memberTable.updatedAt, fyFirst),
         ),
       );
 
@@ -115,11 +121,18 @@ export class StateRepository {
    */
   static async isRegisteredByUid(c: CustomContext<string>, uid: string) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [registeredMembers] = await db
       .select()
       .from(memberTable)
-      .where(and(eq(memberTable.uid, uid), isNull(memberTable.deletedAt)));
+      .where(
+        and(
+          eq(memberTable.uid, uid),
+          isNull(memberTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
+        ),
+      );
 
     return registeredMembers !== undefined;
   }
@@ -132,11 +145,14 @@ export class StateRepository {
    */
   static async isPaidByUid(c: CustomContext<string>, uid: string) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [payment] = await db
       .select()
       .from(paymentTable)
-      .where(eq(paymentTable.uid, uid));
+      .where(
+        and(eq(paymentTable.uid, uid), gte(memberTable.updatedAt, fyFirst)),
+      );
 
     if (payment === undefined) return false;
 
@@ -154,12 +170,43 @@ export class StateRepository {
     uid: string,
   ) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [payment] = await db
       .select()
       .from(paymentTable)
-      .where(and(eq(paymentTable.uid, uid), eq(paymentTable.isConfirmed, 0)));
+      .where(
+        and(
+          eq(paymentTable.uid, uid),
+          eq(paymentTable.isConfirmed, 0),
+          gte(memberTable.updatedAt, fyFirst),
+        ),
+      );
 
     return payment !== undefined;
+  }
+
+  /**
+   * 無効化されているか
+   * @param c 
+   * @param id 
+   * @returns 
+   */
+  static async isDeactivatedById(c: CustomContext<string>, id: number) {
+    const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
+    const [member] = await db
+      .select()
+      .from(memberTable)
+      .where(
+        and(
+          eq(memberTable.id, id),
+          isNull(memberTable.deletedAt),
+          lt(memberTable.updatedAt, fyFirst),
+        ),
+      );
+
+    return member !== undefined;
   }
 }
