@@ -7,7 +7,7 @@
     "wrangler": "wrangler",
     "drizzle-kit": "./node_modules/.bin/drizzle-kit",
     "generate": "./node_modules/.bin/drizzle-kit generate:sqlite",
-    "migrations": "./node_modules/.bin/wrangler d1 migrations apply meibo_db",
+    "migrations-prod": "./node_modules/.bin/wrangler d1 migrations apply meibo_db",
     "migrations-local": "./node_modules/.bin/wrangler d1 migrations apply meibo_db --local",
     "lint": "run-p lint:*",
     "lint:prettier": "prettier --check ./",
