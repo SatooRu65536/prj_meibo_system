@@ -2,12 +2,38 @@ import { Grade, MemberBase, MemberType, PrivateInfo } from '@/types/member';
 import {
   UserRepoT,
   UserRepoWithPrivateInfoT,
+  UserRepository,
 } from '../repository/user.repository';
 import { toDateISO } from '@/util';
-import { CreateUserSchema } from '../validation';
+import { UserSchema } from '../validation';
 import { CreatedAt, MemberPropertyTable } from '@/types/table';
+import { CustomContext } from '@/types/context';
+import { FirebaseIdToken } from 'firebase-auth-cloudflare-workers';
 
 export class UserService {
+  /**
+   * 管理者であれば管理者IDを返す
+   * @param c
+   * @param user
+   * @returns
+   */
+  static async getAdminId(
+    c: CustomContext<string>,
+    user: FirebaseIdToken,
+  ): Promise<number | undefined> {
+    const admin = await UserRepository.getApprovedUserByUid(c, user.uid);
+
+    if (admin !== undefined) return admin.id;
+
+    // 管理者初期ユーザーかどうか
+    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
+    const isInitAdmin =
+      user?.email !== undefined && initAdmins.includes(user?.email);
+    if (isInitAdmin) return 0;
+
+    return undefined;
+  }
+
   /**
    * DBから取得したユーザー情報をフォーマットする
    * @param member
@@ -26,7 +52,7 @@ export class UserService {
       graduationYear: member.graduationYear as number,
       slackName: member.slackName as string,
       iconUrl: member.iconUrl as string,
-      skills: (member.skills as string).split(','),
+      skills: member.skills,
     };
 
     switch (type) {
@@ -78,7 +104,7 @@ export class UserService {
       graduationYear: member.graduationYear as number,
       slackName: member.slackName as string,
       iconUrl: member.iconUrl as string,
-      skills: (member.skills as string).split(','),
+      skills: member.skills,
       privateInfo: {
         birthdate: member.privateInfo.birthdate as string,
         gender: member.privateInfo.gender as string,
@@ -129,7 +155,7 @@ export class UserService {
    * @param member
    */
   static toFlatUser(
-    member: CreateUserSchema['member'],
+    member: UserSchema['member'],
     uid: string,
     now: number,
   ): MemberPropertyTable<CreatedAt> {

@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJSUzI1NiIsImtpZCI6IjUzZWFiMDBhNzc5MTk3Yzc0MWQ2NjJmY2EzODE1OGJkN2JlNGEyY2MiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi5aSa55Sw6ZqG5Lq6IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0wzbWR4MlZrR1VqTEhWZ1NHZ0x0cHB3Sl9kdTg0Nmtac19sWTBZdi1HU3l3PXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL21laWJvLXN5c3RlbSIsImF1ZCI6Im1laWJvLXN5c3RlbSIsImF1dGhfdGltZSI6MTcwNzc1MzAwNCwidXNlcl9pZCI6IkRrOUR1Z3l2NURRM0tCSVpqZ1A1TkFvUDdoVTIiLCJzdWIiOiJEazlEdWd5djVEUTNLQklaamdQNU5Bb1A3aFUyIiwiaWF0IjoxNzA3NzUzMDA0LCJleHAiOjE3MDc3NTY2MDQsImVtYWlsIjoicnl1dG82NTUzNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExMDkyNjA5NzM0OTU1OTYwMDU0OCJdLCJlbWFpbCI6WyJyeXV0bzY1NTM2QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0.b0tSCQMf4R_FrcthhHgWvmaddByM9iK1ZVLbdcF-TYgnjgiYlp3PVwQZ17vC9UZSMo9SEYhW-pwVxvBMSsCt_ZsVJoaibdj5NbORj_z7CkEtkmesyxL_pPeMaUsqRbH0qSn-AgCyVqSHnYel5bv0pBgp0CDhY3t7sQKxX6CLbQgLJ2lT4GFoi_TadothsI72oT7ezmr0fqrw_xm7HItFT-F8VMhgLZH0Y1iIVv_9p1LAyUnzQV8jC48Ghpwkk7uNa0ObzgWoHNcAShHCUb8oNd6Wee2hCw9QNlkLyqqOH6qWKrNGzsWOxfAuwQ6fHA-wMyUFRcWXofH9BZrcZZH2mg
+@token = eyJhbGciOiJSUzI1NiIsImtpZCI6IjUzZWFiMDBhNzc5MTk3Yzc0MWQ2NjJmY2EzODE1OGJkN2JlNGEyY2MiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi5aSa55Sw6ZqG5Lq6IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0wzbWR4MlZrR1VqTEhWZ1NHZ0x0cHB3Sl9kdTg0Nmtac19sWTBZdi1HU3l3PXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL21laWJvLXN5c3RlbSIsImF1ZCI6Im1laWJvLXN5c3RlbSIsImF1dGhfdGltZSI6MTcwNzc4ODE5NiwidXNlcl9pZCI6IkRrOUR1Z3l2NURRM0tCSVpqZ1A1TkFvUDdoVTIiLCJzdWIiOiJEazlEdWd5djVEUTNLQklaamdQNU5Bb1A3aFUyIiwiaWF0IjoxNzA3Nzg4MTk2LCJleHAiOjE3MDc3OTE3OTYsImVtYWlsIjoicnl1dG82NTUzNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExMDkyNjA5NzM0OTU1OTYwMDU0OCJdLCJlbWFpbCI6WyJyeXV0bzY1NTM2QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0.awS7DT1-ZSO_dsB_fMdipA6aNu5gTDoI98e2tgjrpKDmzD9VOOG_UcrD9HCQ_8HrHbkJmlXFat1Ku2qGi6SxxU7DsYDDoREwOvV3fTitMIwm_l6A7IWlfwpfZIKX1WhqbCF6tSExywW3pLN-hUOsfUWFmifH5qr-vF60cWuJgkUgTMQ9cWTA_cDKAbAD8TmIpCUzyDgK4EgYEWnd0cQr0nRg0DUIxT4lbJU9vZTkfNkMJpXRAJPQfkIzAKV00JbxorMzITQ-RDK-djNd-3oj2A6r8HoWhs7E7ynyvEiK0C4ugxNLkdyO_J8mR-FtiE92akJBWPZ3F5MUBwAN7CSXxA
 @userId = 1
 
 ### デバッグ用
@@ -11,7 +11,6 @@ Content-Type: application/json
 
 {
   "member": {
-    "id": 1,
     "firstName": "さとる2",
     "lastName": "佐藤2",
     "firstNameKana": "サトル",
@@ -20,8 +19,6 @@ Content-Type: application/json
     "graduationYear": 2022,
     "iconUrl": "https://lh3.googleusercontent.com/a/ACg8ocJ5UcBEd0RtC1DD9i6jN8O4wN4cIu8kpq041CgD5aHMglo=s96-c",
     "slackName": "k23000_佐藤さとる",
-    "updatedAt": "2021-01-01T00:00:00Z",
-    "createdAt": "2022-02-02T00:00:00Z",
     "type": "active",
     "position": "会計",
     "studentNumber": "k23000",
@@ -43,15 +40,50 @@ Content-Type: application/json
   }
 }
 
+### ユーザ更新
+PUT {{host}}/api/users/{{userId}} HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "member": {
+    "firstName": "さとる更新済",
+    "lastName": "佐藤更新済",
+    "firstNameKana": "サトルコウシンズミ",
+    "lastNameKana": "サトウコウシンズミ",
+    "skills": ["更新1", "更新2"],
+    "graduationYear": 2030,
+    "iconUrl": "https://satooru.me/favicon.ico",
+    "slackName": "k23000_佐藤さとる_更新済",
+    "type": "active",
+    "position": "会計更新済",
+    "studentNumber": "k24000",
+    "grade": "B2",
+    "privateInfo": {
+      "birthdate": "2000-01-05",
+      "gender": "その他",
+      "phoneNumber": "000-0000-0000",
+      "email": "satoru-updated@example.com",
+      "currentAddress": {
+        "postalCode": "987-6543",
+        "address": "更新済県更新済市更新済"
+      },
+      "homeAddress": {
+        "postalCode": "999-9999",
+        "address": "更新済県更新済市更新済2"
+      }
+    }
+  }
+}
+
 ### ユーザ取得
 GET {{host}}/api/users/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}
-
 
 ### ユーザ詳細取得
 GET {{host}}/api/users/{{userId}}/detail HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### ユーザ承認
-GET {{host}}/api/users/{{userId}}/approve HTTP/1.1
+PUT {{host}}/api/users/{{userId}}/approve HTTP/1.1
 Authorization: Bearer {{token}}

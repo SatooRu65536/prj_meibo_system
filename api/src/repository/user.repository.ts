@@ -4,25 +4,60 @@ import {
   officerTable,
   stackTable,
 } from '../models/schema';
-import { SQL, and, eq, isNull, max, or, sql } from 'drizzle-orm';
+import { SQL, and, desc, eq, isNull, max, or, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { UnwrapPromise, ReturnType } from '@/types';
-import { CreateUserSchema } from '../validation';
+import { UserSchema } from '../validation';
 import { UserService } from '../service/user.service';
 
 export class UserRepository {
+  /**
+   * uidが一致するユーザーuidを取得
+   * @param c
+   * @param id
+   * @returns
+   */
+  static async getUserUidById(c: CustomContext<string>, id: number) {
+    const db = drizzle(c.env.DB);
+
+    const [user] = await db
+      .select({ uid: memberTable.uid })
+      .from(memberTable)
+      .where(eq(memberTable.id, id));
+
+    return user.uid;
+  }
+
   /**
    * idが一致するユーザー情報を取得(承認済)
    * @param c
    * @param id
    * @returns idが一致するユーザー情報を取得(承認済)
    */
-  static async getUserById(c: CustomContext<string>, id: number) {
+  static async getdUserById(c: CustomContext<string>, id: number) {
+    const filter = and(eq(memberTable.id, id));
+
+    const [user] = await this.commonGetUer(c, filter);
+
+    return user;
+  }
+
+  /**
+   * idが一致するユーザー情報を取得(承認済)
+   * @param c
+   * @param id
+   * @returns idが一致するユーザー情報を取得(承認済)
+   */
+  static async getApprovedUserById(
+    c: CustomContext<string>,
+    id: number,
+    approved = true,
+  ) {
+    const isApproved = approved ? 1 : 0;
     const filter = and(
       eq(memberTable.id, id),
-      eq(memberTable.isApproved, 1),
-      isNull(stackTable.deletedAt),
+      eq(memberTable.isApproved, isApproved),
     );
 
     const [user] = await this.commonGetUer(c, filter);
@@ -36,11 +71,15 @@ export class UserRepository {
    * @param id
    * @returns idが一致するユーザー情報を取得(承認済)
    */
-  static async getUserByUid(c: CustomContext<string>, uid: string) {
+  static async getApprovedUserByUid(
+    c: CustomContext<string>,
+    uid: string,
+    approved = true,
+  ) {
+    const isApproved = approved ? 1 : 0;
     const filter = and(
       eq(memberTable.uid, uid),
-      eq(memberTable.isApproved, 1),
-      isNull(stackTable.deletedAt),
+      eq(memberTable.isApproved, isApproved),
     );
 
     const [user] = await this.commonGetUer(c, filter);
@@ -58,7 +97,7 @@ export class UserRepository {
     c: CustomContext<string>,
     id: number,
   ) {
-    const filter = and(eq(memberTable.id, id), isNull(stackTable.deletedAt));
+    const filter = eq(memberTable.id, id);
 
     const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
     return user;
@@ -73,30 +112,12 @@ export class UserRepository {
   static async getApprovedUserByIdWithPrivateInfo(
     c: CustomContext<string>,
     id: number,
+    approved = true,
   ) {
+    const isApproved = approved ? 1 : 0;
     const filter = and(
       eq(memberTable.id, id),
-      eq(memberTable.isApproved, 1),
-      isNull(stackTable.deletedAt),
-    );
-
-    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
-    return user;
-  }
-
-  /**
-   * idが一致するユーザー詳細情報を取得(承認済)
-   * @param c
-   * @param id
-   * @returns idが一致するユーザー詳細情報を取得(承認済)
-   */
-  static async getUnapprovedUserByIdWithPrivateInfo(
-    c: CustomContext<string>,
-    id: number,
-  ) {
-    const filter = and(
-      eq(memberTable.id, id),
-      eq(memberTable.isApproved, 0),
+      eq(memberTable.isApproved, isApproved),
       isNull(stackTable.deletedAt),
     );
 
@@ -111,7 +132,7 @@ export class UserRepository {
    * @return
    */
   static async createUser(c: CustomContext<string>, uid: string) {
-    const { member } = await c.req.json<CreateUserSchema>();
+    const { member } = await c.req.json<UserSchema>();
 
     const db = drizzle(c.env.DB);
     const now = Date.now();
@@ -134,6 +155,36 @@ export class UserRepository {
     ]);
 
     return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
+  }
+
+  /**
+   * ユーザー情報を更新する
+   * @param c
+   * @param uid
+   */
+  static async updateUser(c: CustomContext<string>, id: number, uid: string) {
+    const { member } = await c.req.json<UserSchema>();
+
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+    await db.batch([
+      db
+        .update(stackTable)
+        .set({ deletedAt: now })
+        .where(eq(stackTable.uid, uid)),
+      db.insert(stackTable).values(
+        member.skills.map((s) => ({
+          uid: uid,
+          name: s,
+          createdAt: now,
+        })),
+      ),
+      db
+        .insert(memberPropertyTable)
+        .values(UserService.toFlatUser(member, uid, now)),
+    ]);
+
+    return await this.getUserByIdWithPrivateInfo(c, id);
   }
 
   /**
@@ -284,12 +335,12 @@ export class UserRepository {
    */
   private static async commonGetUer(c: CustomContext<string>, filter?: SQL) {
     const db = drizzle(c.env.DB);
-    return await db
+    const propaties = await db
       .select({
         id: memberTable.id,
+        uid: memberTable.uid,
         createdAt: memberTable.createdAt,
         updatedAt: max(memberPropertyTable.createdAt),
-        skills: sql`GROUP_CONCAT(${stackTable.name})`,
         firstName: memberPropertyTable.firstName,
         lastName: memberPropertyTable.lastName,
         firstNameKana: memberPropertyTable.firstNameKana,
@@ -311,13 +362,24 @@ export class UserRepository {
         organization: memberPropertyTable.organization,
       })
       .from(memberTable)
-      .leftJoin(stackTable, eq(memberTable.uid, stackTable.uid))
       .leftJoin(
         memberPropertyTable,
         eq(memberTable.uid, memberPropertyTable.uid),
       )
-      .groupBy(stackTable.uid, memberPropertyTable.uid)
-      .where(filter);
+      .groupBy(memberPropertyTable.uid)
+      .where(filter)
+      .orderBy(desc(memberTable.id));
+    const skills = await db
+      .select({ skill: stackTable.name, uid: stackTable.uid })
+      .from(stackTable)
+      .where(isNull(stackTable.deletedAt));
+
+    return propaties.map((p) => {
+      return {
+        ...p,
+        skills: skills.filter((s) => s.uid === p.uid).map((s) => s.skill),
+      };
+    });
   }
 
   /**
@@ -334,9 +396,9 @@ export class UserRepository {
     const res = await db
       .select({
         id: memberTable.id,
+        uid: memberTable.uid,
         createdAt: memberTable.createdAt,
         updatedAt: max(memberPropertyTable.createdAt),
-        skills: sql`GROUP_CONCAT(${stackTable.name})`,
         firstName: memberPropertyTable.firstName,
         lastName: memberPropertyTable.lastName,
         firstNameKana: memberPropertyTable.firstNameKana,
@@ -371,18 +433,22 @@ export class UserRepository {
         },
       })
       .from(memberTable)
-      .leftJoin(stackTable, eq(memberTable.uid, stackTable.uid))
       .leftJoin(
         memberPropertyTable,
         eq(memberTable.uid, memberPropertyTable.uid),
       )
-      .groupBy(stackTable.uid)
-      .where(filter);
+      .where(filter)
+      .orderBy(desc(memberTable.id));
+    const skills = await db
+      .select({ skill: stackTable.name, uid: stackTable.uid })
+      .from(stackTable)
+      .where(isNull(stackTable.deletedAt));
 
     return res.map((r) => {
       const { address, privateInfo, ...m } = r;
       return {
         ...m,
+        skills: skills.filter((s) => s.uid === m.uid).map((s) => s.skill),
         privateInfo: {
           ...privateInfo,
           currentAddress: {
@@ -400,7 +466,7 @@ export class UserRepository {
 }
 
 export type UserRepoT = UnwrapPromise<
-  ReturnType<typeof UserRepository.getUserById>
+  ReturnType<typeof UserRepository.getApprovedUserById>
 >;
 export type UserRepoWithPrivateInfoT = UnwrapPromise<
   ReturnType<typeof UserRepository.getApprovedUserByIdWithPrivateInfo>

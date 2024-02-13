@@ -3,8 +3,9 @@ import { cors } from 'hono/cors';
 import { UserController } from './controller/user.controller';
 import { CustomContext, Env } from '@/types/context';
 import { VerifyFirebaseAuthConfig, verifyFirebaseAuth } from './auth';
-import { CreateUserSchema, createUserSchema, zodHook } from './validation';
+import { zodHook } from './validation';
 import { zValidator } from '@hono/zod-validator';
+import { UserSchema, userSchema } from './validation/createUser';
 
 const config: VerifyFirebaseAuthConfig = {
   projectId: 'meibo-system',
@@ -23,8 +24,8 @@ app.post(
   '/api/users',
   zValidator(
     'json',
-    createUserSchema,
-    zodHook<CreateUserSchema, CustomContext<'/api/users'>>,
+    userSchema,
+    zodHook<UserSchema, CustomContext<'/api/users'>>,
   ),
   async (c) => await UserController.createUser(c),
 );
@@ -38,10 +39,21 @@ app.get(
   async (c) => await UserController.getUserDetail(c),
 );
 
-// [GET] /api/users/:id/approve 承認
-app.get(
+// [PUT] /api/users/:id/approve 承認
+app.put(
   '/api/users/:id/approve',
   async (c) => await UserController.approveUser(c),
+);
+
+// [PUT] /api/users/:id 編集
+app.put(
+  '/api/users/:id',
+  zValidator(
+    'json',
+    userSchema,
+    zodHook<UserSchema, CustomContext<'/api/users/:id'>>,
+  ),
+  async (c) => await UserController.updateUser(c),
 );
 
 app.all('*', (c) => c.text('Not Found', 404));

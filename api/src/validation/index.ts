@@ -1,11 +1,11 @@
 import { CustomContext } from '@/types/context';
-import { createUserSchema, CreateUserSchema } from './createUser';
+import { userSchema, UserSchema } from './createUser';
 import { TypedResponse } from 'hono';
 import { ResError } from '@/types/response';
 import { ZodError } from 'zod';
 import { ErrorService } from '../service/error.service';
 
-export { createUserSchema, CreateUserSchema };
+export { userSchema, UserSchema };
 
 type ZodSuccess<T> = {
   success: true;

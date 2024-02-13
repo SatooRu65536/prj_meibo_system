@@ -71,7 +71,7 @@ const createExternalUserSchema = createUserBaseSchema.extend({
  * 新規ユーザー登録のバリデーション
  * @private
  */
-export const createUserSchema = z.object({
+export const userSchema = z.object({
   member: z.union([
     createActiveUserSchema,
     createObogUserSchema,
@@ -83,4 +83,4 @@ export const createUserSchema = z.object({
  * 新規ユーザー登録の型
  * @private
  */
-export type CreateUserSchema = z.infer<typeof createUserSchema>;
+export type UserSchema = z.infer<typeof userSchema>;

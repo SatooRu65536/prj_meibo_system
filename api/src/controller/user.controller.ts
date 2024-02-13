@@ -5,7 +5,6 @@ import {
   auth,
   adminOrSelf,
   approved,
-  notApproved,
   admin,
   notRegistered,
 } from '@/src/decorator';
@@ -52,7 +51,7 @@ export class UserController {
     }
 
     // id が一致するユーザー情報を取得
-    const member = await UserRepository.getUserById(c, idNum);
+    const member = await UserRepository.getApprovedUserById(c, idNum);
 
     if (member === undefined) {
       const err = ErrorService.request.notFound('ユーザー');
@@ -121,15 +120,10 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const admin = await UserRepository.getUserByUid(c, user.uid);
+    const adminId = await UserService.getAdminId(c, user);
 
-    const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
-    const includeAdmin = user?.email && initAdmins.includes(user?.email);
-
-    const adminId = admin?.id ? admin.id : 0;
-
-    if (adminId === 0 && !includeAdmin) {
-      const err = ErrorService.request.notFound('管理者ユーザー');
+    if (adminId === undefined) {
+      const err = ErrorService.auth.notAdmin();
       return c.json(err.err, err.status);
     }
 
@@ -142,6 +136,27 @@ export class UserController {
     return c.json({
       success: true,
       member: UserService.toFormatDetail(member),
+    });
+  }
+
+  /**
+   * ユーザー情報更新
+   */
+  @adminOrSelf
+  static async updateUser(c: CustomContext<'/api/users/:id'>) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const editMember = await UserRepository.getdUserById(c, idNum);
+    const editedUser = await UserRepository.updateUser(c, idNum, editMember.uid);
+
+    return c.json({
+      success: true,
+      member: UserService.toFormatDetail(editedUser),
     });
   }
 }
