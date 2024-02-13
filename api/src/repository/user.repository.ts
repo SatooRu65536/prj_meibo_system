@@ -4,7 +4,17 @@ import {
   officerTable,
   stackTable,
 } from '../models/schema';
-import { SQL, and, desc, eq, isNull, max, or, sql } from 'drizzle-orm';
+import {
+  SQL,
+  and,
+  desc,
+  eq,
+  isNotNull,
+  isNull,
+  max,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { UnwrapPromise, ReturnType } from '@/types';
@@ -61,6 +71,7 @@ export class UserRepository {
     const filter = and(
       eq(memberTable.id, id),
       eq(memberTable.isApproved, isApproved),
+      isNull(memberTable.deletedAt),
     );
 
     const [user] = await this.commonGetUer(c, filter);
@@ -83,6 +94,7 @@ export class UserRepository {
     const filter = and(
       eq(memberTable.uid, uid),
       eq(memberTable.isApproved, isApproved),
+      isNull(memberTable.deletedAt),
     );
 
     const [user] = await this.commonGetUer(c, filter);
@@ -100,7 +112,20 @@ export class UserRepository {
     c: CustomContext<string>,
     id: number,
   ) {
-    const filter = eq(memberTable.id, id);
+    const filter = and(eq(memberTable.id, id), isNull(memberTable.deletedAt));
+
+    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
+    return user;
+  }
+
+  static async getDeletedUserByUidWithPrivateInfo(
+    c: CustomContext<string>,
+    id: number,
+  ) {
+    const filter = and(
+      eq(memberTable.id, id),
+      isNotNull(memberTable.deletedAt),
+    );
 
     const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
     return user;
@@ -121,6 +146,7 @@ export class UserRepository {
     const filter = and(
       eq(memberTable.id, id),
       eq(memberTable.isApproved, isApproved),
+      isNull(memberTable.deletedAt),
     );
 
     const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
@@ -143,7 +169,6 @@ export class UserRepository {
         .insert(memberTable)
         .values({ uid: uid, createdAt: now, updatedAt: now, isApproved: 0 })
         .returning({ id: memberTable.id }),
-
       db.insert(stackTable).values(
         member.skills.map((s) => ({
           uid: uid,
@@ -179,7 +204,7 @@ export class UserRepository {
     ]);
 
     const { id } = deleteUser;
-    return await this.getUserByIdWithPrivateInfo(c, id);
+    return await this.getDeletedUserByUidWithPrivateInfo(c, id);
   }
 
   /**

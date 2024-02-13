@@ -26,7 +26,6 @@ export class UserController {
       const err = ErrorService.auth.failedAuth();
       return c.json(err.err, err.status);
     }
-    // ユーザー情報を登録
 
     const member = await UserRepository.createUser(c, user.uid);
 
@@ -56,7 +55,10 @@ export class UserController {
 
     const deleteUser = await UserRepository.deleteUser(c, member.uid);
 
-    return c.json({ success: true, deleteUser });
+    return c.json({
+      success: true,
+      deleteUser: UserService.toFormatDetail(deleteUser),
+    });
   }
 
   /**
