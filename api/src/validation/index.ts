@@ -1,7 +1,7 @@
 import { CustomContext } from '@/types/context';
 import { userSchema, UserSchema } from './createUser';
 import { TypedResponse } from 'hono';
-import { ResError } from '@/types/response';
+import { ErrorResponse } from '@/types/response';
 import { ZodError } from 'zod';
 import { ErrorService } from '../service/error.service';
 
@@ -29,7 +29,7 @@ type ZodHookRes<T> = ZodSuccess<T> | ZodErr<T>;
 export function zodHook<T, U extends CustomContext<string>>(
   res: ZodHookRes<T>,
   c: U,
-): (Response & TypedResponse<ResError>) | void {
+): (Response & TypedResponse<ErrorResponse>) | void {
   if (res.success) return;
 
   const { issues } = res.error;
