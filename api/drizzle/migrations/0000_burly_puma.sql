@@ -41,8 +41,8 @@ CREATE TABLE `member` (
 CREATE TABLE `officer` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`uid` text NOT NULL,
+	`approved_by` integer NOT NULL,
 	`created_at` integer NOT NULL,
-	`updated_at` integer NOT NULL,
 	`deleted_at` integer
 );
 --> statement-breakpoint

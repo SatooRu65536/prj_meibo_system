@@ -13,12 +13,15 @@ import { UserService } from '../service/user.service';
 
 export class UserRepository {
   /**
-   * uidが一致するユーザーuidを取得
+   * idが一致するユーザーuidを取得
    * @param c
    * @param id
    * @returns
    */
-  static async getUserUidById(c: CustomContext<string>, id: number) {
+  static async getUserUidById(
+    c: CustomContext<string>,
+    id: number,
+  ): Promise<string | undefined> {
     const db = drizzle(c.env.DB);
 
     const [user] = await db
@@ -26,7 +29,7 @@ export class UserRepository {
       .from(memberTable)
       .where(eq(memberTable.id, id));
 
-    return user.uid;
+    return user?.uid;
   }
 
   /**
@@ -189,7 +192,8 @@ export class UserRepository {
   /**
    * ユーザー登録を承認する
    * @param c
-   * @param id
+   * @param adminId 承認した管理者のid
+   * @param newUserId 承認するユーザーのid
    */
   static async approveUser(
     c: CustomContext<string>,
@@ -205,6 +209,32 @@ export class UserRepository {
       .returning({ id: memberTable.id });
 
     return this.getApprovedUserByIdWithPrivateInfo(c, member.id);
+  }
+
+  /**
+   * ユーザーを管理者に承認する
+   * @param c
+   * @param adminId 承認した管理者のid
+   * @param newUserId 承認するユーザーのid
+   */
+  static async approveOfficer(
+    c: CustomContext<string>,
+    approvedId: number,
+    newUserUid: string,
+  ) {
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+
+    const [officer] = await db
+      .insert(officerTable)
+      .values({
+        uid: newUserUid,
+        createdAt: now,
+        approvedBy: approvedId,
+      })
+      .returning();
+
+    return officer;
   }
 
   /**

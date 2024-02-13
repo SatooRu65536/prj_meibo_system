@@ -17,7 +17,7 @@ export class UserService {
    * @param user
    * @returns
    */
-  static async getAdminId(
+  static async getIdForApprove(
     c: CustomContext<string>,
     user: FirebaseIdToken,
   ): Promise<number | undefined> {

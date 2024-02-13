@@ -76,8 +76,8 @@ export const officerTable = sqliteTable('officer', {
     .notNull()
     .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
+  approvedBy: integer('approved_by').notNull(),
   createdAt: integer('created_at').notNull(),
-  updatedAt: integer('updated_at').notNull(),
   deletedAt: integer('deleted_at'),
 });
 

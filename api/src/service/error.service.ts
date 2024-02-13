@@ -134,11 +134,34 @@ const alreadyApproved = (): ErrorStruct => ({
   status: 400,
 });
 
+// 承認に失敗
+const approveFailed = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'C4',
+    message: '承認に失敗しました',
+    approach: 'メンバーIDを確認してください',
+  },
+  status: 400,
+});
+
+// すでに管理者承認済み
+const alreadyApprovedOfficer = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'C5',
+    message: 'すでに管理者承認済みです',
+  },
+  status: 400,
+});
+
 const RequestError = {
   invalidRequest,
   validationError,
   notFound,
   alreadyApproved,
+  approveFailed,
+  alreadyApprovedOfficer,
 };
 
 export const ErrorService = {

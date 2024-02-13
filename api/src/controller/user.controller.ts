@@ -37,6 +37,31 @@ export class UserController {
   }
 
   /**
+   * ユーザー情報更新
+   */
+  @adminOrSelf
+  static async updateUser(c: CustomContext<'/api/users/:id'>) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const editMember = await UserRepository.getdUserById(c, idNum);
+    const editedUser = await UserRepository.updateUser(
+      c,
+      idNum,
+      editMember.uid,
+    );
+
+    return c.json({
+      success: true,
+      member: UserService.toFormatDetail(editedUser),
+    });
+  }
+
+  /**
    * ユーザー情報取得
    */
   @approved
@@ -100,7 +125,7 @@ export class UserController {
    * ユーザーを承認
    */
   @admin
-  static async approveUser(c: CustomContext<'/api/users/:id/approve'>) {
+  static async approve(c: CustomContext<'/api/users/:id/approve'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -120,14 +145,14 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const adminId = await UserService.getAdminId(c, user);
+    const approvedId = await UserService.getIdForApprove(c, user);
 
-    if (adminId === undefined) {
+    if (approvedId === undefined) {
       const err = ErrorService.auth.notAdmin();
       return c.json(err.err, err.status);
     }
 
-    const member = await UserRepository.approveUser(c, adminId, idNum);
+    const member = await UserRepository.approveUser(c, approvedId, idNum);
     if (member === undefined) {
       const err = ErrorService.request.notFound('ユーザー');
       return c.json(err.err, err.status);
@@ -140,10 +165,11 @@ export class UserController {
   }
 
   /**
-   * ユーザー情報更新
+   * 役職を承認
+   * @param c
    */
-  @adminOrSelf
-  static async updateUser(c: CustomContext<'/api/users/:id'>) {
+  @admin
+  static async approveOfficer(c: CustomContext<'/api/users/:id/officer'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -151,12 +177,43 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const editMember = await UserRepository.getdUserById(c, idNum);
-    const editedUser = await UserRepository.updateUser(c, idNum, editMember.uid);
+    const user = AuthService.getUser(c);
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
 
-    return c.json({
-      success: true,
-      member: UserService.toFormatDetail(editedUser),
-    });
+    const approvedId = await UserService.getIdForApprove(c, user);
+
+    const newUserUid = await UserRepository.getUserUidById(c, idNum);
+
+    if (newUserUid === undefined) {
+      const err = ErrorService.request.notFound('ユーザー');
+      return c.json(err.err, err.status);
+    }
+
+    const isApproved = await UserRepository.isAdmin(c, newUserUid);
+
+    if (isApproved) {
+      const err = ErrorService.request.alreadyApprovedOfficer();
+      return c.json(err.err, err.status);
+    }
+
+    if (approvedId === undefined) {
+      const err = ErrorService.auth.notAdmin();
+      return c.json(err.err, err.status);
+    }
+
+    const officer = await UserRepository.approveOfficer(
+      c,
+      approvedId,
+      newUserUid,
+    );
+    if (officer === undefined) {
+      const err = ErrorService.request.approveFailed();
+      return c.json(err.err, err.status);
+    }
+
+    return c.json({ success: true, officer });
   }
 }
