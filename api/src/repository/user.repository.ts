@@ -80,6 +80,21 @@ export class UserRepository {
   }
 
   /**
+   * ユーザー情報を取得(承認済)
+   * @param c
+   * @returns
+   */
+  static async getApprovedUsers(c: CustomContext<string>, approved = true) {
+    const isApproved = approved ? 0 : 0;
+    const filter = and(
+      eq(memberTable.isApproved, isApproved),
+      isNull(memberTable.deletedAt),
+    );
+
+    return await this.commonGetUer(c, filter);
+  }
+
+  /**
    * idが一致するユーザー情報を取得(承認済)
    * @param c
    * @param id

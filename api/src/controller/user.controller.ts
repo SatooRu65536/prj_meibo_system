@@ -115,6 +115,19 @@ export class UserController {
   }
 
   /**
+   * ユーザー一覧取得
+   */
+  @approved
+  static async getUsers(c: CustomContext<'/api/users'>) {
+    const members = await UserRepository.getApprovedUsers(c);
+
+    return c.json({
+      success: true,
+      members: members.map((member) => UserService.toFormat(member)),
+    });
+  }
+
+  /**
    * ユーザー情報詳細取得
    */
   @adminOrSelf

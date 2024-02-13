@@ -47,6 +47,8 @@ app.put(
 // [GET] /api/users/:id ユーザー情報詳細取得
 app.get('/api/users/:id', async (c) => await UserController.getUser(c));
 
+app.get('/api/users', async (c) => await UserController.getUsers(c));
+
 // [GET] /api/users/:id/detail ユーザー情報詳細取得
 app.get(
   '/api/users/:id/detail',

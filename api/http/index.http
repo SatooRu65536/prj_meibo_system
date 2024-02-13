@@ -84,6 +84,10 @@ Authorization: Bearer {{token}}
 GET {{host}}/api/users/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}
 
+### ユーザ一覧取得
+GET {{host}}/api/users HTTP/1.1
+Authorization: Bearer {{token}}
+
 ### ユーザ詳細取得
 GET {{host}}/api/users/{{userId}}/detail HTTP/1.1
 Authorization: Bearer {{token}}
