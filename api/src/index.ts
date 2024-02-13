@@ -30,6 +30,9 @@ app.post(
   async (c) => await UserController.createUser(c),
 );
 
+// [DELETE] /api/users/:id ユーザー削除
+app.delete('/api/users/:id', async (c) => await UserController.deleteUser(c));
+
 // [PUT] /api/users/:id 編集
 app.put(
   '/api/users/:id',

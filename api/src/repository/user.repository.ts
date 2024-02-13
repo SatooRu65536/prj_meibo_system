@@ -38,8 +38,8 @@ export class UserRepository {
    * @param id
    * @returns idが一致するユーザー情報を取得(承認済)
    */
-  static async getdUserById(c: CustomContext<string>, id: number) {
-    const filter = and(eq(memberTable.id, id));
+  static async getUserById(c: CustomContext<string>, id: number) {
+    const filter = and(eq(memberTable.id, id), isNull(memberTable.deletedAt));
 
     const [user] = await this.commonGetUer(c, filter);
 
@@ -157,6 +157,29 @@ export class UserRepository {
     ]);
 
     return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
+  }
+
+  static async deleteUser(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+    const [[deleteUser]] = await db.batch([
+      db
+        .update(memberTable)
+        .set({ deletedAt: now })
+        .where(eq(memberTable.uid, uid))
+        .returning({ id: memberTable.id }),
+      db
+        .update(stackTable)
+        .set({ deletedAt: now })
+        .where(eq(stackTable.uid, uid)),
+      db
+        .update(officerTable)
+        .set({ deletedAt: now })
+        .where(eq(officerTable.uid, uid)),
+    ]);
+
+    const { id } = deleteUser;
+    return await this.getUserByIdWithPrivateInfo(c, id);
   }
 
   /**

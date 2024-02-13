@@ -76,6 +76,10 @@ Content-Type: application/json
   }
 }
 
+### ユーザ削除
+DELETE {{host}}/api/users/{{userId}} HTTP/1.1
+Authorization: Bearer {{token}}
+
 ### ユーザ取得
 GET {{host}}/api/users/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}

@@ -37,6 +37,29 @@ export class UserController {
   }
 
   /**
+   * ユーザー削除
+   */
+  @admin
+  static async deleteUser(c: CustomContext<'/api/users/:id'>) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const member = await UserRepository.getUserById(c, idNum);
+    if (member === undefined) {
+      const err = ErrorService.request.notFound('ユーザー');
+      return c.json(err.err, err.status);
+    }
+
+    const deleteUser = await UserRepository.deleteUser(c, member.uid);
+
+    return c.json({ success: true, deleteUser });
+  }
+
+  /**
    * ユーザー情報更新
    */
   @adminOrSelf
@@ -48,7 +71,7 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const editMember = await UserRepository.getdUserById(c, idNum);
+    const editMember = await UserRepository.getUserById(c, idNum);
     const editedUser = await UserRepository.updateUser(
       c,
       idNum,
