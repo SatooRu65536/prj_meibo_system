@@ -28,6 +28,12 @@ app.post(
   async (c) => await UserController.createUser(c),
 );
 
+// [POST] /api/user/continue 継続登録
+app.post(
+  '/api/user/continue',
+  async (c) => await UserController.continueRegister(c),
+);
+
 // [PUT] /api/user/:id 編集
 app.put(
   '/api/user/:id',
@@ -79,7 +85,10 @@ app.delete(
 app.post('/api/user/:id/payment', async (c) => await PaymentController.paid(c));
 
 // [PUT] /api/user/:id/payment 受け取り確認
-app.put('/api/user/:id/payment', async (c) => await PaymentController.confirme(c))
+app.put(
+  '/api/user/:id/payment',
+  async (c) => await PaymentController.confirme(c),
+);
 
 app.all('*', (c) => c.text('Not Found', 404));
 

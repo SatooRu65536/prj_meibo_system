@@ -195,7 +195,7 @@ export class StateRepository {
    * @param id
    * @returns
    */
-  static async isDeactivatedById(c: CustomContext<string>, id: number) {
+  static async isDeactivatedByUid(c: CustomContext<string>, uid: string) {
     const db = drizzle(c.env.DB);
     const fyFirst = getFYFirstdate();
 
@@ -204,7 +204,7 @@ export class StateRepository {
       .from(memberTable)
       .where(
         and(
-          eq(memberTable.id, id),
+          eq(memberTable.uid, uid),
           isNull(memberTable.deletedAt),
           lt(memberTable.updatedAt, fyFirst),
         ),

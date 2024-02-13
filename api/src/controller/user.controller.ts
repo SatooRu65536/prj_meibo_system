@@ -7,6 +7,7 @@ import {
   admin,
   notRegistered,
   notDeactivated,
+  deactivated,
 } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
 import { UserService, UserServiceT } from '../service/user.service';
@@ -32,6 +33,27 @@ export class UserController {
     }
 
     const member = await UserRepository.createUser(c, user.uid);
+
+    return c.json({
+      success: true,
+      user: UserService.toFormatDetail(member),
+    });
+  }
+
+  /**
+   * 継続登録
+   */
+  @deactivated
+  static async continueRegister(
+    c: CustomContext<'/api/user/continue'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
+    const user = AuthService.getUser(c);
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+
+    const member = await UserRepository.continueRegister(c, user.uid);
 
     return c.json({
       success: true,

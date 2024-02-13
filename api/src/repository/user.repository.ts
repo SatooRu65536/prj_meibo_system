@@ -197,6 +197,40 @@ export class UserRepository {
     return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
   }
 
+  /**
+   * 継続登録
+   * @param c
+   * @param uid
+   */
+  static async continueRegister(c: CustomContext<string>, uid: string) {
+    const { member } = await c.req.json<UserSchema>();
+
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+    db.update(memberTable)
+      .set({ deletedAt: now })
+      .where(eq(memberTable.uid, uid));
+
+    const [ids] = await db.batch([
+      db
+        .insert(memberTable)
+        .values({ uid: uid, createdAt: now, updatedAt: now, isApproved: 0 })
+        .returning({ id: memberTable.id }),
+      db.insert(stackTable).values(
+        member.skills.map((s) => ({
+          uid: uid,
+          name: s,
+          createdAt: now,
+        })),
+      ),
+      db
+        .insert(memberPropertyTable)
+        .values(UserService.toFlatUser(member, uid, now)),
+    ]);
+
+    return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
+  }
+
   static async deleteUser(c: CustomContext<string>, uid: string) {
     const db = drizzle(c.env.DB);
     const now = Date.now();

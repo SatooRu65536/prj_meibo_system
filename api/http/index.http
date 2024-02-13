@@ -76,6 +76,42 @@ Content-Type: application/json
   }
 }
 
+### ユーザ継続登録
+POST {{host}}/api/user/continue HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "member": {
+    "firstName": "さとる継続済",
+    "lastName": "佐藤継続済",
+    "firstNameKana": "サトルケイゾクズミ",
+    "lastNameKana": "サトウケイゾクズミ",
+    "skills": ["継続1", "継続2"],
+    "graduationYear": 2050,
+    "iconUrl": "https://satooru.me/favicon.ico?q=continue",
+    "slackName": "k23000_佐藤さとる_継続済",
+    "type": "active",
+    "position": "会計継続済",
+    "studentNumber": "k25000",
+    "grade": "B3",
+    "privateInfo": {
+      "birthdate": "2000-00-00",
+      "gender": "女",
+      "phoneNumber": "111-1111-1111",
+      "email": "satoru-continue@example.com",
+      "currentAddress": {
+        "postalCode": "121-1212",
+        "address": "継続済県継続済市継続済"
+      },
+      "homeAddress": {
+        "postalCode": "212-2121",
+        "address": "継続済県継続済市継続済2"
+      }
+    }
+  }
+}
+
 ### ユーザ削除
 DELETE {{host}}/api/user/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}

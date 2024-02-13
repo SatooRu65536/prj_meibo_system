@@ -322,15 +322,14 @@ export function deactivated(
 ) {
   const originalMethod = descriptor.value;
 
-  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
-    const { id } = c.req.param();
-    const idNum = Number(id);
-    if (isNaN(idNum)) {
-      const err = ErrorService.request.invalidRequest('id', '数値');
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
       return c.json(err.err, err.status);
     }
 
-    const isDeactivated = await StateRepository.isDeactivatedById(c, idNum);
+    const isDeactivated = await StateRepository.isDeactivatedByUid(c, user.uid);
 
     if (!isDeactivated) {
       const err = ErrorService.user.notDeactivated();
@@ -357,15 +356,14 @@ export function notDeactivated(
 ) {
   const originalMethod = descriptor.value;
 
-  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
-    const { id } = c.req.param();
-    const idNum = Number(id);
-    if (isNaN(idNum)) {
-      const err = ErrorService.request.invalidRequest('id', '数値');
+  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
+    const user = AuthService.getUser(c);
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
       return c.json(err.err, err.status);
     }
 
-    const isDeactivated = await StateRepository.isDeactivatedById(c, idNum);
+    const isDeactivated = await StateRepository.isDeactivatedByUid(c, user.uid);
 
     if (isDeactivated) {
       const err = ErrorService.user.deactivated();
