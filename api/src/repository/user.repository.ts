@@ -85,13 +85,13 @@ export class UserRepository {
    * @returns
    */
   static async getApprovedUsers(c: CustomContext<string>, approved = true) {
-    const isApproved = approved ? 0 : 0;
+    const isApproved = approved ? 1 : 0;
     const filter = and(
       eq(memberTable.isApproved, isApproved),
       isNull(memberTable.deletedAt),
     );
 
-    return await this.commonGetUer(c, filter);
+    return await this.commonGetUerWithPrivateInfo(c, filter);
   }
 
   /**
@@ -484,6 +484,7 @@ export class UserRepository {
       .from(stackTable)
       .where(isNull(stackTable.deletedAt));
 
+    console.log(propaties);
     return propaties.map((p) => {
       return {
         ...p,
@@ -503,7 +504,7 @@ export class UserRepository {
     filter?: SQL,
   ) {
     const db = drizzle(c.env.DB);
-    const res = await db
+    const propaties = await db
       .select({
         id: memberTable.id,
         uid: memberTable.uid,
@@ -543,6 +544,7 @@ export class UserRepository {
         },
       })
       .from(memberTable)
+      .groupBy(memberPropertyTable.uid)
       .leftJoin(
         memberPropertyTable,
         eq(memberTable.uid, memberPropertyTable.uid),
@@ -554,8 +556,9 @@ export class UserRepository {
       .from(stackTable)
       .where(isNull(stackTable.deletedAt));
 
-    return res.map((r) => {
-      const { address, privateInfo, ...m } = r;
+      console.log(propaties);
+    return propaties.map((p) => {
+      const { address, privateInfo, ...m } = p;
       return {
         ...m,
         skills: skills.filter((s) => s.uid === m.uid).map((s) => s.skill),

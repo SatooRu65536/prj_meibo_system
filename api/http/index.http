@@ -1,11 +1,11 @@
-@token = eyJhbGciOiJSUzI1NiIsImtpZCI6IjUzZWFiMDBhNzc5MTk3Yzc0MWQ2NjJmY2EzODE1OGJkN2JlNGEyY2MiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi5aSa55Sw6ZqG5Lq6IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0wzbWR4MlZrR1VqTEhWZ1NHZ0x0cHB3Sl9kdTg0Nmtac19sWTBZdi1HU3l3PXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL21laWJvLXN5c3RlbSIsImF1ZCI6Im1laWJvLXN5c3RlbSIsImF1dGhfdGltZSI6MTcwNzc5NDgxNSwidXNlcl9pZCI6IkRrOUR1Z3l2NURRM0tCSVpqZ1A1TkFvUDdoVTIiLCJzdWIiOiJEazlEdWd5djVEUTNLQklaamdQNU5Bb1A3aFUyIiwiaWF0IjoxNzA3Nzk0ODE1LCJleHAiOjE3MDc3OTg0MTUsImVtYWlsIjoicnl1dG82NTUzNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExMDkyNjA5NzM0OTU1OTYwMDU0OCJdLCJlbWFpbCI6WyJyeXV0bzY1NTM2QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0.VbA_E9sC_aDtUS-i11vJTbejqaDkczf1gQ3591Lqq-geX0-8UsDyhcTR4gSdm-PgoOcdKfVk6lpd8JI5cor987QGz_KdqDsQ8mONSyRQXFbzB7-EqPSiea6nESEZsc5Fc9ir17sw9d8PGECZWdEuowIIo1dTUiLCY4Swv57q1u4T5YY1cWULy7nn6bnnuNntZUOxm9uCfT6Lzds9ektw8futeeCTj725jhvTNGYhWDgW10SDTcsWxCWy79ePsrNGt_dOUKdc4BJQx4h5UNY7GdXDnXWZDPc5UhkbDml_erD5YJIe34Z_Oy22y4A49w_w8QiRCilket1LLbN6yT5dkQ
-@userId = 1
+@token = eyJhbGciOiJSUzI1NiIsImtpZCI6IjUzZWFiMDBhNzc5MTk3Yzc0MWQ2NjJmY2EzODE1OGJkN2JlNGEyY2MiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi5aSa55Sw6ZqG5Lq6IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0wzbWR4MlZrR1VqTEhWZ1NHZ0x0cHB3Sl9kdTg0Nmtac19sWTBZdi1HU3l3PXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL21laWJvLXN5c3RlbSIsImF1ZCI6Im1laWJvLXN5c3RlbSIsImF1dGhfdGltZSI6MTcwNzc5NDgxNSwidXNlcl9pZCI6IkRrOUR1Z3l2NURRM0tCSVpqZ1A1TkFvUDdoVTIiLCJzdWIiOiJEazlEdWd5djVEUTNLQklaamdQNU5Bb1A3aFUyIiwiaWF0IjoxNzA3Nzk5Mjk5LCJleHAiOjE3MDc4MDI4OTksImVtYWlsIjoicnl1dG82NTUzNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExMDkyNjA5NzM0OTU1OTYwMDU0OCJdLCJlbWFpbCI6WyJyeXV0bzY1NTM2QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0.KGvrDBp_1bCOYeyf196RXhqVFbcdBNu9srXjSsHPUHJV0wwjwAOGuKRozPqYET59_3oBYsvh6eDSYXkWJNkIdl3yRstIfIgsfeZoSmt3lAnToGYoYdRRbhefdPhu_EtneNPeiOmw4oX0dJgojSVf8tORqOTMKS5V7rI3XMB1YjOjBR2xO-z-ZXTQqwg1mAUWHEIPCdFa9LzpBw_1Ei2bbAlUqAxrXqrqNHSvw1UTl235-jTpPTgeinbgiEXWLmr1cqCfD9IhJuezwD8MUxmtQqbQIuf2UcdjLTX-3oTD2OvxEEzojGQ70VElQbhmsbcDQK4UHH5CTDvWS2bmeyTDCg
+@userId = 4
 
 ### デバッグ用
 GET {{host}}/ HTTP/1.1
 
 ### ユーザ登録
-POST {{host}}/api/users HTTP/1.1
+POST {{host}}/api/user HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -41,7 +41,7 @@ Content-Type: application/json
 }
 
 ### ユーザ更新
-PUT {{host}}/api/users/{{userId}} HTTP/1.1
+PUT {{host}}/api/user/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -77,11 +77,11 @@ Content-Type: application/json
 }
 
 ### ユーザ削除
-DELETE {{host}}/api/users/{{userId}} HTTP/1.1
+DELETE {{host}}/api/user/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### ユーザ取得
-GET {{host}}/api/users/{{userId}} HTTP/1.1
+GET {{host}}/api/user/{{userId}} HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### ユーザ一覧取得
@@ -89,17 +89,21 @@ GET {{host}}/api/users HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### ユーザ詳細取得
-GET {{host}}/api/users/{{userId}}/detail HTTP/1.1
+GET {{host}}/api/user/{{userId}}/detail HTTP/1.1
+Authorization: Bearer {{token}}
+
+### ユーザ詳細一覧取得
+GET {{host}}/api/users/detail HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### ユーザ承認
-PUT {{host}}/api/users/{{userId}}/approve HTTP/1.1
+PUT {{host}}/api/user/{{userId}}/approve HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### 管理者承認
-PUT {{host}}/api/users/{{userId}}/officer HTTP/1.1
+PUT {{host}}/api/user/{{userId}}/officer HTTP/1.1
 Authorization: Bearer {{token}}
 
 ### 管理者解除
-DELETE {{host}}/api/users/{{userId}}/officer HTTP/1.1
+DELETE {{host}}/api/user/{{userId}}/officer HTTP/1.1
 Authorization: Bearer {{token}}

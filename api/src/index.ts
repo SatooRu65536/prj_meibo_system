@@ -19,54 +19,61 @@ app.use('*', verifyFirebaseAuth(config));
 // デバッグ用
 app.get('/', (c) => c.text('Hello Hono!'));
 
-// [POST] /api/users ユーザー登録
+// [POST] /api/user ユーザー登録
 app.post(
-  '/api/users',
+  '/api/user',
   zValidator(
     'json',
     userSchema,
-    zodHook<UserSchema, CustomContext<'/api/users'>>,
+    zodHook<UserSchema, CustomContext<'/api/user'>>,
   ),
   async (c) => await UserController.createUser(c),
 );
 
-// [DELETE] /api/users/:id ユーザー削除
-app.delete('/api/users/:id', async (c) => await UserController.deleteUser(c));
-
-// [PUT] /api/users/:id 編集
+// [PUT] /api/user/:id 編集
 app.put(
-  '/api/users/:id',
+  '/api/user/:id',
   zValidator(
     'json',
     userSchema,
-    zodHook<UserSchema, CustomContext<'/api/users/:id'>>,
+    zodHook<UserSchema, CustomContext<'/api/user/:id'>>,
   ),
   async (c) => await UserController.updateUser(c),
 );
 
-// [GET] /api/users/:id ユーザー情報詳細取得
-app.get('/api/users/:id', async (c) => await UserController.getUser(c));
+// [DELETE] /api/user/:id ユーザー削除
+app.delete('/api/user/:id', async (c) => await UserController.deleteUser(c));
 
+// [GET] /api/user/:id ユーザー情報詳細取得
+app.get('/api/user/:id', async (c) => await UserController.getUser(c));
+
+// [GET] /api/users ユーザー一覧取得
 app.get('/api/users', async (c) => await UserController.getUsers(c));
 
-// [GET] /api/users/:id/detail ユーザー情報詳細取得
+// [GET] /api/user/detail ユーザー情報詳細取得
 app.get(
-  '/api/users/:id/detail',
+  '/api/user/:id/detail',
   async (c) => await UserController.getUserDetail(c),
 );
 
-// [PUT] /api/users/:id/approve 承認
-app.put('/api/users/:id/approve', async (c) => await UserController.approve(c));
+// [GET] /api/user/:id/detail ユーザーの出席情報取得
+app.get(
+  '/api/users/detail',
+  async (c) => await UserController.getUsersDetail(c),
+);
 
-// [PUT] /api/users/:id/officer 管理者承認
+// [PUT] /api/user/:id/approve 承認
+app.put('/api/user/:id/approve', async (c) => await UserController.approve(c));
+
+// [PUT] /api/user/:id/officer 管理者承認
 app.put(
-  '/api/users/:id/officer',
+  '/api/user/:id/officer',
   async (c) => await UserController.approveOfficer(c),
 );
 
-// [DELETE] /api/users/:id/officer 管理者解除
+// [DELETE] /api/user/:id/officer 管理者解除
 app.delete(
-  '/api/users/:id/officer',
+  '/api/user/:id/officer',
   async (c) => await UserController.deleteOfficer(c),
 );
 

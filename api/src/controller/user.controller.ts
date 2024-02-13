@@ -19,7 +19,7 @@ export class UserController {
   @auth
   @notRegistered
   static async createUser(
-    c: CustomContext<'/api/users'>,
+    c: CustomContext<'/api/user'>,
   ): Promise<CustomResponse<UserDetailRes>> {
     const user = AuthService.getUser(c);
     if (!user) {
@@ -39,7 +39,7 @@ export class UserController {
    * ユーザー削除
    */
   @admin
-  static async deleteUser(c: CustomContext<'/api/users/:id'>) {
+  static async deleteUser(c: CustomContext<'/api/user/:id'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -65,7 +65,7 @@ export class UserController {
    * ユーザー情報更新
    */
   @adminOrSelf
-  static async updateUser(c: CustomContext<'/api/users/:id'>) {
+  static async updateUser(c: CustomContext<'/api/user/:id'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -97,7 +97,7 @@ export class UserController {
    */
   @approved
   static async getUser(
-    c: CustomContext<'/api/users/:id'>,
+    c: CustomContext<'/api/user/:id'>,
   ): Promise<CustomResponse<UserRes>> {
     const { id } = c.req.param();
     const idNum = Number(id);
@@ -137,9 +137,8 @@ export class UserController {
    * ユーザー情報詳細取得
    */
   @adminOrSelf
-  @approved
   static async getUserDetail(
-    c: CustomContext<'/api/users/:id/detail'>,
+    c: CustomContext<'/api/user/:id/detail'>,
   ): Promise<CustomResponse<UserDetailRes>> {
     const { id } = c.req.param();
     const idNum = Number(id);
@@ -166,10 +165,23 @@ export class UserController {
   }
 
   /**
+   * ユーザー詳細情報一覧取得
+   */
+  @admin
+  static async getUsersDetail(c: CustomContext<'/api/users/detail'>) {
+    const members = await UserRepository.getApprovedUsers(c);
+
+    return c.json({
+      success: true,
+      members: members.map((member) => UserService.toFormatDetail(member)),
+    });
+  }
+
+  /**
    * ユーザーを承認
    */
   @admin
-  static async approve(c: CustomContext<'/api/users/:id/approve'>) {
+  static async approve(c: CustomContext<'/api/user/:id/approve'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -213,7 +225,7 @@ export class UserController {
    * @param c
    */
   @admin
-  static async approveOfficer(c: CustomContext<'/api/users/:id/officer'>) {
+  static async approveOfficer(c: CustomContext<'/api/user/:id/officer'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -265,7 +277,7 @@ export class UserController {
    * 管理者解除
    */
   @admin
-  static async deleteOfficer(c: CustomContext<'/api/users/:id/officer'>) {
+  static async deleteOfficer(c: CustomContext<'/api/user/:id/officer'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
