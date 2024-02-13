@@ -1,7 +1,8 @@
-import { memberTable, officerTable } from '../models/schema';
-import { and, eq, isNull, or } from 'drizzle-orm';
+import { memberTable, officerTable, paymentTable } from '../models/schema';
+import { and, eq, gte, isNull, or } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
+import { getFYFirstdate } from '@/util';
 
 export class StateRepository {
   /**
@@ -121,5 +122,44 @@ export class StateRepository {
       .where(and(eq(memberTable.uid, uid), isNull(memberTable.deletedAt)));
 
     return registeredMembers !== undefined;
+  }
+
+  /**
+   * 支払い済みか
+   * @param c
+   * @param uid
+   * @returns
+   */
+  static async isPaidByUid(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+
+    const [payment] = await db
+      .select()
+      .from(paymentTable)
+      .where(eq(paymentTable.uid, uid));
+
+    if (payment === undefined) return false;
+
+    return payment !== undefined;
+  }
+
+  /**
+   * 支払い済みかつ受け取り前か
+   * @param c
+   * @param uid
+   * @returns
+   */
+  static async isPaidAndNotConfirmedByUid(
+    c: CustomContext<string>,
+    uid: string,
+  ) {
+    const db = drizzle(c.env.DB);
+
+    const [payment] = await db
+      .select()
+      .from(paymentTable)
+      .where(and(eq(paymentTable.uid, uid), eq(paymentTable.isConfirmed, 0)));
+
+    return payment !== undefined;
   }
 }

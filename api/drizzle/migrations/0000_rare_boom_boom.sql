@@ -49,7 +49,7 @@ CREATE TABLE `officer` (
 CREATE TABLE `payment` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`uid` text NOT NULL,
-	`payee` text NOT NULL,
+	`payee` integer NOT NULL,
 	`is_confirmed` integer DEFAULT 0 NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL

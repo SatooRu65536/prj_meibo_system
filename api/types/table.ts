@@ -8,6 +8,15 @@ export type OfficerTable = {
   deletedAt: number | null;
 };
 
+export type PaymentTable = {
+  id: number;
+  uid: string;
+  payee: number;
+  isConfirmed: number;
+  createdAt: number;
+  updatedAt: number;
+};
+
 type ActiveMemberPropertyTable = {
   type: 'active';
 

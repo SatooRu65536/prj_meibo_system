@@ -144,6 +144,7 @@ export class UserController {
   /**
    * ユーザー情報詳細取得
    */
+  @approved
   @adminOrSelf
   static async getUserDetail(
     c: CustomContext<'/api/user/:id/detail'>,

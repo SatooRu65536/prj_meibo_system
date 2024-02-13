@@ -234,3 +234,75 @@ export function notApproved(
 
   return descriptor;
 }
+
+/**
+ * 支払い済みか(user を包括)
+ */
+export function userPaidAndNotConfirned(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const user = await UserRepository.getUserById(c, idNum);
+    if (user === undefined) {
+      const err = ErrorService.request.userNotFound();
+      return c.json(err.err, err.status);
+    }
+
+    const isPaidAndNotConrifmed = await StateRepository.isPaidAndNotConfirmedByUid(c, user.uid);
+    if (!isPaidAndNotConrifmed) {
+      const err = ErrorService.payment.notAvailable();
+      return c.json(err.err, err.status);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
+  };
+
+  return descriptor;
+}
+
+/**
+ * 支払い前か(user を包括)
+ */
+export function userNotPaid(
+  _target: any,
+  _propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (c: CustomContext<':id'>, ...args: any[]) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const user = await UserRepository.getUserById(c, idNum);
+    if (user === undefined) {
+      const err = ErrorService.request.userNotFound();
+      return c.json(err.err, err.status);
+    }
+
+    const isPaid = await StateRepository.isPaidByUid(c, user.uid);
+    if (isPaid) {
+      const err = ErrorService.payment.alreadyPaid();
+      return c.json(err.err, err.status);
+    }
+
+    return originalMethod.apply(this, [c, ...args]);
+  };
+
+  return descriptor;
+}

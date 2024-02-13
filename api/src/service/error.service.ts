@@ -200,7 +200,92 @@ const RequestError = {
   deleteOfficerFailed,
 };
 
+// 支払い情報の追加に失敗
+const failedPayment = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D0',
+    message: '支払い情報の追加に失敗しました',
+  },
+  status: 500,
+});
+
+// 受け取り情報の追加に失敗
+const failedConfirme = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D1',
+    message: '受け取り情報の追加に失敗しました',
+    approach: 'お金の受け取りが完了しているか確認してください',
+  },
+  status: 500,
+});
+
+// 支払い前
+const notPaid = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D2',
+    message: '支払いが完了していません',
+    approach: 'お金の支払いが完了しているか確認してください',
+  },
+  status: 400,
+});
+
+// 支払い済み
+const alreadyPaid = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D3',
+    message: '支払いが完了しています',
+  },
+  status: 400,
+});
+
+// 受け取り前
+const notConfirmed = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D4',
+    message: '受け取りが完了していません',
+    approach: 'お金の受け取りが完了しているか確認してください',
+  },
+  status: 400,
+});
+
+// 受け取り済み
+const alreadyConfirmed = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D5',
+    message: '受け取りが完了しています',
+  },
+  status: 400,
+});
+
+// 受け取り可能な状態ではありません
+const notAvailable = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'D6',
+    message: '受け取り可能な状態ではありません',
+    approach: 'お金の受け取りが完了しているか確認してください',
+  },
+  status: 400,
+});
+
+const PaymentError = {
+  failedPayment,
+  failedConfirme,
+  notPaid,
+  alreadyPaid,
+  notConfirmed,
+  alreadyConfirmed,
+  notAvailable,
+};
+
 export const ErrorService = {
   auth: AuthError,
   request: RequestError,
+  payment: PaymentError,
 };

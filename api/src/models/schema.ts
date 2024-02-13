@@ -87,7 +87,7 @@ export const paymentTable = sqliteTable('payment', {
     .notNull()
     .primaryKey({ autoIncrement: true }),
   uid: text('uid').notNull(),
-  payee: text('payee').notNull(), // お金を受け取った人
+  payee: integer('payee').notNull(), // お金を受け取った人
   isConfirmed: integer('is_confirmed').notNull().default(0), // 会計が確認したか
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull(),

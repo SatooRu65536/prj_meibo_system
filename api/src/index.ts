@@ -7,6 +7,7 @@ import { zodHook } from './validation';
 import { zValidator } from '@hono/zod-validator';
 import { UserSchema, userSchema } from './validation/createUser';
 import { OfficerController } from './controller/officer.controller';
+import { PaymentController } from './controller/payment.controller';
 
 const app = new Hono<Env>();
 
@@ -73,6 +74,12 @@ app.delete(
   '/api/user/:id/officer',
   async (c) => await OfficerController.delete(c),
 );
+
+// [POST] /api/user/:id/payment 支払い情報登録
+app.post('/api/user/:id/payment', async (c) => await PaymentController.paid(c));
+
+// [PUT] /api/user/:id/payment 受け取り確認
+app.put('/api/user/:id/payment', async (c) => await PaymentController.confirme(c))
 
 app.all('*', (c) => c.text('Not Found', 404));
 

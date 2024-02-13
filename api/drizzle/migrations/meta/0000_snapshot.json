@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "ad7f8df5-4726-429f-8ebf-e00ed44991ae",
+  "id": "9dcf16a7-2e58-40b1-a54f-7a288f985da9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "property": {
@@ -323,7 +323,7 @@
         },
         "payee": {
           "name": "payee",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
