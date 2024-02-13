@@ -216,4 +216,45 @@ export class UserController {
 
     return c.json({ success: true, officer });
   }
+
+  /**
+   * 管理者解除
+   */
+  @admin
+  static async deleteOfficer(c: CustomContext<'/api/users/:id/officer'>) {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const user = AuthService.getUser(c);
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+
+    const deleteOfficerUid = await UserRepository.getUserUidById(c, idNum);
+
+    if (deleteOfficerUid === undefined) {
+      const err = ErrorService.request.notFound('ユーザー');
+      return c.json(err.err, err.status);
+    }
+
+    const isApproved = await UserRepository.isAdmin(c, deleteOfficerUid);
+
+    if (!isApproved) {
+      const err = ErrorService.request.notApprovedOfficer();
+      return c.json(err.err, err.status);
+    }
+
+    const officer = await UserRepository.deleteOfficer(c, deleteOfficerUid);
+    if (officer === undefined) {
+      const err = ErrorService.request.deleteOfficerFailed();
+      return c.json(err.err, err.status);
+    }
+
+    return c.json({ success: true, officer });
+  }
 }

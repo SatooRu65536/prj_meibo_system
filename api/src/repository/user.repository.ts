@@ -238,6 +238,24 @@ export class UserRepository {
   }
 
   /**
+   * 管理者を削除する
+   * @param c
+   * @param uid
+   */
+  static async deleteOfficer(c: CustomContext<string>, uid: string) {
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+
+    const [officer] = await db
+      .update(officerTable)
+      .set({ deletedAt: now })
+      .where(eq(officerTable.uid, uid))
+      .returning();
+
+    return officer;
+  }
+
+  /**
    * 管理者権限があるか
    */
   static async isAdmin(c: CustomContext<string>, uid: string) {

@@ -70,7 +70,7 @@ export const memberPropertyTable = sqliteTable('property', {
   createdAt: integer('created_at').notNull(),
 });
 
-// 役員
+// 管理者
 export const officerTable = sqliteTable('officer', {
   id: integer('id', { mode: 'number' })
     .notNull()

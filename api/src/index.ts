@@ -53,10 +53,16 @@ app.get(
 // [PUT] /api/users/:id/approve 承認
 app.put('/api/users/:id/approve', async (c) => await UserController.approve(c));
 
-// [PUT] /api/users/:id/officer 承認
+// [PUT] /api/users/:id/officer 管理者承認
 app.put(
   '/api/users/:id/officer',
   async (c) => await UserController.approveOfficer(c),
+);
+
+// [DELETE] /api/users/:id/officer 管理者解除
+app.delete(
+  '/api/users/:id/officer',
+  async (c) => await UserController.deleteOfficer(c),
 );
 
 app.all('*', (c) => c.text('Not Found', 404));

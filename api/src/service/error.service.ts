@@ -155,6 +155,28 @@ const alreadyApprovedOfficer = (): ErrorStruct => ({
   status: 400,
 });
 
+// 管理者承認されていない
+const notApprovedOfficer = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'C6',
+    message: '管理者承認されていません',
+    approach: 'メンバーIDを確認してください',
+  },
+  status: 400,
+});
+
+// 管理者解除に失敗
+const deleteOfficerFailed = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'C7',
+    message: '管理者解除に失敗しました',
+    approach: 'メンバーIDを確認してください',
+  },
+  status: 400,
+});
+
 const RequestError = {
   invalidRequest,
   validationError,
@@ -162,6 +184,8 @@ const RequestError = {
   alreadyApproved,
   approveFailed,
   alreadyApprovedOfficer,
+  notApprovedOfficer,
+  deleteOfficerFailed,
 };
 
 export const ErrorService = {
