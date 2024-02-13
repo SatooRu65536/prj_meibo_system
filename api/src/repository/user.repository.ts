@@ -118,7 +118,6 @@ export class UserRepository {
     const filter = and(
       eq(memberTable.id, id),
       eq(memberTable.isApproved, isApproved),
-      isNull(stackTable.deletedAt),
     );
 
     const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
