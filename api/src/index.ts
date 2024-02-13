@@ -17,7 +17,7 @@ app.use('*', verifyFirebaseAuth({ projectId: 'meibo-system' }));
 // デバッグ用
 app.get('/', (c) => c.text('Hello Hono!'));
 
-// [POST] /api/user ユーザー登録
+// [POST] /api/user 新規ユーザー登録
 app.post(
   '/api/user',
   zValidator(

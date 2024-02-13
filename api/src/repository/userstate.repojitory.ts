@@ -10,6 +10,7 @@ export class StateRepository {
    */
   static async isAdmin(c: CustomContext<string>, uid: string) {
     const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
 
     const [first] = await db
       .select()
@@ -20,6 +21,7 @@ export class StateRepository {
           eq(officerTable.uid, uid),
           isNull(officerTable.deletedAt),
           isNull(memberTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
         ),
       );
 
@@ -57,6 +59,7 @@ export class StateRepository {
             eq(officerTable.uid, uid),
             isNull(officerTable.deletedAt),
             isNull(memberTable.deletedAt),
+            gte(memberTable.updatedAt, fyFirst),
           ),
         ),
       );
@@ -188,9 +191,9 @@ export class StateRepository {
 
   /**
    * 無効化されているか
-   * @param c 
-   * @param id 
-   * @returns 
+   * @param c
+   * @param id
+   * @returns
    */
   static async isDeactivatedById(c: CustomContext<string>, id: number) {
     const db = drizzle(c.env.DB);
