@@ -11,23 +11,25 @@ export type Grade =
   | 'その他';
 
 // 住所と郵便番号
-export type Address = {
+type Address = {
   postalCode: string;
   address: string;
 };
 
 // 非公開の情報
-export type PrivateInfo = {
-  birthdate: string;
-  gender: string;
-  phoneNumber: string;
-  email: string;
-  currentAddress: Address;
-  homeAddress: Address;
+type PrivateInfo = {
+  privateInfo: {
+    birthdate: string;
+    gender: string;
+    phoneNumber: string;
+    email: string;
+    currentAddress: Address;
+    homeAddress: Address;
+  };
 };
 
 // 現役部員
-export type ActiveMember = {
+type ActiveMember = {
   type: 'active';
   studentNumber: string;
   position: string;
@@ -49,12 +51,9 @@ type ExternalMember = {
   organization: string;
 };
 
-export type MemberType = ActiveMember | OBOGMember | ExternalMember;
+type MemberType = ActiveMember | OBOGMember | ExternalMember;
 
-export type MemberBase<
-  T extends PrivateInfo | {} = {},
-  U extends MemberType | {} = {},
-> = {
+export type MemberBase<T extends boolean = false, U extends boolean = false> = {
   id: number;
   firstName: string;
   lastName: string;
@@ -65,5 +64,5 @@ export type MemberBase<
   slackName: string;
   iconUrl: string;
   updatedAt: string;
-} & (T extends PrivateInfo ? { privateInfo: T } : {}) &
-  (U extends MemberType ? U : {});
+} & (T extends true ? PrivateInfo : {}) &
+  (U extends true ? MemberType : {});

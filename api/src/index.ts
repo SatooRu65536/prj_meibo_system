@@ -2,19 +2,16 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { UserController } from './controller/user.controller';
 import { CustomContext, Env } from '@/types/context';
-import { VerifyFirebaseAuthConfig, verifyFirebaseAuth } from './auth';
+import { verifyFirebaseAuth } from './service/auth.service';
 import { zodHook } from './validation';
 import { zValidator } from '@hono/zod-validator';
 import { UserSchema, userSchema } from './validation/createUser';
-
-const config: VerifyFirebaseAuthConfig = {
-  projectId: 'meibo-system',
-};
+import { OfficerController } from './controller/officer.controller';
 
 const app = new Hono<Env>();
 
 app.use('*', cors({ origin: '*' }));
-app.use('*', verifyFirebaseAuth(config));
+app.use('*', verifyFirebaseAuth({ projectId: 'meibo-system' }));
 
 // デバッグ用
 app.get('/', (c) => c.text('Hello Hono!'));
@@ -68,13 +65,13 @@ app.put('/api/user/:id/approve', async (c) => await UserController.approve(c));
 // [PUT] /api/user/:id/officer 管理者承認
 app.put(
   '/api/user/:id/officer',
-  async (c) => await UserController.approveOfficer(c),
+  async (c) => await OfficerController.approve(c),
 );
 
 // [DELETE] /api/user/:id/officer 管理者解除
 app.delete(
   '/api/user/:id/officer',
-  async (c) => await UserController.deleteOfficer(c),
+  async (c) => await OfficerController.delete(c),
 );
 
 app.all('*', (c) => c.text('Not Found', 404));

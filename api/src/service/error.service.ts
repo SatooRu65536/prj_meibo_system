@@ -1,7 +1,7 @@
-import { ResError } from '@/types/response';
+import { ErrorResponse } from '@/types/response';
 
 type ErrorStruct = {
-  err: ResError;
+  err: ErrorResponse;
   status: number;
 };
 

@@ -2,6 +2,7 @@ import { CustomContext } from '@/types/context';
 import { AuthService } from '../service/auth.service';
 import { UserRepository } from '../repository/user.repository';
 import { ErrorService } from '../service/error.service';
+import { StateRepository } from '../repository/userstate.repojitory';
 
 /**
  * user が存在するか
@@ -45,7 +46,7 @@ export function admin(
       return c.json(err.err, err.status);
     }
 
-    const isAdmin = await UserRepository.isAdmin(c, user.uid);
+    const isAdmin = await StateRepository.isAdmin(c, user.uid);
 
     const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
     const includeAdmin = user?.email && initAdmins.includes(user?.email);
@@ -88,7 +89,7 @@ export function adminOrSelf(
     }
 
     // 本人か
-    const isAdminOrSelf = await UserRepository.isAdminOrSelf(
+    const isAdminOrSelf = await StateRepository.isAdminOrSelf(
       c,
       user.uid,
       idNum,
@@ -126,7 +127,7 @@ export function registered(
       return c.json(err.err, err.status);
     }
 
-    const isApproved = await UserRepository.isRegisteredByUid(c, user.uid);
+    const isApproved = await StateRepository.isRegisteredByUid(c, user.uid);
 
     if (!isApproved) {
       const err = ErrorService.auth.notRegistered();
@@ -157,7 +158,7 @@ export function notRegistered(
       return c.json(err.err, err.status);
     }
 
-    const isApproved = await UserRepository.isRegisteredByUid(c, user.uid);
+    const isApproved = await StateRepository.isRegisteredByUid(c, user.uid);
 
     if (isApproved) {
       const err = ErrorService.auth.registered();
@@ -188,7 +189,7 @@ export function approved(
       return c.json(err.err, err.status);
     }
 
-    const isApproved = await UserRepository.isApprovedByUid(c, user.uid);
+    const isApproved = await StateRepository.isApprovedByUid(c, user.uid);
     const initAdmins = c.env?.INIT_ADMINS.split(',') || '';
     const includeAdmin = user?.email && initAdmins.includes(user?.email);
 
@@ -221,7 +222,7 @@ export function notApproved(
       return c.json(err.err, err.status);
     }
 
-    const isApproved = await UserRepository.isApprovedByUid(c, user.uid);
+    const isApproved = await StateRepository.isApprovedByUid(c, user.uid);
 
     if (isApproved) {
       const err = ErrorService.auth.approved();

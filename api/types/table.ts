@@ -1,24 +1,12 @@
 import { Grade } from './member';
 
-export type Id = {
+export type OfficerTable = {
   id: number;
-};
-
-export type CreatedAt = {
-  createdAt: number;
-};
-
-export type MemberTable<T = {}> = {
   uid: string;
-  deletedAt: number | null;
-} & T;
-
-export type StackTable<T = {}> = {
-  uid: string;
-  name: string;
+  approvedBy: number | null;
   createdAt: number;
   deletedAt: number | null;
-} & T;
+};
 
 type ActiveMemberPropertyTable = {
   type: 'active';
@@ -65,7 +53,7 @@ type ExternalMemberPropertyTable = {
   organization: string;
 };
 
-export type MemberPropertyTable<T = {}> = {
+export type MemberPropertyTable = {
   uid: string;
   firstName: string;
   lastName: string;
@@ -82,9 +70,9 @@ export type MemberPropertyTable<T = {}> = {
   currentAddress: string;
   homePostalCode: string;
   homeAddress: string;
+  createdAt: number;
 } & (
   | ActiveMemberPropertyTable
   | ObogMemberPropertyTable
   | ExternalMemberPropertyTable
-) &
-  T;
+);

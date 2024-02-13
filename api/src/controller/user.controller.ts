@@ -8,8 +8,11 @@ import {
   notRegistered,
 } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
-import { UserService } from '../service/user.service';
+import { UserService, UserServiceT } from '../service/user.service';
 import { ErrorService } from '../service/error.service';
+import { StateRepository } from '../repository/userstate.repojitory';
+import { CustomResponse } from '@/types/response';
+import { ReturnType } from '@/types';
 
 export class UserController {
   /**
@@ -17,7 +20,9 @@ export class UserController {
    */
   @auth
   @notRegistered
-  static async createUser(c: CustomContext<'/api/user'>) {
+  static async createUser(
+    c: CustomContext<'/api/user'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
     const user = AuthService.getUser(c);
     if (!user) {
       const err = ErrorService.auth.failedAuth();
@@ -36,7 +41,9 @@ export class UserController {
    * ユーザー削除
    */
   @admin
-  static async deleteUser(c: CustomContext<'/api/user/:id'>) {
+  static async deleteUser(
+    c: CustomContext<'/api/user/:id'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -62,7 +69,9 @@ export class UserController {
    * ユーザー情報更新
    */
   @adminOrSelf
-  static async updateUser(c: CustomContext<'/api/user/:id'>) {
+  static async updateUser(
+    c: CustomContext<'/api/user/:id'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -93,7 +102,9 @@ export class UserController {
    * ユーザー情報取得
    */
   @approved
-  static async getUser(c: CustomContext<'/api/user/:id'>) {
+  static async getUser(
+    c: CustomContext<'/api/user/:id'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormat']> }> {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -119,7 +130,9 @@ export class UserController {
    * ユーザー一覧取得
    */
   @approved
-  static async getUsers(c: CustomContext<'/api/users'>) {
+  static async getUsers(
+    c: CustomContext<'/api/users'>,
+  ): CustomResponse<{ users: ReturnType<UserServiceT['toFormat']>[] }> {
     const members = await UserRepository.getApprovedUsers(c);
 
     return c.json({
@@ -132,7 +145,9 @@ export class UserController {
    * ユーザー情報詳細取得
    */
   @adminOrSelf
-  static async getUserDetail(c: CustomContext<'/api/user/:id/detail'>) {
+  static async getUserDetail(
+    c: CustomContext<'/api/user/:id/detail'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -161,7 +176,9 @@ export class UserController {
    * ユーザー詳細情報一覧取得
    */
   @admin
-  static async getUsersDetail(c: CustomContext<'/api/users/detail'>) {
+  static async getUsersDetail(
+    c: CustomContext<'/api/users/detail'>,
+  ): CustomResponse<{ users: ReturnType<UserServiceT['toFormat']>[] }> {
     const members = await UserRepository.getApprovedUsers(c);
 
     return c.json({
@@ -174,7 +191,9 @@ export class UserController {
    * ユーザーを承認
    */
   @admin
-  static async approve(c: CustomContext<'/api/user/:id/approve'>) {
+  static async approve(
+    c: CustomContext<'/api/user/:id/approve'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -188,7 +207,7 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const isApproved = await UserRepository.isApprovedById(c, idNum);
+    const isApproved = await StateRepository.isApprovedById(c, idNum);
     if (isApproved) {
       const err = ErrorService.request.alreadyApproved();
       return c.json(err.err, err.status);
@@ -201,7 +220,7 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const member = await UserRepository.approveUser(c, approvedId, idNum);
+    const member = await UserRepository.approve(c, approvedId, idNum);
     if (member === undefined) {
       const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
@@ -211,99 +230,5 @@ export class UserController {
       success: true,
       user: UserService.toFormatDetail(member),
     });
-  }
-
-  /**
-   * 役職を承認
-   * @param c
-   */
-  @admin
-  static async approveOfficer(c: CustomContext<'/api/user/:id/officer'>) {
-    const { id } = c.req.param();
-    const idNum = Number(id);
-    if (isNaN(idNum)) {
-      const err = ErrorService.request.invalidRequest('id', '数値');
-      return c.json(err.err, err.status);
-    }
-
-    const user = AuthService.getUser(c);
-    if (!user) {
-      const err = ErrorService.auth.failedAuth();
-      return c.json(err.err, err.status);
-    }
-
-    const approvedId = await UserService.getIdForApprove(c, user);
-
-    const newUserUid = await UserRepository.getUserUidById(c, idNum);
-
-    if (newUserUid === undefined) {
-      const err = ErrorService.request.userNotFound();
-      return c.json(err.err, err.status);
-    }
-
-    const isApproved = await UserRepository.isAdmin(c, newUserUid);
-
-    if (isApproved) {
-      const err = ErrorService.request.alreadyApprovedOfficer();
-      return c.json(err.err, err.status);
-    }
-
-    if (approvedId === undefined) {
-      const err = ErrorService.auth.notAdmin();
-      return c.json(err.err, err.status);
-    }
-
-    const officer = await UserRepository.approveOfficer(
-      c,
-      approvedId,
-      newUserUid,
-    );
-    if (officer === undefined) {
-      const err = ErrorService.request.approveFailed();
-      return c.json(err.err, err.status);
-    }
-
-    return c.json({ success: true, officer });
-  }
-
-  /**
-   * 管理者解除
-   */
-  @admin
-  static async deleteOfficer(c: CustomContext<'/api/user/:id/officer'>) {
-    const { id } = c.req.param();
-    const idNum = Number(id);
-    if (isNaN(idNum)) {
-      const err = ErrorService.request.invalidRequest('id', '数値');
-      return c.json(err.err, err.status);
-    }
-
-    const user = AuthService.getUser(c);
-    if (!user) {
-      const err = ErrorService.auth.failedAuth();
-      return c.json(err.err, err.status);
-    }
-
-    const deleteOfficerUid = await UserRepository.getUserUidById(c, idNum);
-
-    if (deleteOfficerUid === undefined) {
-      const err = ErrorService.request.userNotFound();
-      return c.json(err.err, err.status);
-    }
-
-    const isApproved = await UserRepository.isAdmin(c, deleteOfficerUid);
-
-    if (!isApproved) {
-      const err = ErrorService.request.notApprovedOfficer();
-      return c.json(err.err, err.status);
-    }
-
-    const officer = await UserRepository.deleteOfficer(c, deleteOfficerUid);
-    if (officer === undefined) {
-      const err = ErrorService.request.deleteOfficerFailed();
-      return c.json(err.err, err.status);
-    }
-
-    return c.json({ success: true, officer });
   }
 }

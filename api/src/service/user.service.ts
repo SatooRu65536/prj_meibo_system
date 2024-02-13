@@ -1,4 +1,4 @@
-import { Grade, MemberBase, MemberType, PrivateInfo } from '@/types/member';
+import { Grade, MemberBase } from '@/types/member';
 import {
   UserRepoT,
   UserRepoWithPrivateInfoT,
@@ -6,7 +6,7 @@ import {
 } from '../repository/user.repository';
 import { toDateISO } from '@/util';
 import { UserSchema } from '../validation';
-import { CreatedAt, MemberPropertyTable } from '@/types/table';
+import { MemberPropertyTable } from '@/types/table';
 import { CustomContext } from '@/types/context';
 import { FirebaseIdToken } from 'firebase-auth-cloudflare-workers';
 
@@ -39,7 +39,7 @@ export class UserService {
    * @param member
    * @returns
    */
-  static toFormat(member: UserRepoT): MemberBase<{}, MemberType> {
+  static toFormat(member: UserRepoT): MemberBase<false, true> {
     const { type } = member;
 
     const base: MemberBase = {
@@ -91,10 +91,10 @@ export class UserService {
    */
   static toFormatDetail(
     member: UserRepoWithPrivateInfoT,
-  ): MemberBase<PrivateInfo, MemberType> {
+  ): MemberBase<true, true> {
     const { type } = member;
 
-    const base: MemberBase<PrivateInfo> = {
+    const base: MemberBase<true> = {
       id: member.id as number,
       updatedAt: toDateISO(member.updatedAt as number),
       firstName: member.firstName as string,
@@ -158,7 +158,7 @@ export class UserService {
     member: UserSchema['member'],
     uid: string,
     now: number,
-  ): MemberPropertyTable<CreatedAt> {
+  ): MemberPropertyTable {
     const { type } = member;
 
     const base = {
@@ -207,3 +207,5 @@ export class UserService {
     }
   }
 }
+
+export type UserServiceT = typeof UserService;
