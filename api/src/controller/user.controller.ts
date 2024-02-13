@@ -1,6 +1,5 @@
 import { CustomContext } from '@/types/context';
 import { AuthService } from '../service/auth.service';
-import { CustomResponse, UserDetailRes, UserRes } from '@/types/response';
 import {
   auth,
   adminOrSelf,
@@ -18,9 +17,7 @@ export class UserController {
    */
   @auth
   @notRegistered
-  static async createUser(
-    c: CustomContext<'/api/user'>,
-  ): Promise<CustomResponse<UserDetailRes>> {
+  static async createUser(c: CustomContext<'/api/user'>) {
     const user = AuthService.getUser(c);
     if (!user) {
       const err = ErrorService.auth.failedAuth();
@@ -31,7 +28,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      member: UserService.toFormatDetail(member),
+      user: UserService.toFormatDetail(member),
     });
   }
 
@@ -57,7 +54,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      deleteUser: UserService.toFormatDetail(deleteUser),
+      user: UserService.toFormatDetail(deleteUser),
     });
   }
 
@@ -88,7 +85,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      member: UserService.toFormatDetail(editedUser),
+      user: UserService.toFormatDetail(editedUser),
     });
   }
 
@@ -96,9 +93,7 @@ export class UserController {
    * ユーザー情報取得
    */
   @approved
-  static async getUser(
-    c: CustomContext<'/api/user/:id'>,
-  ): Promise<CustomResponse<UserRes>> {
+  static async getUser(c: CustomContext<'/api/user/:id'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -116,7 +111,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      member: UserService.toFormat(member),
+      user: UserService.toFormat(member),
     });
   }
 
@@ -129,7 +124,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      members: members.map((member) => UserService.toFormat(member)),
+      users: members.map((member) => UserService.toFormat(member)),
     });
   }
 
@@ -137,9 +132,7 @@ export class UserController {
    * ユーザー情報詳細取得
    */
   @adminOrSelf
-  static async getUserDetail(
-    c: CustomContext<'/api/user/:id/detail'>,
-  ): Promise<CustomResponse<UserDetailRes>> {
+  static async getUserDetail(c: CustomContext<'/api/user/:id/detail'>) {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
@@ -160,7 +153,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      member: UserService.toFormatDetail(member),
+      user: UserService.toFormatDetail(member),
     });
   }
 
@@ -173,7 +166,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      members: members.map((member) => UserService.toFormatDetail(member)),
+      users: members.map((member) => UserService.toFormatDetail(member)),
     });
   }
 
@@ -216,7 +209,7 @@ export class UserController {
 
     return c.json({
       success: true,
-      member: UserService.toFormatDetail(member),
+      user: UserService.toFormatDetail(member),
     });
   }
 
