@@ -484,7 +484,6 @@ export class UserRepository {
       .from(stackTable)
       .where(isNull(stackTable.deletedAt));
 
-    console.log(propaties);
     return propaties.map((p) => {
       return {
         ...p,
@@ -556,7 +555,6 @@ export class UserRepository {
       .from(stackTable)
       .where(isNull(stackTable.deletedAt));
 
-      console.log(propaties);
     return propaties.map((p) => {
       const { address, privateInfo, ...m } = p;
       return {
