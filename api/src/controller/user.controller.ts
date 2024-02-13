@@ -49,7 +49,7 @@ export class UserController {
 
     const member = await UserRepository.getUserById(c, idNum);
     if (member === undefined) {
-      const err = ErrorService.request.notFound('ユーザー');
+      const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
     }
 
@@ -74,6 +74,12 @@ export class UserController {
     }
 
     const editMember = await UserRepository.getUserById(c, idNum);
+
+    if (editMember === undefined) {
+      const err = ErrorService.request.userNotFound();
+      return c.json(err.err, err.status);
+    }
+
     const editedUser = await UserRepository.updateUser(
       c,
       idNum,
@@ -104,7 +110,7 @@ export class UserController {
     const member = await UserRepository.getApprovedUserById(c, idNum);
 
     if (member === undefined) {
-      const err = ErrorService.request.notFound('ユーザー');
+      const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
     }
 
@@ -149,7 +155,7 @@ export class UserController {
     );
 
     if (member === undefined) {
-      const err = ErrorService.request.notFound('ユーザー');
+      const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
     }
 
@@ -192,7 +198,7 @@ export class UserController {
 
     const member = await UserRepository.approveUser(c, approvedId, idNum);
     if (member === undefined) {
-      const err = ErrorService.request.notFound('ユーザー');
+      const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
     }
 
@@ -226,7 +232,7 @@ export class UserController {
     const newUserUid = await UserRepository.getUserUidById(c, idNum);
 
     if (newUserUid === undefined) {
-      const err = ErrorService.request.notFound('ユーザー');
+      const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
     }
 
@@ -276,7 +282,7 @@ export class UserController {
     const deleteOfficerUid = await UserRepository.getUserUidById(c, idNum);
 
     if (deleteOfficerUid === undefined) {
-      const err = ErrorService.request.notFound('ユーザー');
+      const err = ErrorService.request.userNotFound();
       return c.json(err.err, err.status);
     }
 

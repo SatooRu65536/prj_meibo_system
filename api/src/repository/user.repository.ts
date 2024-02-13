@@ -37,7 +37,7 @@ export class UserRepository {
     const [user] = await db
       .select({ uid: memberTable.uid })
       .from(memberTable)
-      .where(eq(memberTable.id, id));
+      .where(and(eq(memberTable.id, id), isNull(memberTable.deletedAt)));
 
     return user?.uid;
   }

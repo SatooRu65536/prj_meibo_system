@@ -124,11 +124,22 @@ const notFound = (key: string): ErrorStruct => ({
   status: 404,
 });
 
+// ユーザーが見つからない
+const userNotFound = (): ErrorStruct => ({
+  err: {
+    success: false,
+    key: 'C3',
+    message: 'ユーザーが見つかりません',
+    approach: 'ユーザーIDを確認してください',
+  },
+  status: 404,
+});
+
 // すでに承認済み
 const alreadyApproved = (): ErrorStruct => ({
   err: {
     success: false,
-    key: 'C3',
+    key: 'C4',
     message: 'すでに承認済みです',
   },
   status: 400,
@@ -138,7 +149,7 @@ const alreadyApproved = (): ErrorStruct => ({
 const approveFailed = (): ErrorStruct => ({
   err: {
     success: false,
-    key: 'C4',
+    key: 'C5',
     message: '承認に失敗しました',
     approach: 'メンバーIDを確認してください',
   },
@@ -149,7 +160,7 @@ const approveFailed = (): ErrorStruct => ({
 const alreadyApprovedOfficer = (): ErrorStruct => ({
   err: {
     success: false,
-    key: 'C5',
+    key: 'C6',
     message: 'すでに管理者承認済みです',
   },
   status: 400,
@@ -159,7 +170,7 @@ const alreadyApprovedOfficer = (): ErrorStruct => ({
 const notApprovedOfficer = (): ErrorStruct => ({
   err: {
     success: false,
-    key: 'C6',
+    key: 'C7',
     message: '管理者承認されていません',
     approach: 'メンバーIDを確認してください',
   },
@@ -170,7 +181,7 @@ const notApprovedOfficer = (): ErrorStruct => ({
 const deleteOfficerFailed = (): ErrorStruct => ({
   err: {
     success: false,
-    key: 'C7',
+    key: 'C8',
     message: '管理者解除に失敗しました',
     approach: 'メンバーIDを確認してください',
   },
@@ -180,6 +191,7 @@ const deleteOfficerFailed = (): ErrorStruct => ({
 const RequestError = {
   invalidRequest,
   validationError,
+  userNotFound,
   notFound,
   alreadyApproved,
   approveFailed,
