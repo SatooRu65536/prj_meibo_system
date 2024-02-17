@@ -4,7 +4,17 @@ import {
   officerTable,
   stackTable,
 } from '../models/schema';
-import { SQL, and, desc, eq, gte, isNotNull, isNull, max } from 'drizzle-orm';
+import {
+  SQL,
+  and,
+  desc,
+  eq,
+  gte,
+  inArray,
+  isNotNull,
+  isNull,
+  max,
+} from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
 import { UnwrapPromise, ReturnType } from '@/types';
@@ -38,6 +48,24 @@ export class UserRepository {
       );
 
     return user?.uid;
+  }
+
+  static async getUserUidsByIds(c: CustomContext<string>, ids: number[]) {
+    const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
+    const res = await db
+      .select({ uid: memberTable.uid })
+      .from(memberTable)
+      .where(
+        and(
+          inArray(memberTable.id, ids),
+          isNull(memberTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
+        ),
+      );
+
+    return res.map((r) => r.uid);
   }
 
   /**

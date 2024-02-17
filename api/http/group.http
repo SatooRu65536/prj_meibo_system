@@ -16,3 +16,5 @@ Authorization: Bearer {{token}}
 ### グループ削除
 DELETE {{host}}/api/group/3 HTTP/1.1
 Authorization: Bearer {{token}}
+
+### グループにメンバーを追加する

@@ -2,8 +2,10 @@ import { CustomContext } from '@/types/context';
 import { admin } from '../decorator';
 import { GroupRepository } from '../repository/group.repository';
 import { ErrorService } from '../service/error.service';
-import { GroupNameTable } from '@/types/table';
+import { GroupMemberTable, GroupNameTable } from '@/types/table';
 import { CustomResponse } from '@/types/response';
+import { AddToGroupSchema } from '../validation/gourp';
+import { UserRepository } from '../repository/user.repository';
 
 export class GroupController {
   /**
@@ -57,5 +59,47 @@ export class GroupController {
     }
 
     return c.json({ success: true, group });
+  }
+
+  /**
+   * メンバーをグループに追加する
+   */
+  @admin
+  static async add(
+    c: CustomContext<'/api/group/:id'>,
+  ): CustomResponse<{ groups: GroupMemberTable[] }> {
+    const { ids } = await c.req.json<AddToGroupSchema>();
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const uids = await UserRepository.getUserUidsByIds(c, ids);
+
+    const res = await GroupRepository.add(c, idNum, uids);
+    return c.json({ success: true, groups: res });
+  }
+
+  /**
+   * メンバーをグループから削除する
+   */
+  @admin
+  static async remove(c: CustomContext<'/api/group/:id'>) {
+    const { ids } = await c.req.json<AddToGroupSchema>();
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const uids = await UserRepository.getUserUidsByIds(c, ids);
+
+    const res = await GroupRepository.remove(c, idNum, uids);
+    return c.json({ success: true, groups: res });
   }
 }

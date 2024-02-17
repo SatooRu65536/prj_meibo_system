@@ -1,8 +1,8 @@
 import { CustomContext } from '@/types/context';
 import { drizzle } from 'drizzle-orm/d1';
-import { groupNameTable } from '../models/schema';
+import { groupMemberTable, groupNameTable } from '../models/schema';
 import { GroupSchema } from '../validation/gourp';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 
 export class GroupRepository {
   /**
@@ -38,6 +38,37 @@ export class GroupRepository {
       .delete(groupNameTable)
       .where(eq(groupNameTable.id, id))
       .returning();
+    return res;
+  }
+
+  /**
+   * メンバーを追加する
+   */
+  static async add(c: CustomContext<string>, groupId: number, uids: string[]) {
+    const db = drizzle(c.env.DB);
+    const res = await db
+      .insert(groupMemberTable)
+      .values(uids.map((uid) => ({ groupId, uid })))
+      .returning();
+
+    return res;
+  }
+
+  /**
+   * メンバーを削除する
+   */
+  static async remove(c: CustomContext<string>, groupId: number, uids: string[]) {
+    const db = drizzle(c.env.DB);
+    const res = await db
+      .delete(groupMemberTable)
+      .where(
+        eq(
+          eq(groupMemberTable.id, groupId),
+          inArray(groupMemberTable.uid, uids),
+        ),
+      )
+      .returning();
+
     return res;
   }
 }

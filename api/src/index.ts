@@ -9,7 +9,12 @@ import { UserSchema, userSchema } from './validation/user';
 import { OfficerController } from './controller/officer.controller';
 import { PaymentController } from './controller/payment.controller';
 import { GroupController } from './controller/goup.controller';
-import { GroupSchema, goupSchema } from './validation/gourp';
+import {
+  GroupSchema,
+  addToGroupSchema,
+  goupSchema,
+  AddToGroupSchema,
+} from './validation/gourp';
 
 const app = new Hono<Env>();
 
@@ -116,6 +121,28 @@ app.get('/api/groups', async (c) => await GroupController.getAllGroups(c));
 
 // [DELETE] /api/group/:id
 app.delete('/api/group/:id', async (c) => await GroupController.delete(c));
+
+// [POST] /api/group/:id グループに追加する
+app.post(
+  '/api/group/:id',
+  zValidator(
+    'json',
+    addToGroupSchema,
+    zodHook<AddToGroupSchema, CustomContext<'/api/group/:id'>>,
+  ),
+  async (c) => await GroupController.add(c),
+);
+
+// [DELETE] /api/group/:id グループに追加する
+app.delete(
+  '/api/group/:id',
+  zValidator(
+    'json',
+    addToGroupSchema,
+    zodHook<AddToGroupSchema, CustomContext<'/api/group/:id'>>,
+  ),
+  async (c) => await GroupController.add(c),
+);
 
 app.all('*', (c) => c.text('Not Found', 404));
 
