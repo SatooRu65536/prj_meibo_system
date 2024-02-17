@@ -33,6 +33,11 @@ app.post(
 // [POST] /api/user/continue 継続登録
 app.post(
   '/api/user/continue',
+  zValidator(
+    'json',
+    userSchema,
+    zodHook<UserSchema, CustomContext<'/api/user'>>,
+  ),
   async (c) => await UserController.continueRegister(c),
 );
 
