@@ -112,7 +112,7 @@ app.post(
 );
 
 // [GET] /api/groups
-app.get('/api/groups', async (c) => await GroupController.getAllGroups());
+app.get('/api/groups', async (c) => await GroupController.getAllGroups(c));
 
 app.all('*', (c) => c.text('Not Found', 404));
 
