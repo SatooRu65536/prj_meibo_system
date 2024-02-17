@@ -6,6 +6,7 @@ import { GroupMemberTable, GroupNameTable } from '@/types/table';
 import { CustomResponse } from '@/types/response';
 import { AddToGroupSchema } from '../validation/gourp';
 import { UserRepository } from '../repository/user.repository';
+import { GroupMember } from '@/types/group';
 
 export class GroupController {
   /**
@@ -23,6 +24,31 @@ export class GroupController {
     }
 
     return c.json({ success: true, group: res });
+  }
+
+  /**
+   * グループ情報を取得する
+   */
+  @admin
+  static async getGroup(
+    c: CustomContext<'/api/group/:id'>,
+  ): CustomResponse<{ group: GroupMember }> {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const group = await GroupRepository.getGroup(c, idNum);
+
+    if (group === null) {
+      const error = ErrorService.group.groupNotFound();
+      return c.json(error.err, error.status);
+    }
+
+    return c.json({ success: true, group });
   }
 
   /**

@@ -133,6 +133,9 @@ app.post(
   async (c) => await GroupController.add(c),
 );
 
+// [GET] /api/group/:id グループ情報を取得する
+app.get('/api/group/:id', async (c) => await GroupController.getGroup(c));
+
 // [DELETE] /api/group/:id グループに追加する
 app.delete(
   '/api/group/:id',

@@ -21,6 +21,27 @@ export class GroupRepository {
     return res;
   }
 
+  static async getGroup(c: CustomContext<':id'>, id: number) {
+    const db = drizzle(c.env.DB);
+
+    const [group] = await db
+      .select()
+      .from(groupNameTable)
+      .where(eq(groupNameTable.id, id));
+
+    if (group === undefined) return null;
+
+    const res = await db
+      .select()
+      .from(groupMemberTable)
+      .where(eq(groupMemberTable.groupId, id));
+
+    return {
+      ...group,
+      members: res.map((r) => r.id),
+    };
+  }
+
   /**
    * グループ一覧を取得する
    */
@@ -34,10 +55,13 @@ export class GroupRepository {
    */
   static async delete(c: CustomContext<string>, id: number) {
     const db = drizzle(c.env.DB);
-    const [res] = await db
-      .delete(groupNameTable)
-      .where(eq(groupNameTable.id, id))
-      .returning();
+    const [[res]] = await db.batch([
+      db.delete(groupNameTable).where(eq(groupNameTable.id, id)).returning(),
+      db
+        .delete(groupMemberTable)
+        .where(eq(groupMemberTable.groupId, id))
+        .returning(),
+    ]);
     return res;
   }
 
@@ -57,7 +81,11 @@ export class GroupRepository {
   /**
    * メンバーを削除する
    */
-  static async remove(c: CustomContext<string>, groupId: number, uids: string[]) {
+  static async remove(
+    c: CustomContext<string>,
+    groupId: number,
+    uids: string[],
+  ) {
     const db = drizzle(c.env.DB);
     const res = await db
       .delete(groupMemberTable)
