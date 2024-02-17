@@ -146,6 +146,16 @@ const deleteOfficerFailed = (): ErrorStruct => ({
   status: 400,
 });
 
+// グループはすでに存在しています
+const groupAlreadyExist = (): ErrorStruct => ({
+  err: {
+    key: 'C9',
+    message: '指定されたグループ名はすでに存在しています',
+    success: false,
+  },
+  status: 400,
+});
+
 const RequestError = {
   invalidRequest,
   validationError,
@@ -156,6 +166,7 @@ const RequestError = {
   alreadyApprovedOfficer,
   notApprovedOfficer,
   deleteOfficerFailed,
+  groupAlreadyExist,
 };
 
 // 支払い情報の追加に失敗

@@ -5,9 +5,11 @@ import { CustomContext, Env } from '@/types/context';
 import { verifyFirebaseAuth } from './service/auth.service';
 import { zodHook } from './validation';
 import { zValidator } from '@hono/zod-validator';
-import { UserSchema, userSchema } from './validation/createUser';
+import { UserSchema, userSchema } from './validation/user';
 import { OfficerController } from './controller/officer.controller';
 import { PaymentController } from './controller/payment.controller';
+import { GroupController } from './controller/goup.controller';
+import { GroupSchema, goupSchema } from './validation/gourp';
 
 const app = new Hono<Env>();
 
@@ -91,6 +93,17 @@ app.post('/api/user/:id/payment', async (c) => await PaymentController.paid(c));
 app.put(
   '/api/user/:id/payment',
   async (c) => await PaymentController.confirme(c),
+);
+
+// [POST] /api/group/ グループを作成
+app.post(
+  '/api/group',
+  zValidator(
+    'json',
+    goupSchema,
+    zodHook<GroupSchema, CustomContext<'/api/group'>>,
+  ),
+  async (c) => await GroupController.create(c),
 );
 
 app.all('*', (c) => c.text('Not Found', 404));

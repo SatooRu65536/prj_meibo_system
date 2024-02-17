@@ -1,5 +1,5 @@
 import { CustomContext } from '@/types/context';
-import { userSchema, UserSchema } from './createUser';
+import { userSchema, UserSchema } from './user';
 import { TypedResponse } from 'hono';
 import { ErrorResponse } from '@/types/response';
 import { ZodError } from 'zod';

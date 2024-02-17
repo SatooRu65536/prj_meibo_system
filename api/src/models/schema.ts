@@ -92,3 +92,20 @@ export const paymentTable = sqliteTable('payment', {
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull(),
 });
+
+// グループ化
+export const groupNameTable = sqliteTable('group_name', {
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
+  name: text('name').notNull().unique(),
+  createdAt: integer('created_at').notNull(),
+});
+
+export const groupMemberTable = sqliteTable('group_member', {
+  id: integer('id', { mode: 'number' })
+    .notNull()
+    .primaryKey({ autoIncrement: true }),
+  groupId: integer('group_id').notNull(),
+  uid: text('uid').notNull(),
+});

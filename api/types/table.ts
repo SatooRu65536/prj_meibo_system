@@ -1,5 +1,11 @@
 import { Grade } from './member';
 
+export type GroupNameTable = {
+  id: number;
+  name: string;
+  createdAt: number;
+};
+
 export type OfficerTable = {
   id: number;
   uid: string;
