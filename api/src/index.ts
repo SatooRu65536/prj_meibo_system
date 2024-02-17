@@ -100,7 +100,7 @@ app.put(
   async (c) => await PaymentController.confirme(c),
 );
 
-// [POST] /api/group/ グループを作成
+// [POST] /api/group グループを作成
 app.post(
   '/api/group',
   zValidator(
@@ -110,6 +110,9 @@ app.post(
   ),
   async (c) => await GroupController.create(c),
 );
+
+// [GET] /api/groups
+app.get('/api/groups', async (c) => await GroupController.getAllGroups());
 
 app.all('*', (c) => c.text('Not Found', 404));
 

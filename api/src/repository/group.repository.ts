@@ -16,4 +16,9 @@ export class GroupRepository {
 
     return res;
   }
+
+  static async getAllGroups(c: CustomContext<string>) {
+    const db = drizzle(c.env.DB);
+    return await db.select().from(groupNameTable);
+  }
 }

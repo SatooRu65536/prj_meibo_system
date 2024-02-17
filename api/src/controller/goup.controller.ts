@@ -12,7 +12,7 @@ export class GroupController {
   @admin
   static async create(
     c: CustomContext<string>,
-  ): CustomResponse<{ groupName: GroupNameTable }> {
+  ): CustomResponse<{ group: GroupNameTable }> {
     const res = await GroupRepository.create(c).catch((err) => null);
 
     if (res === null) {
@@ -20,6 +20,17 @@ export class GroupController {
       return c.json(error.err, error.status);
     }
 
-    return c.json({ success: true, groupName: res });
+    return c.json({ success: true, group: res });
+  }
+
+  /**
+   * グループ一覧を取得する
+   */
+  @admin
+  static async getAllGroups(
+    c: CustomContext<string>,
+  ): CustomResponse<{ groups: GroupNameTable[] }> {
+    const groups = await GroupRepository.getAllGroups(c);
+    return c.json({ success: true, groups });
   }
 }
