@@ -326,9 +326,24 @@ const UserError = {
   notApproved,
 };
 
+// グループが存在していません
+const groupNotFound = (): ErrorStruct => ({
+  err: {
+    key: 'F0',
+    message: 'グループが存在しません',
+    success: false,
+  },
+  status: 400,
+});
+
+const GroupError = {
+  groupNotFound,
+};
+
 export const ErrorService = {
   auth: AuthError,
   request: RequestError,
   payment: PaymentError,
   user: UserError,
+  group: GroupError,
 };

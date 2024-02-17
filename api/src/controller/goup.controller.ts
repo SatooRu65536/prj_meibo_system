@@ -28,9 +28,34 @@ export class GroupController {
    */
   @admin
   static async getAllGroups(
-    c: CustomContext<string>,
+    c: CustomContext<'/api/groups'>,
   ): CustomResponse<{ groups: GroupNameTable[] }> {
     const groups = await GroupRepository.getAllGroups(c);
     return c.json({ success: true, groups });
+  }
+
+  /**
+   * グループを削除する
+   */
+  @admin
+  static async delete(
+    c: CustomContext<'/api/group/:id'>,
+  ): CustomResponse<{ group: GroupNameTable }> {
+    const { id } = c.req.param();
+    const idNum = Number(id);
+
+    if (isNaN(idNum)) {
+      const err = ErrorService.request.invalidRequest('id', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const group = await GroupRepository.delete(c, idNum);
+
+    if (group === undefined) {
+      const err = ErrorService.group.groupNotFound();
+      return c.json(err.err, err.status);
+    }
+
+    return c.json({ success: true, group });
   }
 }

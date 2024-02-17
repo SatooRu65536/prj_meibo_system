@@ -114,6 +114,9 @@ app.post(
 // [GET] /api/groups
 app.get('/api/groups', async (c) => await GroupController.getAllGroups(c));
 
+// [DELETE] /api/group/:id
+app.delete('/api/group/:id', async (c) => await GroupController.delete(c));
+
 app.all('*', (c) => c.text('Not Found', 404));
 
 export default app;
