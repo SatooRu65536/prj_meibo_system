@@ -1,14 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import styles from './registration.module.scss';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import { validateMember } from '@/components/validation';
-import { ROUTES } from '@/const/path';
 import { useUserState } from '@/globalStates/firebaseUserState';
 import getLocalstorage, {
   setLocalstorage,
@@ -18,10 +22,11 @@ import { MemberError, MemberType } from '@/type/member';
 
 type Porps = {
   isEditing: boolean;
+  setToPayeePage: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function RegistrationPage(props: Porps) {
-  const { isEditing } = props;
+  const { isEditing, setToPayeePage } = props;
 
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState<MemberError>({});
@@ -29,7 +34,6 @@ export default function RegistrationPage(props: Porps) {
     boolean | undefined
   >(undefined);
   const user = useUserState();
-  const router = useRouter();
   const [editMember, dispatch] = useMember();
 
   useEffect(() => {
@@ -62,7 +66,7 @@ export default function RegistrationPage(props: Porps) {
     }
 
     if (isEditing) alert('変更しました');
-    else router.push(ROUTES.payment.path);
+    else setToPayeePage(true);
   }
 
   return (
