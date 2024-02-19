@@ -34,11 +34,12 @@ export default function RegistrationPage(props: Porps) {
 
   useEffect(() => {
     const iconUrl = user?.photoURL;
-    if (!iconUrl) return;
+    if (!iconUrl || editMember.iconUrl) return;
+
     dispatch.setIconUrl(iconUrl);
     dispatch.setEmail(user?.email ?? '');
     setLoaded(true);
-  }, [dispatch, user]);
+  }, [dispatch, editMember.iconUrl, user]);
 
   useEffect(() => {
     if (isLivingWithParents !== undefined) {

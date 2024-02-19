@@ -36,12 +36,12 @@ export default function useMember() {
     const [lastName, firstName] = names.filter((n) => n !== '');
     setEditMemberState((prev) => ({ ...prev, lastName, firstName }));
   }
-  
+
   /**
    * 読み仮名をセットする
    * @param kana {string}
-  */
- function setKana(kana: string) {
+   */
+  function setKana(kana: string) {
     // eslint-disable-next-line no-irregular-whitespace
     const kanas = kana.split(/[ 　]/);
     const [lastNameKana, firstNameKana] = kanas.filter((n) => n !== '');
@@ -255,7 +255,6 @@ export default function useMember() {
   }
 
   useEffect(() => {
-    console.log(editMember);
     setLocalstorage('editMember', editMember);
   }, [editMember]);
 
