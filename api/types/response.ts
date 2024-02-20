@@ -1,11 +1,11 @@
 import { TypedResponse } from 'hono';
 
 type SuccessResponse<T> = {
-  success: true;
+  ok: true;
 } & T;
 
 export type ErrorResponse = {
-  success: false;
+  ok: false;
   key: string;
   message: string;
   approach?: string;

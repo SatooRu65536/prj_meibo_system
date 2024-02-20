@@ -7,7 +7,7 @@ type ErrorStruct = {
 
 const notFoundToken = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'A0',
     message: 'トークンを取得できませんでした',
     approach: 'ログインし直してください',
@@ -17,7 +17,7 @@ const notFoundToken = (): ErrorStruct => ({
 
 const failedAuth = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'A1',
     message: '認証に失敗しました',
     approach: 'ログインし直してください',
@@ -27,7 +27,7 @@ const failedAuth = (): ErrorStruct => ({
 
 const notAdmin = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'A2',
     message: '管理者権限が必要です',
     approach: '管理者に問い合わせてください',
@@ -37,7 +37,7 @@ const notAdmin = (): ErrorStruct => ({
 
 const notSelfOrAdmin = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'A3',
     message: '本人もしくは管理者権限が必要です',
     approach: '管理者に問い合わせてください',
@@ -55,7 +55,7 @@ const AuthError = {
 type Type = '文字列' | '数値' | '真偽値' | 'オブジェクト' | '配列';
 const invalidRequest = (key: string | number, type: Type): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C0',
     message: `${key} が不正な値です. ${key} は ${type} である必要があります`,
   },
@@ -64,7 +64,7 @@ const invalidRequest = (key: string | number, type: Type): ErrorStruct => ({
 
 const validationError = (message: string): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C1',
     message,
   },
@@ -74,7 +74,7 @@ const validationError = (message: string): ErrorStruct => ({
 // 情報が見つからない
 const notFound = (key: string): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C2',
     message: `${key} が見つかりません`,
     approach: '正しい情報を入力してください',
@@ -85,7 +85,7 @@ const notFound = (key: string): ErrorStruct => ({
 // ユーザーが見つからない
 const userNotFound = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C3',
     message: 'ユーザーが見つかりません',
     approach: 'ユーザーIDを確認してください',
@@ -96,7 +96,7 @@ const userNotFound = (): ErrorStruct => ({
 // すでに承認済み
 const alreadyApproved = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C4',
     message: 'すでに承認済みです',
   },
@@ -106,7 +106,7 @@ const alreadyApproved = (): ErrorStruct => ({
 // 承認に失敗
 const approveFailed = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C5',
     message: '承認に失敗しました',
     approach: 'メンバーIDを確認してください',
@@ -117,7 +117,7 @@ const approveFailed = (): ErrorStruct => ({
 // すでに管理者承認済み
 const alreadyApprovedOfficer = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C6',
     message: 'すでに管理者承認済みです',
   },
@@ -127,7 +127,7 @@ const alreadyApprovedOfficer = (): ErrorStruct => ({
 // 管理者承認されていない
 const notApprovedOfficer = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C7',
     message: '管理者承認されていません',
     approach: 'メンバーIDを確認してください',
@@ -138,7 +138,7 @@ const notApprovedOfficer = (): ErrorStruct => ({
 // 管理者解除に失敗
 const deleteOfficerFailed = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'C8',
     message: '管理者解除に失敗しました',
     approach: 'メンバーIDを確認してください',
@@ -151,7 +151,7 @@ const groupAlreadyExist = (): ErrorStruct => ({
   err: {
     key: 'C9',
     message: '指定されたグループ名はすでに存在しています',
-    success: false,
+    ok: false,
   },
   status: 400,
 });
@@ -172,7 +172,7 @@ const RequestError = {
 // 支払い情報の追加に失敗
 const failedPayment = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D0',
     message: '支払い情報の追加に失敗しました',
   },
@@ -182,7 +182,7 @@ const failedPayment = (): ErrorStruct => ({
 // 受け取り情報の追加に失敗
 const failedConfirme = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D1',
     message: '受け取り情報の追加に失敗しました',
     approach: 'お金の受け取りが完了しているか確認してください',
@@ -193,7 +193,7 @@ const failedConfirme = (): ErrorStruct => ({
 // 支払い前
 const notPaid = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D2',
     message: '支払いが完了していません',
     approach: 'お金の支払いが完了しているか確認してください',
@@ -204,7 +204,7 @@ const notPaid = (): ErrorStruct => ({
 // 支払い済み
 const alreadyPaid = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D3',
     message: '支払いが完了しています',
   },
@@ -214,7 +214,7 @@ const alreadyPaid = (): ErrorStruct => ({
 // 受け取り前
 const notConfirmed = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D4',
     message: '受け取りが完了していません',
     approach: 'お金の受け取りが完了しているか確認してください',
@@ -225,7 +225,7 @@ const notConfirmed = (): ErrorStruct => ({
 // 受け取り済み
 const alreadyConfirmed = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D5',
     message: '受け取りが完了しています',
   },
@@ -235,7 +235,7 @@ const alreadyConfirmed = (): ErrorStruct => ({
 // 受け取り可能な状態ではありません
 const notAvailable = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'D6',
     message: '受け取り可能な状態ではありません',
     approach: 'お金の受け取りが完了しているか確認してください',
@@ -256,7 +256,7 @@ const PaymentError = {
 // 無効化されています
 const deactivated = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'E0',
     message: '無効化されています',
     approach: '継続登録を行なってください',
@@ -267,7 +267,7 @@ const deactivated = (): ErrorStruct => ({
 // 無効化されていません
 const notDeactivated = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'E1',
     message: '無効化されていません',
     approach: '新規登録を行ってください',
@@ -278,7 +278,7 @@ const notDeactivated = (): ErrorStruct => ({
 // ユーザー登録されていません
 const notRegistered = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'E2',
     message: 'ユーザー登録されていません',
     approach: 'ユーザー登録を行ってください',
@@ -289,7 +289,7 @@ const notRegistered = (): ErrorStruct => ({
 // 登録済みです
 const registered = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'E3',
     message: '登録済みです',
   },
@@ -299,7 +299,7 @@ const registered = (): ErrorStruct => ({
 // 承認済みです
 const approved = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'E4',
     message: '承認済みです',
   },
@@ -309,7 +309,7 @@ const approved = (): ErrorStruct => ({
 // 承認されていません
 const notApproved = (): ErrorStruct => ({
   err: {
-    success: false,
+    ok: false,
     key: 'E4',
     message: '承認されていません',
     approach: '管理者が承認するまでお待ちください',
@@ -331,7 +331,7 @@ const groupNotFound = (): ErrorStruct => ({
   err: {
     key: 'F0',
     message: 'グループが存在しません',
-    success: false,
+    ok: false,
   },
   status: 400,
 });

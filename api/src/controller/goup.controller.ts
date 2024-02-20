@@ -23,7 +23,7 @@ export class GroupController {
       return c.json(error.err, error.status);
     }
 
-    return c.json({ success: true, group: res });
+    return c.json({ ok: true, group: res });
   }
 
   /**
@@ -48,7 +48,7 @@ export class GroupController {
       return c.json(error.err, error.status);
     }
 
-    return c.json({ success: true, group });
+    return c.json({ ok: true, group });
   }
 
   /**
@@ -59,7 +59,7 @@ export class GroupController {
     c: CustomContext<'/api/groups'>,
   ): CustomResponse<{ groups: GroupNameTable[] }> {
     const groups = await GroupRepository.getAllGroups(c);
-    return c.json({ success: true, groups });
+    return c.json({ ok: true, groups });
   }
 
   /**
@@ -84,7 +84,7 @@ export class GroupController {
       return c.json(err.err, err.status);
     }
 
-    return c.json({ success: true, group });
+    return c.json({ ok: true, group });
   }
 
   /**
@@ -106,7 +106,7 @@ export class GroupController {
     const uids = await UserRepository.getUserUidsByIds(c, ids);
 
     const res = await GroupRepository.add(c, idNum, uids);
-    return c.json({ success: true, groups: res });
+    return c.json({ ok: true, groups: res });
   }
 
   /**
@@ -126,6 +126,6 @@ export class GroupController {
     const uids = await UserRepository.getUserUidsByIds(c, ids);
 
     const res = await GroupRepository.remove(c, idNum, uids);
-    return c.json({ success: true, groups: res });
+    return c.json({ ok: true, groups: res });
   }
 }

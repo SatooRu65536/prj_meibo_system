@@ -45,7 +45,7 @@ export class PaymentController {
       return c.json(err.err, err.status);
     }
 
-    return c.json({ success: true, payment });
+    return c.json({ ok: true, payment });
   }
 
   @admin
@@ -82,6 +82,6 @@ export class PaymentController {
       return c.json(err.err, err.status);
     }
 
-    return c.json({ success: true, payment });
+    return c.json({ ok: true, payment });
   }
 }

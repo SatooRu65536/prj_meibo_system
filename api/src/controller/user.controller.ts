@@ -35,7 +35,7 @@ export class UserController {
     const member = await UserRepository.createUser(c, user.uid);
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormatDetail(member),
     });
   }
@@ -56,7 +56,7 @@ export class UserController {
     const member = await UserRepository.continueRegister(c, user.uid);
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormatDetail(member),
     });
   }
@@ -84,7 +84,7 @@ export class UserController {
     const deleteUser = await UserRepository.deleteUser(c, member.uid);
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormatDetail(deleteUser),
     });
   }
@@ -117,7 +117,7 @@ export class UserController {
     );
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormatDetail(editedUser),
     });
   }
@@ -145,7 +145,7 @@ export class UserController {
     }
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormat(member),
     });
   }
@@ -160,7 +160,7 @@ export class UserController {
     const members = await UserRepository.getApprovedUsers(c);
 
     return c.json({
-      success: true,
+      ok: true,
       users: members.map((member) => UserService.toFormat(member)),
     });
   }
@@ -192,7 +192,7 @@ export class UserController {
     }
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormatDetail(member),
     });
   }
@@ -207,7 +207,7 @@ export class UserController {
     const members = await UserRepository.getApprovedUsers(c);
 
     return c.json({
-      success: true,
+      ok: true,
       users: members.map((member) => UserService.toFormatDetail(member)),
     });
   }
@@ -252,7 +252,7 @@ export class UserController {
     }
 
     return c.json({
-      success: true,
+      ok: true,
       user: UserService.toFormatDetail(member),
     });
   }
@@ -281,6 +281,6 @@ export class UserController {
 
     const state = await StateRepository.getStateByUid(c, member.uid);
 
-    return c.json({ success: true, state });
+    return c.json({ ok: true, state });
   }
 }

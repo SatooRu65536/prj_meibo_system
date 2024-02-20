@@ -25,7 +25,7 @@ app.use('*', verifyFirebaseAuth({ projectId: 'meibo-system' }));
 app.get('/', (c) => c.text('Hello Hono!'));
 
 // [POST] /api/user 新規ユーザー登録
-app.post(
+const postUser = app.post(
   '/api/user',
   zValidator(
     'json',
@@ -36,7 +36,7 @@ app.post(
 );
 
 // [POST] /api/user/continue 継続登録
-app.post(
+const postUserContinue = app.post(
   '/api/user/continue',
   zValidator(
     'json',
@@ -47,7 +47,7 @@ app.post(
 );
 
 // [PUT] /api/user/:id 編集
-app.put(
+const putUserId = app.put(
   '/api/user/:id',
   zValidator(
     'json',
@@ -58,55 +58,73 @@ app.put(
 );
 
 // [DELETE] /api/user/:id ユーザー削除
-app.delete('/api/user/:id', async (c) => await UserController.deleteUser(c));
+const deleteUserId = app.delete(
+  '/api/user/:id',
+  async (c) => await UserController.deleteUser(c),
+);
 
 // [GET] /api/user/:id ユーザー情報詳細取得
-app.get('/api/user/:id', async (c) => await UserController.getUser(c));
+const GetUserId = app.get(
+  '/api/user/:id',
+  async (c) => await UserController.getUser(c),
+);
 
 // [GET] /api/users ユーザー一覧取得
-app.get('/api/users', async (c) => await UserController.getUsers(c));
+const getUsers = app.get(
+  '/api/users',
+  async (c) => await UserController.getUsers(c),
+);
 
 // [GET] /api/user/detail ユーザー情報詳細取得
-app.get(
+const getUserdetail = app.get(
   '/api/user/:id/detail',
   async (c) => await UserController.getUserDetail(c),
 );
 
 // [GET] /api/user/:id/state ユーザーの状態取得
-app.get('/api/user/:id/state', async (c) => await UserController.state(c));
+const getUserIdState = app.get(
+  '/api/user/:id/state',
+  async (c) => await UserController.state(c),
+);
 
 // [GET] /api/user/:id/detail ユーザーの詳細情報取得
-app.get(
+const getUseridDetail = app.get(
   '/api/users/detail',
   async (c) => await UserController.getUsersDetail(c),
 );
 
 // [PUT] /api/user/:id/approve 承認
-app.put('/api/user/:id/approve', async (c) => await UserController.approve(c));
+const putUserIdApprove = app.put(
+  '/api/user/:id/approve',
+  async (c) => await UserController.approve(c),
+);
 
-// [PUT] /api/user/:id/officer 管理者承認
-app.put(
-  '/api/user/:id/officer',
+// [PUT] /api/user/:id/admin 管理者承認
+const putUserIdOfficer = app.put(
+  '/api/user/:id/admin',
   async (c) => await OfficerController.approve(c),
 );
 
-// [DELETE] /api/user/:id/officer 管理者解除
-app.delete(
-  '/api/user/:id/officer',
+// [DELETE] /api/user/:id/admin 管理者解除
+const deleteUserIdAdmin = app.delete(
+  '/api/user/:id/admin',
   async (c) => await OfficerController.delete(c),
 );
 
 // [POST] /api/user/:id/payment 支払い情報登録
-app.post('/api/user/:id/payment', async (c) => await PaymentController.paid(c));
+const postUserIdPayment = app.post(
+  '/api/user/:id/payment',
+  async (c) => await PaymentController.paid(c),
+);
 
 // [PUT] /api/user/:id/payment 受け取り確認
-app.put(
+const putUseridPayment = app.put(
   '/api/user/:id/payment',
   async (c) => await PaymentController.confirme(c),
 );
 
 // [POST] /api/group グループを作成
-app.post(
+const postGroup = app.post(
   '/api/group',
   zValidator(
     'json',
@@ -116,37 +134,68 @@ app.post(
   async (c) => await GroupController.create(c),
 );
 
-// [GET] /api/groups
-app.get('/api/groups', async (c) => await GroupController.getAllGroups(c));
+// [GET] /api/groups グループ一覧を取得する
+const getGroup = app.get(
+  '/api/groups',
+  async (c) => await GroupController.getAllGroups(c),
+);
 
-// [DELETE] /api/group/:id
-app.delete('/api/group/:id', async (c) => await GroupController.delete(c));
-
-// [POST] /api/group/:id グループに追加する
-app.post(
+// [GET] /api/group/:id グループ情報を取得する
+const getGroupId = app.get(
   '/api/group/:id',
+  async (c) => await GroupController.getGroup(c),
+);
+
+// [DELETE] /api/group/:id グループを削除する
+const deleteGroupId = app.delete(
+  '/api/group/:id',
+  async (c) => await GroupController.delete(c),
+);
+
+// [POST] /api/group/user/:id グループにユーザー追加する
+const postGroupUserId = app.post(
+  '/api/group/user/:id',
   zValidator(
     'json',
     addToGroupSchema,
-    zodHook<AddToGroupSchema, CustomContext<'/api/group/:id'>>,
+    zodHook<AddToGroupSchema, CustomContext<'/api/group/user/:id'>>,
   ),
   async (c) => await GroupController.add(c),
 );
 
-// [GET] /api/group/:id グループ情報を取得する
-app.get('/api/group/:id', async (c) => await GroupController.getGroup(c));
-
 // [DELETE] /api/group/:id グループに追加する
-app.delete(
-  '/api/group/:id',
+const deleteGroupUserId = app.delete(
+  '/api/group/user/:id',
   zValidator(
     'json',
     addToGroupSchema,
     zodHook<AddToGroupSchema, CustomContext<'/api/group/:id'>>,
   ),
-  async (c) => await GroupController.add(c),
+  async (c) => await GroupController.remove(c),
 );
 
 app.all('*', (c) => c.text('Not Found', 404));
 
 export default app;
+export type ApiType = {
+  postUser: typeof postUser;
+  postUserContinue: typeof postUserContinue;
+  putUserId: typeof putUserId;
+  deleteUserId: typeof deleteUserId;
+  GetUserId: typeof GetUserId;
+  getUsers: typeof getUsers;
+  getUserdetail: typeof getUserdetail;
+  getUserIdState: typeof getUserIdState;
+  getUseridDetail: typeof getUseridDetail;
+  putUserIdApprove: typeof putUserIdApprove;
+  putUserIdOfficer: typeof putUserIdOfficer;
+  deleteUserIdAdmin: typeof deleteUserIdAdmin;
+  postUserIdPayment: typeof postUserIdPayment;
+  putUseridPayment: typeof putUseridPayment;
+  postGroup: typeof postGroup;
+  getGroup: typeof getGroup;
+  getGroupId: typeof getGroupId;
+  deleteGroupId: typeof deleteGroupId;
+  postGroupUserId: typeof postGroupUserId;
+  deleteGroupUserId: typeof deleteGroupUserId;
+};

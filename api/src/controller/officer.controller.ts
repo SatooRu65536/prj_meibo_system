@@ -58,7 +58,7 @@ export class OfficerController {
       return c.json(err.err, err.status);
     }
 
-    return c.json({ success: true, officer });
+    return c.json({ ok: true, officer });
   }
 
   /**
@@ -101,6 +101,6 @@ export class OfficerController {
       return c.json(err.err, err.status);
     }
 
-    return c.json({ success: true, officer });
+    return c.json({ ok: true, officer });
   }
 }
