@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <RecoilProvider>
-      <html lang="en">
+      <html lang="ja">
         <body className={inter.className}>
           <Header />
           <LoginCheck>{children}</LoginCheck>

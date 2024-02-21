@@ -5,9 +5,7 @@ import {
   adminOrSelf,
   approved,
   admin,
-  notRegistered,
   notDeactivated,
-  deactivated,
 } from '@/src/decorator';
 import { UserRepository } from '../repository/user.repository';
 import { UserService, UserServiceT } from '../service/user.service';
@@ -18,10 +16,9 @@ import { ReturnType } from '@/types';
 
 export class UserController {
   /**
-   * ユーザー登録
+   * 新規, 継続登録
    */
   @auth
-  @notRegistered
   @notDeactivated
   static async createUser(
     c: CustomContext<'/api/user'>,
@@ -32,29 +29,25 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const member = await UserRepository.createUser(c, user.uid);
+    const isRegistered = await StateRepository.isRegisteredByUid(c, user.uid);
 
-    return c.json({
-      ok: true,
-      user: UserService.toFormatDetail(member),
-    });
-  }
-
-  /**
-   * 継続登録
-   */
-  @deactivated
-  static async continueRegister(
-    c: CustomContext<'/api/user/continue'>,
-  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
-    const user = AuthService.getUser(c);
-    if (!user) {
-      const err = ErrorService.auth.failedAuth();
+    // 既に登録済みの場合はエラー
+    if (isRegistered) {
+      const err = ErrorService.user.registered();
       return c.json(err.err, err.status);
     }
 
-    const member = await UserRepository.continueRegister(c, user.uid);
+    const isDeactivated = await StateRepository.isDeactivatedByUid(c, user.uid);
+    // 無効化されている場合は継続登録
+    if (isDeactivated) {
+      const member = await UserRepository.continueRegister(c, user.uid);
+      return c.json({
+        ok: true,
+        user: UserService.toFormatDetail(member),
+      });
+    }
 
+    const member = await UserRepository.createUser(c, user.uid);
     return c.json({
       ok: true,
       user: UserService.toFormatDetail(member),
@@ -147,6 +140,37 @@ export class UserController {
     return c.json({
       ok: true,
       user: UserService.toFormat(member),
+    });
+  }
+
+  /**
+   * 自分のユーザー情報取得
+   */
+  @approved
+  static async getMe(
+    c: CustomContext<'/api/user'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
+    const user = AuthService.getUser(c);
+
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+
+    // id が一致するユーザー情報を取得
+    const member = await UserRepository.getUserByUidWithPrivateInfo(
+      c,
+      user.uid,
+    );
+
+    if (member === undefined) {
+      const err = ErrorService.request.userNotFound();
+      return c.json(err.err, err.status);
+    }
+
+    return c.json({
+      ok: true,
+      user: UserService.toFormatDetail(member),
     });
   }
 

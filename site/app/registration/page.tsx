@@ -8,7 +8,7 @@ export default function Page() {
   const [toPayeePage, setToPayeePage] = useState(false);
 
   return toPayeePage ? (
-    <PayeePage />
+    <PayeePage isEditing={false} />
   ) : (
     <RegistrationPage setToPayeePage={setToPayeePage} isEditing={false} />
   );

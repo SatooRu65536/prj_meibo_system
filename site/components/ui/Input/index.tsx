@@ -1,4 +1,4 @@
-import { ChangeEvent, HTMLProps, useState } from 'react';
+import { ChangeEvent, HTMLProps, useEffect, useState } from 'react';
 import styles from './input.module.scss';
 
 type InputProps = HTMLProps<HTMLInputElement> & {
@@ -17,6 +17,10 @@ export default function Input(props: InputProps) {
     setValue(e.target.value);
     if (set) set(e.currentTarget.value);
   }
+
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
 
   return (
     <div {...others} className={`${styles.input_container} ${className}`}>

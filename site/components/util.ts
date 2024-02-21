@@ -1,4 +1,4 @@
-import { Member } from '@/type/member';
+import { Member, MemberAll, Nullable } from '@/type/member';
 import { MemberKeysWithPrivateInfo } from '@/type/member';
 
 /**
@@ -65,4 +65,65 @@ export function getMemberInfo(member: Member) {
     case 'external':
       return `${member.organization}(外部)`;
   }
+}
+
+/**
+ * メンバー情報を送信用に変換する
+ * @param member メンバー情報
+ * @param isLivingWithParents 実家住所を使うかどうか
+ * @returns 送信用メンバー情報
+ */
+export function toSendMember(
+  member: Nullable<MemberAll>,
+  isLivingWithParents: boolean | undefined,
+) {
+  const { currentAddress, homeAddress } = member.privateInfo;
+  const homeAddressSnap = isLivingWithParents ? currentAddress : homeAddress;
+
+  const base = {
+    firstName: member.firstName,
+    lastName: member.lastName,
+    firstNameKana: member.firstNameKana,
+    lastNameKana: member.lastNameKana,
+    skills: member.skills,
+    graduationYear: member.graduationYear,
+    slackName: member.slackName,
+    iconUrl: member.iconUrl,
+    privateInfo: {
+      birthdate: member.privateInfo.birthdate,
+      gender: member.privateInfo.gender,
+      phoneNumber: member.privateInfo.phoneNumber,
+      email: member.privateInfo.email,
+      currentAddress: {
+        postalCode: member.privateInfo.currentAddress.postalCode,
+        address: member.privateInfo.currentAddress.address,
+      },
+      homeAddress: homeAddressSnap,
+    },
+  };
+
+  if (member.type === 'active') {
+    return {
+      ...base,
+      type: member.type,
+      studentNumber: member.studentNumber,
+      grade: member.grade,
+      position: member.position,
+    };
+  } else if (member.type === 'obog') {
+    return {
+      ...base,
+      type: member.type,
+      oldPosition: member.oldPosition,
+      oldStudentNumber: member.oldStudentNumber,
+      employment: member.employment,
+    };
+  }
+
+  return {
+    ...base,
+    type: member.type,
+    school: member.school,
+    organization: member.organization,
+  };
 }

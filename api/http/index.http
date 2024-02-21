@@ -10,7 +10,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "member": {
+  "user": {
     "firstName": "さとる2",
     "lastName": "佐藤2",
     "firstNameKana": "サトル",
@@ -46,7 +46,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "member": {
+  "user": {
     "firstName": "さとる更新済",
     "lastName": "佐藤更新済",
     "firstNameKana": "サトルコウシンズミ",
@@ -82,7 +82,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "member": {
+  "user": {
     "firstName": "さとる継続済",
     "lastName": "佐藤継続済",
     "firstNameKana": "サトルケイゾクズミ",

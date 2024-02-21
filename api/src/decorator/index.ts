@@ -141,37 +141,6 @@ export function registered(
 }
 
 /**
- * 未登録か(user を包括)
- */
-export function notRegistered(
-  _target: any,
-  _propertyKey: string,
-  descriptor: PropertyDescriptor,
-) {
-  const originalMethod = descriptor.value;
-
-  descriptor.value = async function (c: CustomContext<string>, ...args: any[]) {
-    const user = AuthService.getUser(c);
-
-    if (!user) {
-      const err = ErrorService.auth.failedAuth();
-      return c.json(err.err, err.status);
-    }
-
-    const isApproved = await StateRepository.isRegisteredByUid(c, user.uid);
-
-    if (isApproved) {
-      const err = ErrorService.user.registered();
-      return c.json(err.err, err.status);
-    }
-
-    return originalMethod.apply(this, [c, ...args]);
-  };
-
-  return descriptor;
-}
-
-/**
  * 承認済みか(user を包括)
  */
 export function approved(

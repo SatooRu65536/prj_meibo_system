@@ -6,7 +6,7 @@ const EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 const PHONE_NUMBER_REGEXP = /^\d{2,4}-\d{2,4}-\d{2,4}$/;
 const POSTAL_CODE_REGEXP = /^\d{3}-\d{4}$/;
 
-// 新規ユーザー登録のバリデーション(ベース)
+// ユーザー登録のバリデーション(ベース)
 const createUserBaseSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
@@ -30,7 +30,10 @@ const createUserBaseSchema = z.object({
     currentAddress: z.object({
       postalCode: z
         .string()
-        .regex(POSTAL_CODE_REGEXP, '郵便番号の形式で入力してください'),
+        .regex(
+          POSTAL_CODE_REGEXP,
+          '郵便番号はの xxx-xxxx の形式で入力してください',
+        ),
       address: z.string(),
     }),
     homeAddress: z.object({
@@ -42,7 +45,7 @@ const createUserBaseSchema = z.object({
   }),
 });
 
-// 新規ユーザー登録のバリデーション(現役生)
+// ユーザー登録のバリデーション(現役生)
 const createActiveUserSchema = createUserBaseSchema.extend({
   type: z.literal('active'),
   studentNumber: z
@@ -52,7 +55,7 @@ const createActiveUserSchema = createUserBaseSchema.extend({
   grade: z.enum(['B1', 'B2', 'B3', 'B4', 'M1', 'M2', 'D1', 'D2', 'その他']),
 });
 
-// 新規ユーザー登録のバリデーション(OB/OG)
+// ユーザー登録のバリデーション(OB/OG)
 const createObogUserSchema = createUserBaseSchema.extend({
   type: z.literal('obog'),
   oldPosition: z.string(),
@@ -60,7 +63,7 @@ const createObogUserSchema = createUserBaseSchema.extend({
   employment: z.string(),
 });
 
-// 新規ユーザー登録のバリデーション(外部)
+// ユーザー登録のバリデーション(外部)
 const createExternalUserSchema = createUserBaseSchema.extend({
   type: z.literal('external'),
   school: z.string(),
@@ -68,19 +71,24 @@ const createExternalUserSchema = createUserBaseSchema.extend({
 });
 
 /**
- * 新規ユーザー登録のバリデーション
+ * ユーザー登録のバリデーション
  * @private
  */
 export const userSchema = z.object({
-  member: z.union([
+  user: z.union([
     createActiveUserSchema,
     createObogUserSchema,
     createExternalUserSchema,
   ]),
 });
 
+export const createUserSchema = userSchema.extend({
+  payeeId: z.number(),
+});
+
 /**
- * 新規ユーザー登録の型
+ * ユーザーの型
  * @private
  */
 export type UserSchema = z.infer<typeof userSchema>;
+export type CreateUserSchema = z.infer<typeof createUserSchema>;

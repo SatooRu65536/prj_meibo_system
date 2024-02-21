@@ -33,9 +33,6 @@ export function zodHook<T, U extends CustomContext<string>>(
   if (res.success) return;
 
   const { issues } = res.error;
-  const message = issues
-    .map((i) => `${i.message} at ${i.path.join(', ')}`)
-    .join('.\n');
-  const err = ErrorService.request.validationError(message);
+  const err = ErrorService.request.validationError(issues);
   return c.json(err.err, err.status);
 }

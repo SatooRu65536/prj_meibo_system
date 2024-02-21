@@ -159,6 +159,22 @@ export class UserRepository {
     return user;
   }
 
+  /**
+   * uidが一致するユーザー詳細情報を取得(承認済)
+   * @param c
+   * @param id
+   * @returns idが一致するユーザー詳細情報を取得(承認済)
+   */
+  static async getUserByUidWithPrivateInfo(
+    c: CustomContext<string>,
+    uid: string,
+  ) {
+    const filter = and(eq(memberTable.uid, uid), isNull(memberTable.deletedAt));
+
+    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
+    return user;
+  }
+
   static async getDeletedUserByUidWithPrivateInfo(
     c: CustomContext<string>,
     id: number,
@@ -201,7 +217,7 @@ export class UserRepository {
    * @return
    */
   static async createUser(c: CustomContext<string>, uid: string) {
-    const { member } = await c.req.json<UserSchema>();
+    const { user } = await c.req.json<UserSchema>();
 
     const db = drizzle(c.env.DB);
     const now = Date.now();
@@ -211,7 +227,7 @@ export class UserRepository {
         .values({ uid: uid, createdAt: now, updatedAt: now, isApproved: 0 })
         .returning({ id: memberTable.id }),
       db.insert(stackTable).values(
-        member.skills.map((s) => ({
+        user.skills.map((s) => ({
           uid: uid,
           name: s,
           createdAt: now,
@@ -219,7 +235,7 @@ export class UserRepository {
       ),
       db
         .insert(memberPropertyTable)
-        .values(UserService.toFlatUser(member, uid, now)),
+        .values(UserService.toFlatUser(user, uid, now)),
     ]);
 
     return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
@@ -231,7 +247,7 @@ export class UserRepository {
    * @param uid
    */
   static async continueRegister(c: CustomContext<string>, uid: string) {
-    const { member } = await c.req.json<UserSchema>();
+    const { user } = await c.req.json<UserSchema>();
 
     const db = drizzle(c.env.DB);
     const now = Date.now();
@@ -245,7 +261,7 @@ export class UserRepository {
         .values({ uid: uid, createdAt: now, updatedAt: now, isApproved: 0 })
         .returning({ id: memberTable.id }),
       db.insert(stackTable).values(
-        member.skills.map((s) => ({
+        user.skills.map((s) => ({
           uid: uid,
           name: s,
           createdAt: now,
@@ -253,7 +269,7 @@ export class UserRepository {
       ),
       db
         .insert(memberPropertyTable)
-        .values(UserService.toFlatUser(member, uid, now)),
+        .values(UserService.toFlatUser(user, uid, now)),
     ]);
 
     return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
@@ -288,7 +304,7 @@ export class UserRepository {
    * @param uid
    */
   static async updateUser(c: CustomContext<string>, id: number, uid: string) {
-    const { member } = await c.req.json<UserSchema>();
+    const { user } = await c.req.json<UserSchema>();
 
     const db = drizzle(c.env.DB);
     const now = Date.now();
@@ -298,7 +314,7 @@ export class UserRepository {
         .set({ deletedAt: now })
         .where(eq(stackTable.uid, uid)),
       db.insert(stackTable).values(
-        member.skills.map((s) => ({
+        user.skills.map((s) => ({
           uid: uid,
           name: s,
           createdAt: now,
@@ -306,7 +322,7 @@ export class UserRepository {
       ),
       db
         .insert(memberPropertyTable)
-        .values(UserService.toFlatUser(member, uid, now)),
+        .values(UserService.toFlatUser(user, uid, now)),
     ]);
 
     return await this.getUserByIdWithPrivateInfo(c, id);

@@ -1,12 +1,13 @@
 'use client';
 
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { baseGetFetcher, basePutFetcher } from '../fetcher';
 import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+  ActiveMember,
+  ExternalMember,
+  OBOGMember,
+  Wrapper,
+} from './_components';
 import styles from './registration.module.scss';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
@@ -17,12 +18,22 @@ import { useUserState } from '@/globalStates/firebaseUserState';
 import getLocalstorage, {
   setLocalstorage,
 } from '@/globalStates/foundations/localstorage';
+import {
+  useLiveWithParentsMutators,
+  useLiveWithParentsState,
+} from '@/globalStates/livingWithParents';
 import useMember from '@/hooks/useMember';
-import { MemberError, MemberType } from '@/type/member';
+import {
+  MemberAll,
+  MemberError,
+  MemberType,
+  MemberWithPrivateInfo,
+} from '@/type/member';
+import { MemberRes } from '@/type/response';
 
 type Porps = {
   isEditing: boolean;
-  setToPayeePage: Dispatch<SetStateAction<boolean>>;
+  setToPayeePage?: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function RegistrationPage(props: Porps) {
@@ -30,11 +41,12 @@ export default function RegistrationPage(props: Porps) {
 
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState<MemberError>({});
-  const [isLivingWithParents, setIsLivingWithParents] = useState<
-    boolean | undefined
-  >(undefined);
+  const isLivingWithParents = useLiveWithParentsState();
+  const { setIsLivingWithParents } = useLiveWithParentsMutators();
   const user = useUserState();
   const [editMember, dispatch] = useMember();
+
+  const ref = useRef(false);
 
   useEffect(() => {
     const iconUrl = user?.photoURL;
@@ -46,6 +58,21 @@ export default function RegistrationPage(props: Porps) {
   }, [dispatch, editMember.iconUrl, user]);
 
   useEffect(() => {
+    if (ref.current) return;
+    ref.current = true;
+
+    (async () => {
+      const token = await user?.getIdToken();
+      const res = await baseGetFetcher<MemberRes<MemberAll>>(
+        '/api/user',
+        token,
+      );
+
+      if (res?.ok) dispatch.setMember(res.user);
+    })();
+  }, [dispatch, user]);
+
+  useEffect(() => {
     if (isLivingWithParents !== undefined) {
       setLocalstorage<boolean>('isLivingWithParents', isLivingWithParents);
       return;
@@ -53,9 +80,13 @@ export default function RegistrationPage(props: Porps) {
 
     const value = getLocalstorage<boolean>('isLivingWithParents', false);
     setIsLivingWithParents(value);
-  }, [isLivingWithParents, editMember.privateInfo.currentAddress]);
+  }, [
+    isLivingWithParents,
+    editMember.privateInfo.currentAddress,
+    setIsLivingWithParents,
+  ]);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (isLivingWithParents === undefined) return;
 
     const [isValid, errors] = validateMember(editMember, isLivingWithParents);
@@ -65,8 +96,36 @@ export default function RegistrationPage(props: Porps) {
       return;
     }
 
-    if (isEditing) alert('変更しました');
-    else setToPayeePage(true);
+    if (!isEditing && setToPayeePage) setToPayeePage(true);
+    else if (isEditing) sendEdited();
+    else
+      alert(
+        'エラーが発生しました\n' +
+          'もう一度お試しください' +
+          'バグなので何度試しても変わらないと思います',
+      );
+  }
+
+  async function sendEdited() {
+    const token = await user?.getIdToken();
+    const res = await basePutFetcher<MemberRes<MemberWithPrivateInfo>>(
+      `/api/user/${editMember.id}`,
+      token,
+      { user: editMember },
+    );
+    if (res === undefined) {
+      alert('エラーが発生しました\nもう一度お試しください');
+      return;
+    } else if (!res.ok) {
+      alert(`${res.message}\n${res.approach ?? ''}`);
+      return;
+    }
+    alert('変更しました');
+  }
+
+  function getFullName(first: string | null, last: string | null): string {
+    if (first === undefined) return last ?? '';
+    return `${last} ${first}`;
   }
 
   return (
@@ -79,11 +138,7 @@ export default function RegistrationPage(props: Porps) {
         <Wrapper title="名前">
           <Input
             type="text"
-            value={
-              editMember.firstName && editMember.lastName
-                ? `${editMember.lastName} ${editMember.firstName}`
-                : ''
-            }
+            value={getFullName(editMember.firstName, editMember.lastName)}
             set={(v) => dispatch.setName(v)}
             placeholder="佐藤 智"
             supplement="姓と名の間には空白を入れてください"
@@ -94,11 +149,10 @@ export default function RegistrationPage(props: Porps) {
         <Wrapper title="名前(フリガナ)">
           <Input
             type="text"
-            value={
-              editMember.firstNameKana && editMember.lastNameKana
-                ? `${editMember.lastNameKana} ${editMember.firstNameKana}`
-                : ''
-            }
+            value={getFullName(
+              editMember.firstNameKana,
+              editMember.lastNameKana,
+            )}
             set={(v) => dispatch.setKana(v)}
             placeholder="サトウ サトル"
             supplement="姓と名の間には空白を入れてください"
@@ -302,192 +356,5 @@ export default function RegistrationPage(props: Porps) {
         </Button>
       </section>
     </main>
-  );
-}
-
-type ActiveMemberProps = {
-  active: boolean;
-  studentNumber: string | null;
-  position: string | null;
-  grade: string | null;
-  // eslint-disable-next-line no-unused-vars
-  setStudentNumber: (value: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setPosition: (value: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setGrade: (value: string) => void;
-  errors: MemberError;
-};
-function ActiveMember(props: ActiveMemberProps) {
-  const {
-    active,
-    studentNumber,
-    position,
-    grade,
-    setStudentNumber,
-    setPosition,
-    setGrade,
-    errors,
-  } = props;
-
-  return (
-    <div className={styles.type_box} data-active={active}>
-      <Wrapper title="学年">
-        <Select
-          options={[
-            { key: '', value: '' },
-            { key: 'B1', value: 'B1' },
-            { key: 'B2', value: 'B2' },
-            { key: 'B3', value: 'B3' },
-            { key: 'B4', value: 'B4' },
-            { key: 'M1', value: 'M1' },
-            { key: 'M2', value: 'M2' },
-            { key: 'その他', value: 'その他' },
-          ]}
-          value={grade ?? ''}
-          set={(v) => setGrade(v)}
-          error={errors.grade}
-        />
-      </Wrapper>
-
-      <Wrapper title="学籍番号" supplement="現在の学籍番号">
-        <Input
-          type="text"
-          value={studentNumber ?? ''}
-          set={(v) => setStudentNumber(v)}
-          placeholder="k23075"
-          error={errors.studentNumber}
-        />
-      </Wrapper>
-
-      <Wrapper title="役職" supplement="現在の役職">
-        <Input
-          type="text"
-          value={position ?? ''}
-          set={(v) => setPosition(v)}
-          supplement="なければ空白にしてください"
-          error={errors.position}
-        />
-      </Wrapper>
-    </div>
-  );
-}
-
-type OBOGMemberProps = {
-  active: boolean;
-  oldPosition: string | null;
-  oldStudentNumber: string | null;
-  employment: string | null;
-  // eslint-disable-next-line no-unused-vars
-  setOldPosition: (value: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setOldStudentNumber: (value: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setEmployment: (value: string) => void;
-  errors: MemberError;
-};
-function OBOGMember(props: OBOGMemberProps) {
-  const {
-    active,
-    oldPosition,
-    oldStudentNumber,
-    employment,
-    setOldPosition,
-    setOldStudentNumber,
-    setEmployment,
-    errors,
-  } = props;
-
-  return (
-    <div className={styles.type_box} data-active={active}>
-      <Wrapper title="学籍番号" supplement="卒業時の学籍番号">
-        <Input
-          type="text"
-          value={oldStudentNumber ?? ''}
-          set={(v) => setOldStudentNumber(v)}
-          placeholder="k23075"
-          error={errors.oldStudentNumber}
-        />
-      </Wrapper>
-
-      <Wrapper title="旧役職" supplement="最終的な役職">
-        <Input
-          type="text"
-          value={oldPosition ?? ''}
-          set={(v) => setOldPosition(v)}
-          supplement="なければ空白にしてください"
-          error={errors.oldPosition}
-        />
-      </Wrapper>
-
-      <Wrapper title="就職先(任意)">
-        <Input
-          type="text"
-          value={employment ?? ''}
-          set={(v) => setEmployment(v)}
-          error={errors.employment}
-        />
-      </Wrapper>
-    </div>
-  );
-}
-
-type ExternalMemberProps = {
-  active: boolean;
-  school: string | null;
-  organization: string | null;
-  // eslint-disable-next-line no-unused-vars
-  setSchool: (value: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setOrganization: (value: string) => void;
-  errors: MemberError;
-};
-function ExternalMember(props: ExternalMemberProps) {
-  const { active, school, organization, setSchool, setOrganization, errors } =
-    props;
-
-  return (
-    <div className={styles.type_box} data-active={active}>
-      <Wrapper title="学校">
-        <Input
-          type="text"
-          value={school ?? ''}
-          set={(v) => setSchool(v)}
-          supplement="なければ空白にしてください"
-          error={errors.school}
-        />
-      </Wrapper>
-
-      <Wrapper title="所属団体">
-        <Input
-          type="text"
-          value={organization ?? ''}
-          set={(v) => setOrganization(v)}
-          supplement="なければ空白にしてください"
-          error={errors.organization}
-        />
-      </Wrapper>
-    </div>
-  );
-}
-
-type WrapperProps = {
-  title: string;
-  supplement?: string;
-  children: ReactNode;
-};
-
-function Wrapper(props: WrapperProps) {
-  const { title, supplement, children } = props;
-
-  return (
-    <div className={styles.wrapper}>
-      <div className={styles.title_container}>
-        <h3 className={styles.title}>{title}</h3>
-        {supplement && <p className={styles.supplement}>{supplement}</p>}
-      </div>
-
-      <div>{children}</div>
-    </div>
   );
 }

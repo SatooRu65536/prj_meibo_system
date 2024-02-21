@@ -20,7 +20,7 @@
     "@hono/zod-validator": "^0.1.11",
     "drizzle-orm": "^0.29.3",
     "firebase-auth-cloudflare-workers": "^1.1.0",
-    "hono": "^3.12.8",
+    "hono": "3",
     "zod": "^3.22.4"
   },
   "devDependencies": {

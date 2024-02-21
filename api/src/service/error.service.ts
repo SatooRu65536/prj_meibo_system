@@ -62,7 +62,7 @@ const invalidRequest = (key: string | number, type: Type): ErrorStruct => ({
   status: 400,
 });
 
-const validationError = (message: string): ErrorStruct => ({
+const validationError = (message: any): ErrorStruct => ({
   err: {
     ok: false,
     key: 'C1',

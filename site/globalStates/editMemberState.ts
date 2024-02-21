@@ -1,6 +1,6 @@
-import { MemberAll, Nullable } from '@/type/member';
 import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
 import getLocalstorage from './foundations/localstorage';
+import { MemberAll, Nullable } from '@/type/member';
 
 const init: Nullable<MemberAll> = {
   id: null,
