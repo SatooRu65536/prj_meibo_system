@@ -9,7 +9,6 @@ import {
 } from '@/src/decorator';
 import {
   UserRepoAllFlatT,
-  UserRepoWithPrivateInfoT,
   UserRepository,
 } from '../repository/user.repository';
 import { UserService, UserServiceT } from '../service/user.service';

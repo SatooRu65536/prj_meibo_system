@@ -557,12 +557,25 @@ export class UserRepository {
       .where(
         and(isNull(stackTable.deletedAt), gte(stackTable.createdAt, fyFirst)),
       );
+    const officers = await db
+      .select()
+      .from(memberTable)
+      .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .where(
+        and(
+          isNull(officerTable.deletedAt),
+          isNull(memberTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
+        ),
+      );
 
     return propaties.map((p) => {
-      const { uid, ...m } = p;
+      const { uid, isApproved, ...m } = p;
       return {
-        skills: skills.filter((s) => s.uid === uid).map((s) => s.skill),
         ...m,
+        skills: skills.filter((s) => s.uid === uid).map((s) => s.skill),
+        isAdmin: officers.some((o) => o.member.uid === uid),
+        isApproved: isApproved === 1,
       };
     });
   }

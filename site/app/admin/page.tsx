@@ -38,7 +38,7 @@ export default function Page() {
 
   return (
     <main className={styles.main}>
-      <Table members={memberes} />
+      <Table members={memberes} setMembers={setMembers} />
     </main>
   );
 }

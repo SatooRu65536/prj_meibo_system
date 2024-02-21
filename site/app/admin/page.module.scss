@@ -15,7 +15,6 @@
   td {
     height: 50px;
     padding: 0 8px;
-    line-height: 1.6;
     vertical-align: top;
     border: 1px solid rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -27,11 +26,13 @@
     }
 
     .icon {
+      margin: auto;
       width: 50px;
+      display: block;
     }
 
     .approve_btn {
-      margin: 10px 0;
+      margin: 5px 0;
       width: max-content;
       font-size: 1rem;
     }

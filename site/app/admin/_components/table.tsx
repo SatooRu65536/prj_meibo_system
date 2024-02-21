@@ -1,5 +1,6 @@
+import { Dispatch, SetStateAction } from 'react';
 import styles from '../page.module.scss';
-import { basePutFetcher } from '@/components/fetcher';
+import { baseDeleteFetcher, basePutFetcher } from '@/components/fetcher';
 import Button from '@/components/ui/Button';
 import { useUserState } from '@/globalStates/firebaseUserState';
 import { MemberProps, MemberWithPrivateInfo } from '@/type/member';
@@ -7,15 +8,17 @@ import { MemberRes } from '@/type/response';
 
 type Props = {
   members: MemberProps[];
+  setMembers: Dispatch<SetStateAction<MemberProps[]>>;
 };
 
 export default function Table(props: Props) {
-  const { members } = props;
+  const { members, setMembers } = props;
   const user = useUserState();
 
   const memberPropaties = [
     { key: 'id', title: 'ID' },
     { key: 'isApproved', title: '承認' },
+    { key: 'isAdmin', title: '管理者' },
     { key: 'approveBy', title: '承認者ID' },
     { key: 'lastName', title: '姓' },
     { key: 'firstName', title: '名' },
@@ -58,11 +61,67 @@ export default function Table(props: Props) {
 
     if (res === undefined) alert('承認に失敗しました');
     else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
-    else alert('承認しました');
+    else {
+      alert('承認しました');
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === id
+            ? { ...member, isApproved: 1, approveBy: member.id }
+            : member,
+        ),
+      );
+    }
   }
 
-  const Propaty = (props: { k: string; value: any; id: number }) => {
-    const { k, value, id } = props;
+  async function approveAdmin(id: number) {
+    const ok = window.confirm('管理者にしますか？');
+    if (!ok) return;
+
+    const token = await user?.getIdToken();
+    const res = await basePutFetcher<MemberRes<MemberWithPrivateInfo>>(
+      `/api/user/${id}/admin`,
+      token,
+      {},
+    );
+
+    if (res === undefined) alert('管理者承認に失敗しました');
+    else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
+    else {
+      alert('管理者承認しました');
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === id ? { ...member, isAdmin: true } : member,
+        ),
+      );
+    }
+  }
+
+  async function removeAdmin(id: number) {
+    const ok = window.confirm('管理者権限を取り消しますか？');
+    if (!ok) return;
+
+    const token = await user?.getIdToken();
+    const res = await baseDeleteFetcher<MemberRes<MemberWithPrivateInfo>>(
+      `/api/user/${id}/admin`,
+      token,
+      {},
+    );
+
+    if (res === undefined) alert('管理者権限の取り消しに失敗しました');
+    else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
+    else {
+      alert('管理者権限を取り消ししました');
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === id ? { ...member, isAdmin: false } : member,
+        ),
+      );
+    }
+  }
+
+  const Propaty = (props: { k: string; value: any; member: MemberProps }) => {
+    const { k, value, member } = props;
+    const { id } = member;
 
     switch (k) {
       case 'iconUrl':
@@ -74,16 +133,52 @@ export default function Table(props: Props) {
       case 'isApproved':
         return (
           <td>
-            {value === 1 ? (
+            {value ? (
               <p>済</p>
             ) : (
               <Button
                 className={styles.approve_btn}
                 onClick={() => approve(id)}
               >
-                承認する
+                承認
               </Button>
             )}
+          </td>
+        );
+      case 'isAdmin':
+        if (!member.position)
+          return (
+            <td>
+              <p>-</p>
+            </td>
+          );
+        if (value)
+          return (
+            <td>
+              <Button
+                className={styles.approve_btn}
+                onClick={() => removeAdmin(id)}
+              >
+                管理者取消
+              </Button>
+            </td>
+          );
+        return (
+          <td>
+            <Button
+              className={styles.approve_btn}
+              onClick={() => approveAdmin(id)}
+            >
+              管理者承認
+            </Button>
+          </td>
+        );
+      case 'type':
+        return (
+          <td>
+            {value === 'active' && <p>現役</p>}
+            {value === 'obog' && <p>現役</p>}
+            {value === 'external' && <p>外部</p>}
           </td>
         );
       default:
@@ -111,7 +206,7 @@ export default function Table(props: Props) {
         {members.map((member) => (
           <tr key={member.id}>
             {memberPropaties.map(({ key }) => (
-              <Propaty key={key} k={key} value={member[key]} id={member.id} />
+              <Propaty key={key} k={key} value={member[key]} member={member} />
             ))}
           </tr>
         ))}

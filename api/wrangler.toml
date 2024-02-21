@@ -13,7 +13,7 @@ port = 8000
 [[d1_databases]]
 binding = "DB"
 database_name = "meibo_db"
-database_id = "9ad6570b-9154-42a8-9606-a659712b2c5f"
+database_id = "430ebc8e-0af0-4846-9a46-7fcf08df586d"
 migrations_dir = "drizzle/migrations"
 
 [[kv_namespaces]]
