@@ -17,7 +17,7 @@ import { validateMember } from '@/components/validation';
 import { useUserState } from '@/globalStates/firebaseUserState';
 import getLocalstorage, {
   setLocalstorage,
-} from '@/globalStates/foundations/localstorage';
+} from '@/foundations/localstorage';
 import {
   useLiveWithParentsMutators,
   useLiveWithParentsState,

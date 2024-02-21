@@ -3,7 +3,7 @@ import {
   useEditMemberMutators,
   useEditMemberState,
 } from '@/globalStates/editMemberState';
-import { setLocalstorage } from '@/globalStates/foundations/localstorage';
+import { setLocalstorage } from '@/foundations/localstorage';
 import { MemberAll, MemberType } from '@/type/member';
 
 export default function useMember() {

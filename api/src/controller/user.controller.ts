@@ -147,9 +147,10 @@ export class UserController {
    * 自分のユーザー情報取得
    */
   @approved
-  static async getMe(
-    c: CustomContext<'/api/user'>,
-  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
+  static async getMe(c: CustomContext<'/api/user'>): CustomResponse<{
+    user: ReturnType<UserServiceT['toFormatDetail']>;
+    isAdmin: boolean;
+  }> {
     const user = AuthService.getUser(c);
 
     if (!user) {
@@ -168,9 +169,12 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
+    const isAdmin = await StateRepository.isAdmin(c, user.uid);
+
     return c.json({
       ok: true,
       user: UserService.toFormatDetail(member),
+      isAdmin,
     });
   }
 
