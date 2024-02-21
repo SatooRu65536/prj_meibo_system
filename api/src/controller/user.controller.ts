@@ -329,4 +329,14 @@ export class UserController {
     if (isAdmin || includeAdmin) return c.json({ ok: true, isAdmin: true });
     return c.json({ ok: true, isAdmin: false });
   }
+
+  /**
+   * 支払い先一覧取得
+   */
+  static async getPayee(c: CustomContext<'/api/users/payee'>): CustomResponse<{
+    payee: { id: number; name: string }[];
+  }> {
+    const payee = await UserRepository.getPayee(c);
+    return c.json({ ok: true, payee });
+  }
 }

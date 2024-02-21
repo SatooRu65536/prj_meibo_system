@@ -6,10 +6,12 @@ import styles from './base.module.scss';
 import { baseGetFetcher } from '@/components/fetcher';
 import { ROUTES } from '@/const/path';
 import { useUserState } from '@/globalStates/firebaseUserState';
+import { useIsAdminMutators } from '@/globalStates/isAdmin';
 
 export default function Header() {
   const [menus, setMenus] = useState([ROUTES.top, ROUTES.signup]);
   const user = useUserState();
+  const { setIsAdmin } = useIsAdminMutators();
 
   useEffect(() => {
     (async () => {
@@ -21,9 +23,10 @@ export default function Header() {
 
       if (res?.isAdmin) {
         setMenus((prev) => [...prev, ROUTES.admin]);
+        setIsAdmin(true);
       }
     })();
-  }, [user]);
+  }, [setIsAdmin, user]);
 
   return (
     <header className={styles.header}>

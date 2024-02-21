@@ -32,6 +32,9 @@ app.get('/', (c) => c.text('Hello Hono!'));
 // [GET] /api/user/admin 管理者かどうか
 app.get('/api/user/admin', async (c) => await UserController.isAdmin(c));
 
+// [GET] /api/users/payee 支払い先一覧取得
+app.get('/api/users/payee', async (c) => await UserController.getPayee(c));
+
 // [POST] /api/user ユーザー登録
 app.post(
   '/api/user',

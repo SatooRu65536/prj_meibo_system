@@ -14,6 +14,7 @@ import {
   isNotNull,
   isNull,
   max,
+  sql,
 } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { CustomContext } from '@/types/context';
@@ -578,6 +579,33 @@ export class UserRepository {
         isApproved: isApproved === 1,
       };
     });
+  }
+
+  /**
+   * 支払い先一覧を取得する
+   */
+  static async getPayee(c: CustomContext<string>) {
+    const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
+    return await db
+      .select({
+        id: memberTable.id,
+        name: sql`CONCAT(${memberPropertyTable.lastName}, ' ', ${memberPropertyTable.firstName})`,
+      })
+      .from(memberTable)
+      .leftJoin(
+        memberPropertyTable,
+        eq(memberPropertyTable.uid, memberTable.uid),
+      )
+      .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .where(
+        and(
+          isNull(memberTable.deletedAt),
+          isNull(officerTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
+        ),
+      );
   }
 }
 

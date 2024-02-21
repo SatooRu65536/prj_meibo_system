@@ -7,13 +7,11 @@ export const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
  */
 export const baseGetFetcher = async <T>(
   path: string,
-  token: string | undefined,
+  token?: string,
 ): Promise<T | undefined> => {
-  if (!token) return undefined;
-
   const url = new URL(path, BASE_URL).href;
   const headers = new Headers();
-  headers.append('Authorization', `Bearer ${token}`);
+  if (token) headers.append('Authorization', `Bearer ${token}`);
 
   return fetch(url, { headers })
     .then((res) => res.json())
