@@ -1,4 +1,4 @@
-import { Member, MemberWithPrivateInfo } from './member';
+import { Member, MemberProps, MemberWithPrivateInfo } from './member';
 
 type SuccessResponse<T> = {
   ok: true;
@@ -13,11 +13,11 @@ export type ErrorResponse = {
 
 export type BaseResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-export type MembersRes<T extends Member | MemberWithPrivateInfo> =
+export type MembersRes<T extends Member | MemberWithPrivateInfo | MemberProps> =
   BaseResponse<{
     users: T[];
   }>;
 
-export type MemberRes<T extends Member | MemberWithPrivateInfo> = BaseResponse<{
+export type MemberRes<T extends Member | MemberWithPrivateInfo | MemberProps> = BaseResponse<{
   user: T;
 }>;

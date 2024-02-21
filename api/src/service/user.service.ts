@@ -155,7 +155,7 @@ export class UserService {
    * @param member
    */
   static toFlatUser(
-    member: UserSchema['member'],
+    member: UserSchema['user'],
     uid: string,
     now: number,
   ): MemberPropertyTable {

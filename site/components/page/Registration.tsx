@@ -14,10 +14,8 @@ import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import { validateMember } from '@/components/validation';
+import getLocalstorage, { setLocalstorage } from '@/foundations/localstorage';
 import { useUserState } from '@/globalStates/firebaseUserState';
-import getLocalstorage, {
-  setLocalstorage,
-} from '@/foundations/localstorage';
 import {
   useLiveWithParentsMutators,
   useLiveWithParentsState,
@@ -49,12 +47,13 @@ export default function RegistrationPage(props: Porps) {
   const ref = useRef(false);
 
   useEffect(() => {
+    setLoaded(true);
+
     const iconUrl = user?.photoURL;
     if (!iconUrl || editMember.iconUrl) return;
 
     dispatch.setIconUrl(iconUrl);
     dispatch.setEmail(user?.email ?? '');
-    setLoaded(true);
   }, [dispatch, editMember.iconUrl, user]);
 
   useEffect(() => {

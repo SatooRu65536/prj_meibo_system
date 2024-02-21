@@ -7,7 +7,11 @@ import {
   admin,
   notDeactivated,
 } from '@/src/decorator';
-import { UserRepository } from '../repository/user.repository';
+import {
+  UserRepoAllFlatT,
+  UserRepoWithPrivateInfoT,
+  UserRepository,
+} from '../repository/user.repository';
 import { UserService, UserServiceT } from '../service/user.service';
 import { ErrorService } from '../service/error.service';
 import { StateRepository } from '../repository/userstate.repojitory';
@@ -147,10 +151,9 @@ export class UserController {
    * 自分のユーザー情報取得
    */
   @approved
-  static async getMe(c: CustomContext<'/api/user'>): CustomResponse<{
-    user: ReturnType<UserServiceT['toFormatDetail']>;
-    isAdmin: boolean;
-  }> {
+  static async getMe(
+    c: CustomContext<'/api/user'>,
+  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
     const user = AuthService.getUser(c);
 
     if (!user) {
@@ -169,12 +172,9 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const isAdmin = await StateRepository.isAdmin(c, user.uid);
-
     return c.json({
       ok: true,
       user: UserService.toFormatDetail(member),
-      isAdmin,
     });
   }
 
@@ -231,12 +231,14 @@ export class UserController {
   @admin
   static async getUsersDetail(
     c: CustomContext<'/api/users/detail'>,
-  ): CustomResponse<{ users: ReturnType<UserServiceT['toFormat']>[] }> {
-    const members = await UserRepository.getApprovedUsers(c);
+  ): CustomResponse<{
+    users: UserRepoAllFlatT;
+  }> {
+    const members = await UserRepository.getAllUsers(c);
 
     return c.json({
       ok: true,
-      users: members.map((member) => UserService.toFormatDetail(member)),
+      users: members,
     });
   }
 
@@ -310,5 +312,22 @@ export class UserController {
     const state = await StateRepository.getStateByUid(c, member.uid);
 
     return c.json({ ok: true, state });
+  }
+
+  /**
+   * 管理者かどうか
+   */
+  static async isAdmin(
+    c: CustomContext<'/api/user/admin'>,
+  ): CustomResponse<{ isAdmin: boolean }> {
+    const user = AuthService.getUser(c);
+    if (!user) return c.json({ ok: true, isAdmin: false });
+
+    const isAdmin = await StateRepository.isAdmin(c, user.uid);
+    const initAdmins = c.env?.DEFAULT_ADMIN_EMAILS.split(',') || '';
+    const includeAdmin = user?.email && initAdmins.includes(user?.email);
+
+    if (isAdmin || includeAdmin) return c.json({ ok: true, isAdmin: true });
+    return c.json({ ok: true, isAdmin: false });
   }
 }

@@ -22,4 +22,8 @@ export const ROUTES: Routes = {
     name: 'ユーザーページ',
     path: '/user',
   },
+  admin: {
+    name: '管理者',
+    path: '/admin',
+  },
 };

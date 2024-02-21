@@ -118,6 +118,7 @@ export type Nullable<T> = {
 };
 
 export type MemberError = {
+  // eslint-disable-next-line no-unused-vars
   [K in
     | MemberKeysWithPrivateInfo
     | keyof ActiveMember
@@ -128,3 +129,7 @@ export type MemberError = {
     | 'currentPostalCode'
     | 'homePostalCode']?: string;
 };
+
+export type MemberProps = {
+  [key: string]: any;
+}

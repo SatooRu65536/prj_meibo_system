@@ -495,6 +495,77 @@ export class UserRepository {
       };
     });
   }
+
+  /**
+   * 全てのユーザを取得する
+   */
+  static async getAllUsers(c: CustomContext<string>) {
+    const db = drizzle(c.env.DB);
+    const fyFirst = getFYFirstdate();
+
+    const propaties = await db
+      .select({
+        id: memberTable.id,
+        uid: memberTable.uid,
+        isApproved: memberTable.isApproved,
+        approveBy: memberTable.approveBy,
+        createdAt: memberTable.createdAt,
+        updatedAt: max(memberPropertyTable.createdAt),
+        firstName: memberPropertyTable.firstName,
+        lastName: memberPropertyTable.lastName,
+        firstNameKana: memberPropertyTable.firstNameKana,
+        lastNameKana: memberPropertyTable.lastNameKana,
+        graduationYear: memberPropertyTable.graduationYear,
+        slackName: memberPropertyTable.slackName,
+        iconUrl: memberPropertyTable.iconUrl,
+        type: memberPropertyTable.type,
+
+        studentNumber: memberPropertyTable.studentNumber,
+        position: memberPropertyTable.position,
+        grade: memberPropertyTable.grade,
+
+        oldPosition: memberPropertyTable.oldPosition,
+        oldStudentNumber: memberPropertyTable.oldStudentNumber,
+        employment: memberPropertyTable.employment,
+
+        school: memberPropertyTable.school,
+        organization: memberPropertyTable.organization,
+
+        birthdate: memberPropertyTable.birthdate,
+        gender: memberPropertyTable.gender,
+        phoneNumber: memberPropertyTable.phoneNumber,
+        email: memberPropertyTable.email,
+
+        homePostalCode: memberPropertyTable.homePostalCode,
+        homeAddress: memberPropertyTable.homeAddress,
+        cuurentPostalCode: memberPropertyTable.cuurentPostalCode,
+        currentAddress: memberPropertyTable.currentAddress,
+      })
+      .from(memberTable)
+      .groupBy(memberPropertyTable.uid)
+      .leftJoin(
+        memberPropertyTable,
+        eq(memberTable.uid, memberPropertyTable.uid),
+      )
+      .where(
+        and(isNull(memberTable.deletedAt), gte(memberTable.updatedAt, fyFirst)),
+      )
+      .orderBy(desc(memberTable.id));
+    const skills = await db
+      .select({ skill: stackTable.name, uid: stackTable.uid })
+      .from(stackTable)
+      .where(
+        and(isNull(stackTable.deletedAt), gte(stackTable.createdAt, fyFirst)),
+      );
+
+    return propaties.map((p) => {
+      const { uid, ...m } = p;
+      return {
+        skills: skills.filter((s) => s.uid === uid).map((s) => s.skill),
+        ...m,
+      };
+    });
+  }
 }
 
 export type UserRepoT = UnwrapPromise<
@@ -502,4 +573,7 @@ export type UserRepoT = UnwrapPromise<
 >;
 export type UserRepoWithPrivateInfoT = UnwrapPromise<
   ReturnType<typeof UserRepository.getApprovedUserByIdWithPrivateInfo>
+>;
+export type UserRepoAllFlatT = UnwrapPromise<
+  ReturnType<typeof UserRepository.getAllUsers>
 >;
