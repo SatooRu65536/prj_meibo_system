@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
+import { setLocalstorage } from '@/foundations/localstorage';
 import {
   useEditMemberMutators,
   useEditMemberState,
 } from '@/globalStates/editMemberState';
-import { setLocalstorage } from '@/foundations/localstorage';
 import { MemberAll, MemberType } from '@/type/member';
 
 export default function useMember() {

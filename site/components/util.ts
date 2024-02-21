@@ -56,7 +56,7 @@ export const toColumnName = (key: MemberKeysWithPrivateInfo): string => {
  * @param member メンバー情報
  * @returns ユーザー情報
  */
-export function getMemberInfo(member: Member) {
+export function getMemberInfo(member: Member | Nullable<MemberAll>) {
   switch (member.type) {
     case 'active':
       return `[${member.grade}] ${member.studentNumber}`;

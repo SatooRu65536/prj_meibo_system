@@ -1,48 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import styles from './userQRcode.module.scss';
 import { getMemberInfo } from '@/components/util';
-import { Member } from '@/type/member';
-
-const SAMPLE_MEMBER: Member = {
-  id: 1,
-  firstName: 'さとる',
-  lastName: '佐藤',
-  firstNameKana: 'サトル',
-  lastNameKana: 'サトウ',
-  skills: ['JavaScript', 'TypeScript', 'React', 'Vue.js', 'Angular'],
-  graduationYear: 2022,
-  iconUrl:
-    'https://lh3.googleusercontent.com/a/ACg8ocJ5UcBEd0RtC1DD9i6jN8O4wN4cIu8kpq041CgD5aHMglo=s96-c',
-  slackName: 'k23000_佐藤さとる',
-  updatedAt: '2021-01-01T00:00:00Z',
-  createdAt: '2022-02-02T00:00:00Z',
-  type: 'active',
-  position: '会計',
-  studentNumber: 'k23000',
-  grade: 'B1',
-};
+import useMember from '@/hooks/useMember';
 
 export default function UserQRcode() {
-  const [member, setMember] = useState<Member>();
-
-  useEffect(() => {
-    setMember(SAMPLE_MEMBER);
-  }, []);
+  const [editMember] = useMember();
 
   return (
     <section className={styles.qrcode_section}>
       <div className={styles.qr_wrapper}>
-        {member && (
+        {editMember && (
           <>
             <QRCode
               className={styles.qrcode}
-              value={`https://meibo.sysken.net/user/${member.id}`}
+              value={`https://meibo.sysken.net/user/${editMember.id}`}
             />
             <h2 className={styles.info}>
-              {`${getMemberInfo(member)} ${member.lastName} ${member.firstName}`}
+              {`${getMemberInfo(editMember)} ${editMember.lastName} ${editMember.firstName}`}
             </h2>
           </>
         )}
