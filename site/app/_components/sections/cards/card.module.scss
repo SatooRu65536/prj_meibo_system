@@ -1,4 +1,9 @@
+.card_wrapper {
+  text-decoration: none;
+}
+
 .card {
+  color: var(--text);
   box-shadow: var(--box-shadow);
   border-radius: 10px;
   overflow: hidden;

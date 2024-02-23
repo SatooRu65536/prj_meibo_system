@@ -1,4 +1,9 @@
-import { Member, MemberAll, Nullable } from '@/type/member';
+import {
+  Member,
+  MemberAll,
+  MemberWithPrivateInfo,
+  Nullable,
+} from '@/type/member';
 import { MemberKeysWithPrivateInfo } from '@/type/member';
 
 /**
@@ -125,5 +130,60 @@ export function toSendMember(
     type: member.type,
     school: member.school,
     organization: member.organization,
+  };
+}
+
+/**
+ * メンバー情報をフラットにする
+ * @param member
+ * @returns
+ */
+export function toFlatMember(member: MemberWithPrivateInfo): MemberAll {
+  const studentNumber = member.type === 'active' ? member.studentNumber : '';
+  const grade = member.type === 'active' ? member.grade : '';
+  const position = member.type === 'active' ? member.position : '';
+  const oldPosition = member.type === 'obog' ? member.oldPosition : '';
+  const oldStudentNumber = member.type === 'obog' ? member.oldStudentNumber : '';
+  const employment = member.type === 'obog' ? member.employment : '';
+  const school = member.type === 'external' ? member.school : '';
+  const organization = member.type === 'external' ? member.organization : '';
+
+
+  return {
+    id: member.id,
+    firstName: member.firstName,
+    lastName: member.lastName,
+    firstNameKana: member.firstNameKana,
+    lastNameKana: member.lastNameKana,
+    skills: member.skills,
+    graduationYear: member.graduationYear,
+    slackName: member.slackName,
+    iconUrl: member.iconUrl,
+
+    type: member.type,
+
+    studentNumber,
+    grade,
+    position,
+    oldPosition,
+    oldStudentNumber,
+    employment,
+    school,
+    organization,
+
+    privateInfo: {
+      birthdate: member.privateInfo.birthdate,
+      gender: member.privateInfo.gender,
+      phoneNumber: member.privateInfo.phoneNumber,
+      email: member.privateInfo.email,
+      currentAddress: {
+        postalCode: member.privateInfo.currentAddress.postalCode,
+        address: member.privateInfo.currentAddress.address,
+      },
+      homeAddress: {
+        postalCode: member.privateInfo.homeAddress.postalCode,
+        address: member.privateInfo.homeAddress.address,
+      }
+    },
   };
 }

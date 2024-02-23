@@ -140,7 +140,11 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    const isAdmin = await StateRepository.isAdmin(c, user.uid);
+    const isAdminOrSelf = await StateRepository.isAdminOrSelf(
+      c,
+      user.uid,
+      idNum,
+    );
 
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getApprovedUserById(c, idNum);
@@ -150,7 +154,7 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
-    if (isAdmin) {
+    if (isAdminOrSelf) {
       return c.json({
         ok: true,
         user: UserService.toFormatDetail(member),

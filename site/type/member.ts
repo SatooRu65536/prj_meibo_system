@@ -80,8 +80,6 @@ export type MemberBase = {
   graduationYear: number;
   slackName: string;
   iconUrl: string;
-  updatedAt: string;
-  createdAt: string;
 };
 
 export type Member = MemberBase &

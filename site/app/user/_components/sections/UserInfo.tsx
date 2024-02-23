@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import BaseInfo from '../info/BaseInfo';
 import DetailInfo from '../info/DetailInfo';
-import Info from '../info/Info';
+import Menu from '../menu/Menu';
+import UserQRcode from './UserQRcode';
 import { baseGetFetcher } from '@/components/fetcher';
 import { useUserState } from '@/globalStates/firebaseUserState';
 import { MemberDetailInfo, MemberInfo, UserInfoRes } from '@/type/response';
 
 type Props = {
-  id: string;
+  id: string | null;
 };
 
 export default function UserInfo(props: Props) {
@@ -22,7 +24,8 @@ export default function UserInfo(props: Props) {
   useEffect(() => {
     (async () => {
       const token = await user?.getIdToken();
-      const res = await baseGetFetcher<UserInfoRes>(`/api/user/${id}`, token);
+      const url = id ? `/api/user/${id}` : '/api/user';
+      const res = await baseGetFetcher<UserInfoRes>(url, token);
 
       if (res === undefined)
         alert('エラーが発生しました\nページをリロードしてください');
@@ -31,11 +34,15 @@ export default function UserInfo(props: Props) {
     })();
   }, [id, user]);
 
+  const isShowQRcode = userInfo?.user.id !== undefined && id === null;
+
   return (
-    <section>
-      {userInfo === undefined || <div>読み込み中</div>}
-      {userInfo?.isDetail === true && <DetailInfo user={userInfo} />}
-      {userInfo?.isDetail === false && <Info user={userInfo} />}
-    </section>
+    <main>
+      <Menu id={id} />
+      {isShowQRcode && <UserQRcode id={userInfo?.user.id} />}
+      {userInfo === null && <div>読み込み中</div>}
+      {userInfo && <BaseInfo user={userInfo.user} />}
+      {userInfo?.isDetail === true && <DetailInfo user={userInfo.user} />}
+    </main>
   );
 }

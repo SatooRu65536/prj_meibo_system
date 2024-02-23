@@ -12,8 +12,6 @@ const init: Nullable<MemberAll> = {
   graduationYear: null,
   slackName: null,
   iconUrl: null,
-  updatedAt: null,
-  createdAt: null,
   type: null,
 
   studentNumber: null,

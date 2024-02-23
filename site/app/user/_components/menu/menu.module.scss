@@ -1,0 +1,30 @@
+.menu_section {
+  margin-inline: auto;
+  max-width: 600px;
+  display: flex;
+
+  .spacer {
+    margin-inline: auto;
+  }
+
+  button,
+  a {
+    padding: 5px 10px;
+    font-size: 1rem;
+    line-height: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    color: var(--primary);
+    background-color: var(--background);
+    border: 1px solid var(--primary);
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--background-dark);
+    }
+  }
+}
