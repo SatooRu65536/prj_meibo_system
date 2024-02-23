@@ -561,7 +561,7 @@ export class UserRepository {
     const officers = await db
       .select({ uid: officerTable.uid })
       .from(memberTable)
-      .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .innerJoin(officerTable, eq(officerTable.uid, memberTable.uid))
       .where(
         and(
           isNull(officerTable.deletedAt),
@@ -594,11 +594,11 @@ export class UserRepository {
         name: sql`CONCAT(${memberPropertyTable.lastName}, ' ', ${memberPropertyTable.firstName})`,
       })
       .from(memberTable)
-      .leftJoin(
+      .innerJoin(
         memberPropertyTable,
         eq(memberPropertyTable.uid, memberTable.uid),
       )
-      .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .innerJoin(officerTable, eq(officerTable.uid, memberTable.uid))
       .where(
         and(
           isNull(memberTable.deletedAt),
