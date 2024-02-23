@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import styles from '../page.module.scss';
 import { baseDeleteFetcher, basePutFetcher } from '@/components/fetcher';
 import Button from '@/components/ui/Button';
@@ -20,8 +20,10 @@ export default function Table(props: Props) {
   const memberPropaties = [
     { key: 'id', title: 'ID' },
     { key: 'isApproved', title: '承認' },
-    { key: 'isAdmin', title: '管理者' },
     { key: 'approveBy', title: '承認者ID' },
+    { key: 'isConfirmed', title: '会計回収' },
+    { key: 'payee', title: '部費受取者ID' },
+    { key: 'isAdmin', title: '管理者' },
     { key: 'lastName', title: '姓' },
     { key: 'firstName', title: '名' },
     { key: 'lastNameKana', title: '姓(カナ)' },
@@ -64,7 +66,6 @@ export default function Table(props: Props) {
     if (res === undefined) alert('承認に失敗しました');
     else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
     else {
-      alert('承認しました');
       setMembers((prev) =>
         prev.map((member) =>
           member.id === id
@@ -72,6 +73,34 @@ export default function Table(props: Props) {
             : member,
         ),
       );
+      alert('承認しました');
+    }
+  }
+
+  async function collectByTreasurer(id: number, isConfirmed: boolean) {
+    const token = await user?.getIdToken();
+    let res: MemberRes<MemberWithPrivateInfo> | undefined;
+    if (isConfirmed) {
+      res = await basePutFetcher<MemberRes<MemberWithPrivateInfo>>(
+        `/api/user/${id}/payment`,
+        token,
+      );
+    } else {
+      res = await baseDeleteFetcher<MemberRes<MemberWithPrivateInfo>>(
+        `/api/user/${id}/payment`,
+        token,
+      );
+    }
+
+    if (res === undefined) alert('支払い状態の更新に失敗しました');
+    else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
+    else {
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === id ? { ...member, isConfirmed } : member,
+        ),
+      );
+      alert('更新しました');
     }
   }
 
@@ -89,12 +118,12 @@ export default function Table(props: Props) {
     if (res === undefined) alert('管理者承認に失敗しました');
     else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
     else {
-      alert('管理者承認しました');
       setMembers((prev) =>
         prev.map((member) =>
           member.id === id ? { ...member, isAdmin: true } : member,
         ),
       );
+      alert('管理者承認しました');
     }
   }
 
@@ -112,12 +141,12 @@ export default function Table(props: Props) {
     if (res === undefined) alert('管理者権限の取り消しに失敗しました');
     else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
     else {
-      alert('管理者権限を取り消ししました');
       setMembers((prev) =>
         prev.map((member) =>
           member.id === id ? { ...member, isAdmin: false } : member,
         ),
       );
+      alert('管理者権限を取り消ししました');
     }
   }
 
@@ -126,6 +155,11 @@ export default function Table(props: Props) {
       if (prev.key === key) return { key, asc: !prev.asc };
       return { key, asc: true };
     });
+  }
+
+  function handleConfirmed(e: ChangeEvent<HTMLInputElement>, id: number) {
+    const { checked } = e.target;
+    collectByTreasurer(id, checked);
   }
 
   const Propaty = (props: { k: string; value: any; member: MemberProps }) => {
@@ -151,13 +185,20 @@ export default function Table(props: Props) {
             {value ? (
               <p>済</p>
             ) : (
-              <Button
-                className={styles.approve_btn}
-                onClick={() => approve(id)}
-              >
+              <Button className={styles.btn} onClick={() => approve(id)}>
                 承認
               </Button>
             )}
+          </td>
+        );
+      case 'isConfirmed':
+        return (
+          <td>
+            <input
+              type="checkbox"
+              checked={value}
+              onChange={(e) => handleConfirmed(e, id)}
+            />
           </td>
         );
       case 'isAdmin':
@@ -170,20 +211,14 @@ export default function Table(props: Props) {
         if (value)
           return (
             <td>
-              <Button
-                className={styles.approve_btn}
-                onClick={() => removeAdmin(id)}
-              >
+              <Button className={styles.btn} onClick={() => removeAdmin(id)}>
                 管理者取消
               </Button>
             </td>
           );
         return (
           <td>
-            <Button
-              className={styles.approve_btn}
-              onClick={() => approveAdmin(id)}
-            >
+            <Button className={styles.btn} onClick={() => approveAdmin(id)}>
               管理者承認
             </Button>
           </td>

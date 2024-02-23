@@ -2,6 +2,7 @@ import {
   memberPropertyTable,
   memberTable,
   officerTable,
+  paymentTable,
   stackTable,
 } from '../models/schema';
 import {
@@ -22,6 +23,7 @@ import { UnwrapPromise, ReturnType } from '@/types';
 import { UserSchema } from '../validation';
 import { UserService } from '../service/user.service';
 import { getFYFirstdate } from '@/util';
+import { CreateUserSchema } from '../validation/user';
 
 export class UserRepository {
   /**
@@ -218,7 +220,7 @@ export class UserRepository {
    * @return
    */
   static async createUser(c: CustomContext<string>, uid: string) {
-    const { user } = await c.req.json<UserSchema>();
+    const { user, payeeId } = await c.req.json<CreateUserSchema>();
 
     const db = drizzle(c.env.DB);
     const now = Date.now();
@@ -237,6 +239,12 @@ export class UserRepository {
       db
         .insert(memberPropertyTable)
         .values(UserService.toFlatUser(user, uid, now)),
+      db.insert(paymentTable).values({
+        uid: uid,
+        payee: payeeId,
+        createdAt: now,
+        updatedAt: now,
+      }),
     ]);
 
     return await this.getUserByIdWithPrivateInfo(c, ids[0].id);
@@ -541,6 +549,10 @@ export class UserRepository {
         homeAddress: memberPropertyTable.homeAddress,
         cuurentPostalCode: memberPropertyTable.cuurentPostalCode,
         currentAddress: memberPropertyTable.currentAddress,
+
+        payee: paymentTable.payee,
+        isConfirmed: paymentTable.isConfirmed,
+        paymentAt: paymentTable.createdAt,
       })
       .from(memberTable)
       .groupBy(memberPropertyTable.uid)
@@ -548,6 +560,7 @@ export class UserRepository {
         memberPropertyTable,
         eq(memberTable.uid, memberPropertyTable.uid),
       )
+      .leftJoin(paymentTable, eq(paymentTable.uid, memberTable.uid))
       .where(
         and(isNull(memberTable.deletedAt), gte(memberTable.updatedAt, fyFirst)),
       )
@@ -571,12 +584,13 @@ export class UserRepository {
       );
 
     return propaties.map((p) => {
-      const { uid, isApproved, ...m } = p;
+      const { uid, isApproved, isConfirmed, ...m } = p;
       return {
         ...m,
         skills: skills.filter((s) => s.uid === uid).map((s) => s.skill),
         isAdmin: officers.some((o) => o.uid === uid),
         isApproved: isApproved === 1,
+        isConfirmed: isConfirmed === 1,
       };
     });
   }

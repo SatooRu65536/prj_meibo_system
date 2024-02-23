@@ -60,7 +60,7 @@ export const basePostFetcher = async <T>(
 export const basePutFetcher = async <T>(
   path: string,
   token: string | undefined,
-  body: any,
+  body: any = {},
 ): Promise<T | undefined> => {
   if (!token) return undefined;
 
@@ -90,7 +90,7 @@ export const basePutFetcher = async <T>(
 export const baseDeleteFetcher = async <T>(
   path: string,
   token: string | undefined,
-  body: any,
+  body: any = {},
 ): Promise<T | undefined> => {
   if (!token) return undefined;
 

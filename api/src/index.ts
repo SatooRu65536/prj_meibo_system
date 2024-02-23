@@ -105,6 +105,12 @@ app.put(
   async (c) => await PaymentController.confirme(c),
 );
 
+// [PUT] /api/user/:id/payment 受け取り確認取消
+app.delete(
+  '/api/user/:id/payment',
+  async (c) => await PaymentController.cancelConfirme(c),
+);
+
 // [POST] /api/group グループを作成
 app.post(
   '/api/group',

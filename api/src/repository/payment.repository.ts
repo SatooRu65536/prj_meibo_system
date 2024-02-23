@@ -33,18 +33,20 @@ export class PaymentRepository {
   static async confirme(
     c: CustomContext<'/api/user/:id/payment'>,
     payedUid: string,
+    isConfirmed: boolean,
   ): Promise<PaymentTable | undefined> {
     const db = drizzle(c.env.DB);
     const now = Date.now();
+    const confirmNum = isConfirmed ? 1 : 0;
 
     const [payment] = await db
       .update(paymentTable)
       .set({
         updatedAt: now,
-        isConfirmed: 1,
+        isConfirmed: confirmNum,
       })
       .where(
-        and(eq(paymentTable.uid, payedUid), eq(paymentTable.isConfirmed, 0)),
+        and(eq(paymentTable.uid, payedUid)),
       )
       .returning();
 

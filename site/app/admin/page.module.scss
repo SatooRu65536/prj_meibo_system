@@ -34,7 +34,7 @@
   th,
   td {
     height: 50px;
-    padding: 0 18px 0 8px;
+    padding: 0 8px;
     vertical-align: top;
     border: 1px solid rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -56,7 +56,11 @@
       display: block;
     }
 
-    .approve_btn {
+    input {
+      height: 46px;
+    }
+
+    .btn {
       margin: 5px 0;
       width: max-content;
       font-size: 1rem;
@@ -64,6 +68,7 @@
   }
 
   th {
+    padding: 0 18px 0 8px;
     cursor: pointer;
     user-select: none;
     position: relative;
