@@ -198,75 +198,46 @@ export default function Table(props: Props) {
 
     switch (k) {
       case 'id':
-        return (
-          <td>
-            <a href={`/user/edit/?id=${value}`}>{value}</a>
-          </td>
-        );
+        return <a href={`/user/edit/?id=${value}`}>{value}</a>;
       case 'iconUrl':
-        return (
-          <td>
-            <img className={styles.icon} src={value ?? ''} alt="アイコン" />
-          </td>
-        );
+        return <img className={styles.icon} src={value ?? ''} alt="アイコン" />;
       case 'isApproved':
-        return (
-          <td>
-            {value ? (
-              <p>済</p>
-            ) : (
-              <Button className={styles.btn} onClick={() => approve(id)}>
-                承認
-              </Button>
-            )}
-          </td>
+        return value ? (
+          <p>済</p>
+        ) : (
+          <Button className={styles.btn} onClick={() => approve(id)}>
+            承認
+          </Button>
         );
       case 'isConfirmed':
         return (
-          <td>
-            <input
-              type="checkbox"
-              checked={value}
-              onChange={(e) => handleConfirmed(e, id)}
-            />
-          </td>
+          <input
+            type="checkbox"
+            checked={value}
+            onChange={(e) => handleConfirmed(e, id)}
+          />
         );
       case 'isAdmin':
-        if (!member.position)
-          return (
-            <td>
-              <p>-</p>
-            </td>
-          );
+        if (!member.position) return <p>-</p>;
         if (value)
           return (
-            <td>
-              <Button className={styles.btn} onClick={() => removeAdmin(id)}>
-                管理者取消
-              </Button>
-            </td>
+            <Button className={styles.btn} onClick={() => removeAdmin(id)}>
+              管理者取消
+            </Button>
           );
         return (
-          <td>
-            <Button className={styles.btn} onClick={() => approveAdmin(id)}>
-              管理者承認
-            </Button>
-          </td>
+          <Button className={styles.btn} onClick={() => approveAdmin(id)}>
+            管理者承認
+          </Button>
         );
+      case 'skills':
+        return <p>{value.join(', ')}</p>;
       case 'type':
-        return (
-          <td>
-            {value === 'active' && <p>現役</p>}
-            {value === 'obog' && <p>現役</p>}
-            {value === 'external' && <p>外部</p>}
-          </td>
-        );
+        if (value === 'active') return <p>現役</p>;
+        if (value === 'obog') return <p>OB/OG</p>;
+        return <p>外部</p>;
       default:
-        return (
-          <td>
-            <p>{value ?? '-'}</p>
-          </td>
-        );
+        return <p>{value ?? '-'}</p>;
     }
   };
 
@@ -311,12 +282,9 @@ export default function Table(props: Props) {
           {members.map((member) => (
             <tr key={member.id}>
               {displayCell.map(({ key }) => (
-                <Propaty
-                  key={key}
-                  k={key}
-                  value={member[key]}
-                  member={member}
-                />
+                <td key={key}>
+                  <Propaty k={key} value={member[key]} member={member} />
+                </td>
               ))}
             </tr>
           ))}
