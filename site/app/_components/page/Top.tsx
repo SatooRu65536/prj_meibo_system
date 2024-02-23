@@ -23,17 +23,6 @@ export default function TopPage() {
     );
   }
 
-  function matchMember(member: Member, words: string[]) {
-    return words.some((w) => {
-      const [key, value] = w.split(':');
-      if (member[key] === undefined) return false;
-      if (typeof member[key] === 'string') return member[key] === value;
-      if (typeof member[key] === 'number')
-        return member[key].toString() === value;
-      return false;
-    });
-  }
-
   useEffect(() => {
     (async () => {
       const token = await user?.getIdToken();
@@ -54,11 +43,7 @@ export default function TopPage() {
 
   useEffect(() => {
     const words = search.split(' ');
-    const kvWords = words.filter((w) => w.match(/(\w+):(\w+)/));
-    const otherWords = words.filter((w) => !w.match(/(\w+):(\w+)/));
-    const display = members.filter(
-      (m) => includeInMember(m, otherWords) || matchMember(m, kvWords),
-    );
+    const display = members.filter((m) => includeInMember(m, words));
     setDisplayMembers(display);
   }, [search, members]);
 
