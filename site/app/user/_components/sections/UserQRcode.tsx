@@ -15,7 +15,7 @@ export default function UserQRcode() {
           <>
             <QRCode
               className={styles.qrcode}
-              value={`https://meibo.sysken.net/user/${editMember.id}`}
+              value={`https://meibo.sysken.net/user/?id=${editMember.id}`}
             />
             <h2 className={styles.info}>
               {`${getMemberInfo(editMember)} ${editMember.lastName} ${editMember.firstName}`}

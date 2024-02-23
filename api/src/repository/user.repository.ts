@@ -101,7 +101,7 @@ export class UserRepository {
       isNull(memberTable.deletedAt),
     );
 
-    const [user] = await this.commonGetUer(c, filter);
+    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
 
     return user;
   }

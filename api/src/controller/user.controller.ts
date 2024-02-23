@@ -122,15 +122,25 @@ export class UserController {
    * ユーザー情報取得
    */
   @approved
-  static async getUser(
-    c: CustomContext<'/api/user/:id'>,
-  ): CustomResponse<{ user: ReturnType<UserServiceT['toFormat']> }> {
+  static async getUser(c: CustomContext<'/api/user/:id'>): CustomResponse<{
+    user: ReturnType<UserServiceT['toFormat'] | UserServiceT['toFormatDetail']>;
+    isDetail: boolean;
+  }> {
     const { id } = c.req.param();
     const idNum = Number(id);
     if (isNaN(idNum)) {
       const err = ErrorService.request.invalidRequest('id', '数値');
       return c.json(err.err, err.status);
     }
+
+    const user = AuthService.getUser(c);
+
+    if (!user) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+
+    const isAdmin = await StateRepository.isAdmin(c, user.uid);
 
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getApprovedUserById(c, idNum);
@@ -140,9 +150,17 @@ export class UserController {
       return c.json(err.err, err.status);
     }
 
+    if (isAdmin) {
+      return c.json({
+        ok: true,
+        user: UserService.toFormatDetail(member),
+        isDetail: true,
+      });
+    }
     return c.json({
       ok: true,
       user: UserService.toFormat(member),
+      isDetail: false,
     });
   }
 

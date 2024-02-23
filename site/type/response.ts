@@ -21,3 +21,13 @@ export type MembersRes<T extends Member | MemberWithPrivateInfo | MemberProps> =
 export type MemberRes<T extends Member | MemberWithPrivateInfo | MemberProps> = BaseResponse<{
   user: T;
 }>;
+
+export type MemberInfo = {
+  user: Member;
+  isDetail: false;
+}
+export type MemberDetailInfo = {
+  user: MemberWithPrivateInfo;
+  isDetail: true;
+}
+export type UserInfoRes = BaseResponse<MemberInfo | MemberDetailInfo>;
