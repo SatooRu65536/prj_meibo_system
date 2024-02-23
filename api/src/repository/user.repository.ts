@@ -559,7 +559,7 @@ export class UserRepository {
         and(isNull(stackTable.deletedAt), gte(stackTable.createdAt, fyFirst)),
       );
     const officers = await db
-      .select()
+      .select({ uid: officerTable.uid })
       .from(memberTable)
       .leftJoin(officerTable, eq(officerTable.uid, memberTable.uid))
       .where(
@@ -575,7 +575,7 @@ export class UserRepository {
       return {
         ...m,
         skills: skills.filter((s) => s.uid === uid).map((s) => s.skill),
-        isAdmin: officers.some((o) => o.member.uid === uid),
+        isAdmin: officers.some((o) => o.uid === uid),
         isApproved: isApproved === 1,
       };
     });

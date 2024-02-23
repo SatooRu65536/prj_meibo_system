@@ -6,6 +6,7 @@ import {
   approved,
   admin,
   notDeactivated,
+  registered,
 } from '@/src/decorator';
 import {
   UserRepoAllFlatT,
@@ -171,7 +172,7 @@ export class UserController {
   /**
    * 自分のユーザー情報取得
    */
-  @approved
+  @registered
   static async getMe(
     c: CustomContext<'/api/user'>,
   ): CustomResponse<{ user: ReturnType<UserServiceT['toFormatDetail']> }> {
