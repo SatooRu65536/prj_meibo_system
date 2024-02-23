@@ -2,6 +2,26 @@
   overflow-x: scroll;
 }
 
+.search_wrapper {
+  display: flex;
+  justify-content: right;
+
+  .label {
+    padding-inline: 5px;
+    font-size: 1rem;
+    line-height: 40px;
+  }
+
+  .search {
+    height: 40px;
+    width: 300px;
+    padding: 6px 10px 4px;
+    font-size: 1rem;
+    border: 1px solid var(--primary);
+    border-radius: 5px;
+  }
+}
+
 .table {
   margin: 20px 0;
   margin-bottom: 30px;
@@ -14,12 +34,13 @@
   th,
   td {
     height: 50px;
-    padding: 0 8px;
+    padding: 0 18px 0 8px;
     vertical-align: top;
     border: 1px solid rgba(0, 0, 0, 0.1);
     text-align: center;
 
-    p,a {
+    p,
+    a {
       margin-inline: auto;
       width: max-content;
       line-height: 50px;
@@ -39,6 +60,42 @@
       margin: 5px 0;
       width: max-content;
       font-size: 1rem;
+    }
+  }
+
+  th {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      height: 10px;
+      width: 5px;
+      background-color: var(--primary);
+      opacity: 0.3;
+      position: absolute;
+      right: 5px;
+    }
+
+    &[data-sort='true'][data-asc='true']::before,
+    &[data-sort='true'][data-asc='false']::after {
+      opacity: 1;
+    }
+
+    &::before {
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%, 50% 0%);
+      top: 10px;
+    }
+
+    &::after {
+      clip-path: polygon(50% 100%, 0% 0%, 100% 0%, 50% 100%);
+      bottom: 15px;
+    }
+
+    &[data-sort='true'] {
+      background-color: var(--background-dark);
     }
   }
 

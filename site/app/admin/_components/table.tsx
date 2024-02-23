@@ -8,11 +8,13 @@ import { MemberRes } from '@/type/response';
 
 type Props = {
   members: MemberProps[];
+  sortBy: { key: string; asc: boolean };
   setMembers: Dispatch<SetStateAction<MemberProps[]>>;
+  setSortBy: Dispatch<SetStateAction<{ key: string; asc: boolean }>>;
 };
 
 export default function Table(props: Props) {
-  const { members, setMembers } = props;
+  const { members, sortBy, setMembers, setSortBy } = props;
   const user = useUserState();
 
   const memberPropaties = [
@@ -119,6 +121,13 @@ export default function Table(props: Props) {
     }
   }
 
+  function handleSort(key: string) {
+    setSortBy((prev) => {
+      if (prev.key === key) return { key, asc: !prev.asc };
+      return { key, asc: true };
+    });
+  }
+
   const Propaty = (props: { k: string; value: any; member: MemberProps }) => {
     const { k, value, member } = props;
     const { id } = member;
@@ -201,7 +210,12 @@ export default function Table(props: Props) {
       <thead>
         <tr>
           {memberPropaties.map((prop) => (
-            <th key={prop.key}>
+            <th
+              key={prop.key}
+              onClick={() => handleSort(prop.key)}
+              data-sort={sortBy.key === prop.key}
+              data-asc={sortBy.asc}
+            >
               <p>{prop.title}</p>
             </th>
           ))}
