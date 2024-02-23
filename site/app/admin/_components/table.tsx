@@ -1,10 +1,60 @@
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import styles from '../page.module.scss';
 import { baseDeleteFetcher, basePutFetcher } from '@/components/fetcher';
 import Button from '@/components/ui/Button';
+import getLocalstorage, { setLocalstorage } from '@/foundations/localstorage';
 import { useUserState } from '@/globalStates/firebaseUserState';
 import { MemberProps, MemberWithPrivateInfo } from '@/type/member';
 import { MemberRes } from '@/type/response';
+
+type CellProps = {
+  key: string;
+  title: string;
+};
+
+const memberPropaties: CellProps[] = [
+  { key: 'id', title: 'ID' },
+  { key: 'isApproved', title: '承認' },
+  { key: 'approveBy', title: '承認者ID' },
+  { key: 'isConfirmed', title: '会計回収' },
+  { key: 'payee', title: '部費受取者ID' },
+  { key: 'isAdmin', title: '管理者' },
+  { key: 'lastName', title: '姓' },
+  { key: 'firstName', title: '名' },
+  { key: 'lastNameKana', title: '姓(カナ)' },
+  { key: 'firstNameKana', title: '名(カナ)' },
+  { key: 'graduationYear', title: '卒業(予定)年' },
+  { key: 'slackName', title: 'slack名' },
+  { key: 'iconUrl', title: 'アイコン' },
+  { key: 'skills', title: 'スキル' },
+  { key: 'birthdate', title: '誕生日' },
+  { key: 'gender', title: '性別' },
+  { key: 'phoneNumber', title: '電話番号' },
+  { key: 'email', title: 'メールアドレス' },
+  { key: 'cuurentPostalCode', title: '現在の郵便番号' },
+  { key: 'currentAddress', title: '現在の住所' },
+  { key: 'homePostalCode', title: '実家の郵便番号' },
+  { key: 'homeAddress', title: '実家の住所' },
+  { key: 'createdAt', title: '登録日' },
+
+  { key: 'type', title: 'タイプ' },
+  { key: 'studentNumber', title: '学生番号' },
+  { key: 'position', title: '役職' },
+  { key: 'grade', title: '学年' },
+
+  { key: 'oldStudentNumber', title: '旧学籍番号' },
+  { key: 'oldPosition', title: '旧役職' },
+  { key: 'employment', title: '就職先' },
+
+  { key: 'school', title: '学校' },
+  { key: 'organization', title: '団体' },
+];
 
 type Props = {
   members: MemberProps[];
@@ -15,45 +65,21 @@ type Props = {
 
 export default function Table(props: Props) {
   const { members, sortBy, setMembers, setSortBy } = props;
+  const [displayCell, setDisplayCell] = useState<CellProps[]>(memberPropaties);
+  const [hideCell, setHideCell] = useState<string[]>([]);
   const user = useUserState();
 
-  const memberPropaties = [
-    { key: 'id', title: 'ID' },
-    { key: 'isApproved', title: '承認' },
-    { key: 'approveBy', title: '承認者ID' },
-    { key: 'isConfirmed', title: '会計回収' },
-    { key: 'payee', title: '部費受取者ID' },
-    { key: 'isAdmin', title: '管理者' },
-    { key: 'lastName', title: '姓' },
-    { key: 'firstName', title: '名' },
-    { key: 'lastNameKana', title: '姓(カナ)' },
-    { key: 'firstNameKana', title: '名(カナ)' },
-    { key: 'graduationYear', title: '卒業(予定)年' },
-    { key: 'slackName', title: 'slack名' },
-    { key: 'iconUrl', title: 'アイコン' },
-    { key: 'skills', title: 'スキル' },
-    { key: 'birthdate', title: '誕生日' },
-    { key: 'gender', title: '性別' },
-    { key: 'phoneNumber', title: '電話番号' },
-    { key: 'email', title: 'メールアドレス' },
-    { key: 'cuurentPostalCode', title: '現在の郵便番号' },
-    { key: 'currentAddress', title: '現在の住所' },
-    { key: 'homePostalCode', title: '実家の郵便番号' },
-    { key: 'homeAddress', title: '実家の住所' },
-    { key: 'createdAt', title: '登録日' },
+  useEffect(() => {
+    const hide = getLocalstorage<string[]>('hideCell', []);
+    if (hide.length) setHideCell(hide);
+  }, []);
 
-    { key: 'type', title: 'タイプ' },
-    { key: 'studentNumber', title: '学生番号' },
-    { key: 'position', title: '役職' },
-    { key: 'grade', title: '学年' },
-
-    { key: 'oldStudentNumber', title: '旧学籍番号' },
-    { key: 'oldPosition', title: '旧役職' },
-    { key: 'employment', title: '就職先' },
-
-    { key: 'school', title: '学校' },
-    { key: 'organization', title: '団体' },
-  ];
+  useEffect(() => {
+    setDisplayCell(
+      memberPropaties.filter((prop) => !hideCell.includes(prop.title)),
+    );
+    setLocalstorage('hideCell', hideCell);
+  }, [hideCell]);
 
   async function approve(id: number) {
     const token = await user?.getIdToken();
@@ -162,6 +188,10 @@ export default function Table(props: Props) {
     collectByTreasurer(id, checked);
   }
 
+  function handleContextMenu(key: string) {
+    setHideCell((prev) => [...prev, key]);
+  }
+
   const Propaty = (props: { k: string; value: any; member: MemberProps }) => {
     const { k, value, member } = props;
     const { id } = member;
@@ -241,31 +271,57 @@ export default function Table(props: Props) {
   };
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          {memberPropaties.map((prop) => (
-            <th
-              key={prop.key}
-              onClick={() => handleSort(prop.key)}
-              data-sort={sortBy.key === prop.key}
-              data-asc={sortBy.asc}
-            >
-              <p>{prop.title}</p>
-            </th>
-          ))}
-        </tr>
-      </thead>
+    <section>
+      <div className={styles.hide_cells}>
+        {hideCell.map((cell) => (
+          <button
+            key={cell}
+            className={styles.btn}
+            onClick={() =>
+              setHideCell((prev) => prev.filter((c) => c !== cell))
+            }
+          >
+            {cell}
+          </button>
+        ))}
+      </div>
 
-      <tbody>
-        {members.map((member) => (
-          <tr key={member.id}>
-            {memberPropaties.map(({ key }) => (
-              <Propaty key={key} k={key} value={member[key]} member={member} />
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            {displayCell.map((prop) => (
+              <th
+                key={prop.key}
+                onClick={() => handleSort(prop.key)}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  handleContextMenu(prop.title);
+                }}
+                data-sort={sortBy.key === prop.key}
+                data-asc={sortBy.asc}
+                data-close={hideCell.includes(prop.key)}
+              >
+                <p>{prop.title}</p>
+              </th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          {members.map((member) => (
+            <tr key={member.id}>
+              {displayCell.map(({ key }) => (
+                <Propaty
+                  key={key}
+                  k={key}
+                  value={member[key]}
+                  member={member}
+                />
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
   );
 }

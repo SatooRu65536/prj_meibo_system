@@ -22,8 +22,30 @@
   }
 }
 
+.hide_cells {
+  width: 100%;
+  margin-top: 30px;
+  min-height: 40px;
+  overflow-x: scroll;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .btn {
+    height: 30px;
+    padding: 5px 10px;
+    color: var(--on-primary);
+    background-color: var(--primary);
+    border-radius: 5px;
+    box-shadow: none;
+    outline: none;
+    border: none;
+    cursor: pointer;
+  }
+}
+
 .table {
-  margin: 20px 0;
+  margin: 10px 0;
   margin-bottom: 30px;
   width: 100%;
   padding: 10px;
@@ -72,6 +94,11 @@
     cursor: pointer;
     user-select: none;
     position: relative;
+
+    &[data-close='true'] {
+      table-layout: fixed;
+      width: 10px;
+    }
 
     &::before,
     &::after {

@@ -1,4 +1,4 @@
-type Keys = 'editMember' | 'isLivingWithParents';
+type Keys = 'editMember' | 'isLivingWithParents' | 'hideCell';
 
 export default function getLocalstorage<T>(key: Keys, defaultValue: T) {
   if (typeof window === 'undefined') return defaultValue;
