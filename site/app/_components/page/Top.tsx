@@ -10,7 +10,29 @@ import { MembersRes } from '@/type/response';
 
 export default function TopPage() {
   const [members, setMembers] = useState<Member[]>([]);
+  const [displayMembers, setDisplayMembers] = useState<Member[]>([]);
+  const [search, setSearch] = useState('');
   const user = useUserState();
+
+  function includeInMember(member: Member, words: string[]) {
+    return words.some((w) =>
+      Object.values(member).some((v) => {
+        if (typeof v === 'string') return v.includes(w);
+        if (typeof v === 'number') return v.toString().includes(w);
+      }),
+    );
+  }
+
+  function matchMember(member: Member, words: string[]) {
+    return words.some((w) => {
+      const [key, value] = w.split(':');
+      if (member[key] === undefined) return false;
+      if (typeof member[key] === 'string') return member[key] === value;
+      if (typeof member[key] === 'number')
+        return member[key].toString() === value;
+      return false;
+    });
+  }
 
   useEffect(() => {
     (async () => {
@@ -30,10 +52,33 @@ export default function TopPage() {
     })();
   }, [user]);
 
+  useEffect(() => {
+    const words = search.split(' ');
+    const kvWords = words.filter((w) => w.match(/(\w+):(\w+)/));
+    const otherWords = words.filter((w) => !w.match(/(\w+):(\w+)/));
+    const display = members.filter(
+      (m) => includeInMember(m, otherWords) || matchMember(m, kvWords),
+    );
+    setDisplayMembers(display);
+  }, [search, members]);
+
   return (
     <main className={styles.cards}>
+      <section className={styles.search_wrapper}>
+        <label className={styles.label} htmlFor="search_input">
+          検索:
+        </label>
+        <input
+          type="text"
+          id="search_input"
+          className={styles.search}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </section>
+
       <section className={styles.cards_section}>
-        {members.map((member) => (
+        {displayMembers.map((member) => (
           <Card key={member.id} member={member} />
         ))}
       </section>

@@ -86,7 +86,7 @@ export default function Page() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.search_wrapper}>
+      <section className={styles.search_wrapper}>
         <label className={styles.label} htmlFor="search_input">
           検索:
         </label>
@@ -97,7 +97,7 @@ export default function Page() {
           value={search}
           onChange={handleSearch}
         />
-      </div>
+      </section>
 
       <Table
         members={sortedMembers}
