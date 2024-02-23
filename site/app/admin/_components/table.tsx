@@ -124,6 +124,12 @@ export default function Table(props: Props) {
     const { id } = member;
 
     switch (k) {
+      case 'id':
+        return (
+          <td>
+            <a href={`/user/edit/?id=${value}`}>{value}</a>
+          </td>
+        );
       case 'iconUrl':
         return (
           <td>

@@ -19,10 +19,14 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     text-align: center;
 
-    p {
+    p,a {
       margin-inline: auto;
       width: max-content;
       line-height: 50px;
+    }
+
+    a {
+      color: var(--primary-dark);
     }
 
     .icon {
