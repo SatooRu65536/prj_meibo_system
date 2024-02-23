@@ -37,7 +37,7 @@ export default function UserEdit(props: Props) {
 
   function getFullName(first: string | null, last: string | null): string {
     if (first === undefined) return last ?? '';
-    return `${last} ${first}`;
+    return `${`${last  } ` ?? ''}${first ?? ''}`;
   }
 
   async function handleSubmit() {
