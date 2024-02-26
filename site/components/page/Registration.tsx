@@ -124,7 +124,7 @@ export default function RegistrationPage(props: Porps) {
 
   function getFullName(first: string | null, last: string | null): string {
     if (first === undefined) return last ?? '';
-    return `${`${last  } ` ?? ''}${first ?? ''}`;
+    return `${`${last ?? ''} ` ?? ''}${first ?? ''}`;
   }
 
   return (
@@ -316,9 +316,7 @@ export default function RegistrationPage(props: Porps) {
               checked={isLivingWithParents ?? false}
               onChange={() => setIsLivingWithParents((v) => !v)}
             />
-            <label htmlFor="living">
-              {isLivingWithParents ? 'はい' : 'いいえ'}
-            </label>
+            <label htmlFor="living">はい</label>
           </div>
         </Wrapper>
 
