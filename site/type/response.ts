@@ -25,9 +25,11 @@ export type MemberRes<T extends Member | MemberWithPrivateInfo | MemberProps> = 
 export type MemberInfo = {
   user: Member;
   isDetail: false;
+  isApproved: boolean;
 }
 export type MemberDetailInfo = {
   user: MemberWithPrivateInfo;
   isDetail: true;
+  isApproved: boolean;
 }
 export type UserInfoRes = BaseResponse<MemberInfo | MemberDetailInfo>;

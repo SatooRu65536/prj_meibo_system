@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import ApproveBtn from '../approveBtn/ApproveBtn';
 import BaseInfo from '../info/BaseInfo';
 import DetailInfo from '../info/DetailInfo';
 import Menu from '../menu/Menu';
@@ -43,6 +44,7 @@ export default function UserInfo(props: Props) {
       {userInfo === null && <div>読み込み中</div>}
       {userInfo && <BaseInfo user={userInfo.user} />}
       {userInfo?.isDetail === true && <DetailInfo user={userInfo.user} />}
+      {userInfo?.isApproved && <ApproveBtn id={id} />}
     </main>
   );
 }

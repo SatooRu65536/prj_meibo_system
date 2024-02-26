@@ -126,6 +126,7 @@ export class UserController {
   static async getUser(c: CustomContext<'/api/user/:id'>): CustomResponse<{
     user: ReturnType<UserServiceT['toFormat'] | UserServiceT['toFormatDetail']>;
     isDetail: boolean;
+    isApproved: boolean;
   }> {
     const { id } = c.req.param();
     const idNum = Number(id);
@@ -149,6 +150,7 @@ export class UserController {
 
     // id が一致するユーザー情報を取得
     const member = await UserRepository.getUserById(c, idNum);
+    const isApproved = await StateRepository.isApprovedById(c, idNum);
 
     if (member === undefined) {
       const err = ErrorService.request.userNotFound();
@@ -160,12 +162,14 @@ export class UserController {
         ok: true,
         user: UserService.toFormatDetail(member),
         isDetail: true,
+        isApproved,
       });
     }
     return c.json({
       ok: true,
       user: UserService.toFormat(member),
       isDetail: false,
+      isApproved,
     });
   }
 
@@ -231,7 +235,7 @@ export class UserController {
     }
 
     // id が一致するユーザー情報を取得
-    const member = await UserRepository.getApprovedUserByIdWithPrivateInfo(
+    const member = await UserRepository.getUserByIdWithPrivateInfo(
       c,
       idNum,
     );
