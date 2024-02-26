@@ -148,7 +148,7 @@ export class UserController {
     );
 
     // id が一致するユーザー情報を取得
-    const member = await UserRepository.getApprovedUserById(c, idNum);
+    const member = await UserRepository.getUserById(c, idNum);
 
     if (member === undefined) {
       const err = ErrorService.request.userNotFound();

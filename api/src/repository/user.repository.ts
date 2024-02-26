@@ -80,7 +80,7 @@ export class UserRepository {
   static async getUserById(c: CustomContext<string>, id: number) {
     const filter = and(eq(memberTable.id, id), isNull(memberTable.deletedAt));
 
-    const [user] = await this.commonGetUer(c, filter);
+    const [user] = await this.commonGetUerWithPrivateInfo(c, filter);
 
     return user;
   }
