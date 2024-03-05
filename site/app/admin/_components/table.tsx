@@ -54,6 +54,8 @@ const memberPropaties: CellProps[] = [
 
   { key: 'school', title: '学校' },
   { key: 'organization', title: '団体' },
+
+  { key: 'delete', title: '削除' },
 ];
 
 type Props = {
@@ -172,7 +174,7 @@ export default function Table(props: Props) {
           member.id === id ? { ...member, isAdmin: false } : member,
         ),
       );
-      alert('管理者権限を取り消ししました');
+      alert('管理者権限を取り消しました');
     }
   }
 
@@ -190,6 +192,30 @@ export default function Table(props: Props) {
 
   function handleContextMenu(key: string) {
     setHideCell((prev) => [...prev, key]);
+  }
+
+  async function handleDelete(id: number) {
+    const ok = window.confirm('削除しますか？');
+    if (ok) {
+      setMembers((prev) => prev.filter((m) => m.id !== id));
+    }
+    const token = await user?.getIdToken();
+    const res = await baseDeleteFetcher<MemberRes<MemberWithPrivateInfo>>(
+      `/api/user/${id}/admin`,
+      token,
+      {},
+    );
+
+    if (res === undefined) alert('ユーザーの削除に失敗しました');
+    else if (res.ok === false) alert(`${res.message}\n${res.approach ?? ''}`);
+    else {
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === id ? { ...member, isAdmin: false } : member,
+        ),
+      );
+      alert('ユーザーを削除しました');
+    }
   }
 
   const Propaty = (props: { k: string; value: any; member: MemberProps }) => {
@@ -236,6 +262,12 @@ export default function Table(props: Props) {
         if (value === 'active') return <p>現役</p>;
         if (value === 'obog') return <p>OB/OG</p>;
         return <p>外部</p>;
+      case 'delete':
+        return (
+          <Button className={styles.btn} onClick={() => handleDelete(id)}>
+            削除
+          </Button>
+        );
       default:
         return <p>{value ?? '-'}</p>;
     }
