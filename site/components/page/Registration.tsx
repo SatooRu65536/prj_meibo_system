@@ -49,7 +49,8 @@ export default function RegistrationPage(props: Porps) {
   useEffect(() => {
     setLoaded(true);
 
-    const iconUrl = user?.photoURL;
+    const iconUrl = user?.photoURL?.split('=')[0];
+    console.log(iconUrl);
     if (!iconUrl || editMember.iconUrl) return;
 
     dispatch.setIconUrl(iconUrl);
@@ -126,7 +127,7 @@ export default function RegistrationPage(props: Porps) {
     <main className={styles.registration}>
       <section className={styles.registration_section}>
         <Wrapper title="アイコン">
-          <Icon src={user?.photoURL ?? undefined} />
+          <Icon src={user?.photoURL?.split('=')[0] ?? undefined} />
         </Wrapper>
 
         <Wrapper title="名前(姓)">
