@@ -207,6 +207,7 @@ export class UserController {
   /**
    * ユーザー一覧取得
    */
+  @registered
   @approved
   static async getUsers(
     c: CustomContext<'/api/users'>,
