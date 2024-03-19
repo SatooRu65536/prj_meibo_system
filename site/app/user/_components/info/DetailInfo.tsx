@@ -23,7 +23,7 @@ export default function DetailInfo(props: Props) {
         <p>{user.privateInfo.phoneNumber}</p>
       </Wrapper>
 
-      <Wrapper title="メールアドレスt">
+      <Wrapper title="メールアドレス">
         <p>{user.privateInfo.email}</p>
       </Wrapper>
 
