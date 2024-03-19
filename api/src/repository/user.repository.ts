@@ -608,18 +608,20 @@ export class UserRepository {
         name: sql`CONCAT(${memberPropertyTable.lastName}, ' ', ${memberPropertyTable.firstName})`,
       })
       .from(memberTable)
-      .innerJoin(
+      .groupBy(memberPropertyTable.uid)
+      .leftJoin(
         memberPropertyTable,
-        eq(memberPropertyTable.uid, memberTable.uid),
+        eq(memberTable.uid, memberPropertyTable.uid),
       )
-      .innerJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .rightJoin(officerTable, eq(officerTable.uid, memberTable.uid))
       .where(
         and(
           isNull(memberTable.deletedAt),
           isNull(officerTable.deletedAt),
           gte(memberTable.updatedAt, fyFirst),
         ),
-      );
+      )
+      .orderBy(desc(memberTable.id));
   }
 }
 
