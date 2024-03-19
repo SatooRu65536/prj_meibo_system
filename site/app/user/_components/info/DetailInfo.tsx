@@ -16,7 +16,7 @@ export default function DetailInfo(props: Props) {
       </Wrapper>
 
       <Wrapper title="性別">
-        <p>{user.privateInfo.email}</p>
+        <p>{user.privateInfo.gender}</p>
       </Wrapper>
 
       <Wrapper title="電話番号">
