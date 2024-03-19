@@ -22,7 +22,7 @@ export default function Header() {
       );
 
       if (res?.isAdmin) {
-        setMenus((prev) => [...prev, ROUTES.admin]);
+        setMenus([ROUTES.top, ROUTES.signup, ROUTES.admin]);
         setIsAdmin(true);
       }
     })();
