@@ -38,6 +38,22 @@ export default function useMember() {
   }
 
   /**
+   * 姓をセットする
+   * @param lastName {string}
+   */
+  function setLastName(lastName: string) {
+    setEditMemberState((prev) => ({ ...prev, lastName }));
+  }
+
+  /**
+   * 名をセットする
+   * @param firstName {string}
+   */
+  function setFirstName(firstName: string) {
+    setEditMemberState((prev) => ({ ...prev, firstName }));
+  }
+
+  /**
    * 読み仮名をセットする
    * @param kana {string}
    */
@@ -46,6 +62,22 @@ export default function useMember() {
     const kanas = kana.split(/[ 　]/);
     const [lastNameKana, firstNameKana] = kanas.filter((n) => n !== '');
     setEditMemberState((prev) => ({ ...prev, lastNameKana, firstNameKana }));
+  }
+
+  /**
+   * 姓の読み仮名をセットする
+   * @param lastNameKana {string}
+   */
+  function setLastNameKana(lastNameKana: string) {
+    setEditMemberState((prev) => ({ ...prev, lastNameKana }));
+  }
+
+  /**
+   * 名の読み仮名をセットする
+   * @param firstNameKana {string}
+   */
+  function setFirstNameKana(firstNameKana: string) {
+    setEditMemberState((prev) => ({ ...prev, firstNameKana }));
   }
 
   /**
@@ -264,7 +296,11 @@ export default function useMember() {
       setMember,
       setId,
       setName,
+      setLastName,
+      setFirstName,
       setKana,
+      setLastNameKana,
+      setFirstNameKana,
       setSkills,
       setGraduationYear,
       setSlackName,

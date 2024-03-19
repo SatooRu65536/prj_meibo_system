@@ -122,11 +122,6 @@ export default function RegistrationPage(props: Porps) {
     alert('変更しました');
   }
 
-  function getFullName(first: string | null, last: string | null): string {
-    if (first === undefined) return last ?? '';
-    return `${`${last ?? ''} ` ?? ''}${first ?? ''}`;
-  }
-
   return (
     <main className={styles.registration}>
       <section className={styles.registration_section}>
@@ -134,27 +129,42 @@ export default function RegistrationPage(props: Porps) {
           <Icon src={user?.photoURL ?? undefined} />
         </Wrapper>
 
-        <Wrapper title="名前">
+        <Wrapper title="名前(姓)">
           <Input
             type="text"
-            value={getFullName(editMember.firstName, editMember.lastName)}
-            set={(v) => dispatch.setName(v)}
-            placeholder="佐藤 智"
-            supplement="姓と名の間には空白を入れてください"
+            value={editMember.lastName ?? ''}
+            set={(v) => dispatch.setLastName(v)}
+            placeholder="佐藤"
             error={errors.name}
           />
         </Wrapper>
 
-        <Wrapper title="名前(フリガナ)">
+        <Wrapper title="名前(名)">
           <Input
             type="text"
-            value={getFullName(
-              editMember.firstNameKana,
-              editMember.lastNameKana,
-            )}
-            set={(v) => dispatch.setKana(v)}
-            placeholder="サトウ サトル"
-            supplement="姓と名の間には空白を入れてください"
+            value={editMember.firstName ?? ''}
+            set={(v) => dispatch.setFirstName(v)}
+            placeholder="佐藤"
+            error={errors.name}
+          />
+        </Wrapper>
+
+        <Wrapper title="名前(セイ)">
+          <Input
+            type="text"
+            value={editMember.lastNameKana ?? ''}
+            set={(v) => dispatch.setLastNameKana(v)}
+            placeholder="サトウ"
+            error={errors.kana}
+          />
+        </Wrapper>
+
+        <Wrapper title="名前(メイ)">
+          <Input
+            type="text"
+            value={editMember.firstNameKana ?? ''}
+            set={(v) => dispatch.setFirstNameKana(v)}
+            placeholder="サトル"
             error={errors.kana}
           />
         </Wrapper>
