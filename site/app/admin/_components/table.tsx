@@ -201,7 +201,7 @@ export default function Table(props: Props) {
     }
     const token = await user?.getIdToken();
     const res = await baseDeleteFetcher<MemberRes<MemberWithPrivateInfo>>(
-      `/api/user/${id}/admin`,
+      `/api/user/${id}`,
       token,
       {},
     );
