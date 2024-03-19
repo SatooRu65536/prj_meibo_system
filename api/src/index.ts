@@ -153,6 +153,9 @@ app.delete(
   async (c) => await GroupController.remove(c),
 );
 
+// [GET] /api/system/lsit 大学に提出するデータを取得
+app.get('/api/system/list', async (c) => await UserController.getList(c));
+
 app.all('*', (c) => c.text('Not Found', 404));
 
 export default app;

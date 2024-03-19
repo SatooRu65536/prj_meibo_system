@@ -14,6 +14,7 @@ import {
   inArray,
   isNotNull,
   isNull,
+  lt,
   max,
   sql,
 } from 'drizzle-orm';
@@ -24,6 +25,7 @@ import { UserSchema } from '../validation';
 import { UserService } from '../service/user.service';
 import { getFYFirstdate } from '@/util';
 import { CreateUserSchema } from '../validation/user';
+import { List, MemberBase } from '@/types/member';
 
 export class UserRepository {
   /**
@@ -622,6 +624,59 @@ export class UserRepository {
         ),
       )
       .orderBy(desc(memberTable.id));
+  }
+
+  /**
+   * 大学に提出するデータ用のユーザー情報一覧を取得する
+   */
+  static async getList(c: CustomContext<string>, comparison: number) {
+    const db = drizzle(c.env.DB);
+    const now = Date.now();
+    const comparisonTime = now - comparison;
+    const fyFirst = getFYFirstdate();
+
+    const current = await db
+      .select({
+        updatedAt: max(memberPropertyTable.createdAt),
+        name: sql`CONCAT(${memberPropertyTable.lastName}, ' ', ${memberPropertyTable.firstName})`,
+        studentNumber: memberPropertyTable.studentNumber,
+        position: memberPropertyTable.position,
+      })
+      .from(memberTable)
+      .groupBy(memberPropertyTable.uid)
+      .leftJoin(
+        memberPropertyTable,
+        eq(memberTable.uid, memberPropertyTable.uid),
+      )
+      .where(and(gte(memberTable.updatedAt, fyFirst)))
+      .orderBy(desc(memberTable.id));
+
+    const old = await db
+      .select({
+        studentNumber: memberPropertyTable.studentNumber,
+        name: sql`CONCAT(${memberPropertyTable.lastName}, ' ', ${memberPropertyTable.firstName})`,
+        position: memberPropertyTable.position,
+      })
+      .from(memberTable)
+      .groupBy(memberPropertyTable.uid)
+      .innerJoin(
+        memberPropertyTable,
+        eq(memberTable.uid, memberPropertyTable.uid),
+      )
+      .where(
+        and(
+          isNull(memberTable.deletedAt),
+          gte(memberTable.updatedAt, fyFirst),
+          eq(memberPropertyTable.type, 'active'),
+          lt(memberTable.createdAt, comparisonTime),
+        ),
+      )
+      .orderBy(desc(memberPropertyTable.createdAt));
+
+    return { current, old } as {
+      current: Omit<List, 'state'>[];
+      old: Omit<List, 'state'>[];
+    };
   }
 }
 

@@ -66,3 +66,12 @@ export type MemberBase<T extends boolean = false, U extends boolean = false> = {
   updatedAt: string;
 } & (T extends true ? PrivateInfo : {}) &
   (U extends true ? MemberType : {});
+
+export type State = '入部' | '退部' | '役職就任' | '役職退任' | '役職交代';
+export type List = {
+  studentNumber: string;
+  name: string;
+  state: State | null;
+  position: string | null;
+  updatedAt: number;
+};

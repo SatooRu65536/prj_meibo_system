@@ -17,6 +17,7 @@ import { ErrorService } from '../service/error.service';
 import { StateRepository } from '../repository/userstate.repojitory';
 import { CustomResponse } from '@/types/response';
 import { ReturnType } from '@/types';
+import { List } from '@/types/member';
 
 export class UserController {
   /**
@@ -236,10 +237,7 @@ export class UserController {
     }
 
     // id が一致するユーザー情報を取得
-    const member = await UserRepository.getUserByIdWithPrivateInfo(
-      c,
-      idNum,
-    );
+    const member = await UserRepository.getUserByIdWithPrivateInfo(c, idNum);
 
     if (member === undefined) {
       const err = ErrorService.request.userNotFound();
@@ -366,5 +364,59 @@ export class UserController {
   }> {
     const payee = await UserRepository.getPayee(c);
     return c.json({ ok: true, payee });
+  }
+
+  /**
+   * 大学に提出するデータを取得
+   */
+  static async getList(
+    c: CustomContext<'/api/system/lis'>,
+  ): CustomResponse<{ list: List[] }> {
+    const comparison = Number(c.req.query('comparison'));
+
+    if (isNaN(comparison)) {
+      const err = ErrorService.request.invalidRequest('comparison', '数値');
+      return c.json(err.err, err.status);
+    }
+
+    const comparisonLists = await UserRepository.getList(c, comparison);
+    console.log(comparisonLists);
+
+    const list: List[] = comparisonLists.current.map((current) => {
+      const old = comparisonLists.old.find((oldMember) => {
+        return oldMember.studentNumber === current.studentNumber;
+      });
+      if (old === undefined) return { ...current, state: '入部' };
+
+      const didOfficer = old.position !== '' || old.position !== null;
+      const isOfficer = current.position !== '' || current.position !== null;
+      const isSamePosition = old.position === current.position;
+
+      if (!didOfficer && isOfficer) return { ...current, state: '役職就任' };
+      if (didOfficer && !isOfficer) return { ...current, state: '役職退任' };
+      if (!isSamePosition && isOfficer)
+        return { ...current, state: '役職交代' };
+
+      return { ...current, state: null };
+    });
+
+    // 退部者
+    const retirementList = comparisonLists.old.filter((old) => {
+      const isRetirement = comparisonLists.current.every(
+        (c) => c.studentNumber !== old.studentNumber,
+      );
+      return isRetirement;
+    });
+
+    const retirementListWithState: List[] = retirementList.map((retirement) => {
+      return { ...retirement, state: '退部' };
+    });
+
+    const listSorted = [...list, ...retirementListWithState].sort((a, b) => {
+      if (a.studentNumber < b.studentNumber) return -1;
+      return 1;
+    });
+
+    return c.json({ ok: true, list: listSorted });
   }
 }
