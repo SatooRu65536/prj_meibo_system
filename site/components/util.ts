@@ -90,7 +90,7 @@ export function toSendMember(
     lastName: member.lastName,
     firstNameKana: member.firstNameKana,
     lastNameKana: member.lastNameKana,
-    skills: member.skills,
+    skills: member.skills ?? [],
     graduationYear: member.graduationYear,
     slackName: member.slackName,
     iconUrl: member.iconUrl,
@@ -113,7 +113,7 @@ export function toSendMember(
       type: member.type,
       studentNumber: member.studentNumber,
       grade: member.grade,
-      position: member.position,
+      position: member.position ?? '',
     };
   } else if (member.type === 'obog') {
     return {
@@ -121,7 +121,7 @@ export function toSendMember(
       type: member.type,
       oldPosition: member.oldPosition,
       oldStudentNumber: member.oldStudentNumber,
-      employment: member.employment,
+      employment: member.employment ?? '',
     };
   }
 
@@ -143,11 +143,11 @@ export function toFlatMember(member: MemberWithPrivateInfo): MemberAll {
   const grade = member.type === 'active' ? member.grade : '';
   const position = member.type === 'active' ? member.position : '';
   const oldPosition = member.type === 'obog' ? member.oldPosition : '';
-  const oldStudentNumber = member.type === 'obog' ? member.oldStudentNumber : '';
+  const oldStudentNumber =
+    member.type === 'obog' ? member.oldStudentNumber : '';
   const employment = member.type === 'obog' ? member.employment : '';
   const school = member.type === 'external' ? member.school : '';
   const organization = member.type === 'external' ? member.organization : '';
-
 
   return {
     id: member.id,
@@ -183,7 +183,7 @@ export function toFlatMember(member: MemberWithPrivateInfo): MemberAll {
       homeAddress: {
         postalCode: member.privateInfo.homeAddress.postalCode,
         address: member.privateInfo.homeAddress.address,
-      }
+      },
     },
   };
 }
