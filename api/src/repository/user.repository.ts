@@ -613,7 +613,7 @@ export class UserRepository {
         memberPropertyTable,
         eq(memberTable.uid, memberPropertyTable.uid),
       )
-      .rightJoin(officerTable, eq(officerTable.uid, memberTable.uid))
+      .innerJoin(officerTable, eq(officerTable.uid, memberTable.uid))
       .where(
         and(
           isNull(memberTable.deletedAt),
