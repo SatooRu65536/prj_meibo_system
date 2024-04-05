@@ -10,7 +10,7 @@ export default function SignupPage() {
           className={styles.qrcode}
           value="https://meibo.sysken.net/signup"
         />
-        <p className={styles.desc}>招待用のQRコードです</p>
+        <p>招待用のQRコードです</p>
 
         <a href={ROUTES.registration.path} className={styles.registration}>
           登録に進む

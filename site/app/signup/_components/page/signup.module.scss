@@ -5,16 +5,13 @@
 
   .container {
     height: fit-content;
+    text-align: center;
 
     .qrcode {
       margin-inline: auto;
       width: 100px;
       height: 100px;
       display: block;
-    }
-
-    .desc {
-      text-align: center;
     }
 
     .registration {
