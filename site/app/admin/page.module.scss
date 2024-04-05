@@ -82,10 +82,16 @@
       height: 46px;
     }
 
-    .btn {
+    .btn,
+    .btn_outline {
       margin: 5px 0;
       width: max-content;
       font-size: 1rem;
+    }
+
+    .btn_outline {
+      color: var(--primary);
+      background-color: var(--on-primary);
     }
   }
 

@@ -252,7 +252,7 @@ export default function Table(props: Props) {
             </Button>
           );
         return (
-          <Button className={styles.btn} onClick={() => approveAdmin(id)}>
+          <Button className={styles.btn_outline} onClick={() => approveAdmin(id)}>
             管理者承認
           </Button>
         );
