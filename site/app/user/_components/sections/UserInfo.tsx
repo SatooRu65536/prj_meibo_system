@@ -44,7 +44,7 @@ export default function UserInfo(props: Props) {
       {userInfo === null && <div>読み込み中</div>}
       {userInfo && <BaseInfo user={userInfo.user} />}
       {userInfo?.isDetail === true && <DetailInfo user={userInfo.user} />}
-      {userInfo?.isApproved && <ApproveBtn id={id} />}
+      {userInfo?.isApproved === false && <ApproveBtn id={id} />}
     </main>
   );
 }
