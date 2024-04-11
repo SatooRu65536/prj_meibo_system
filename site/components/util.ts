@@ -90,7 +90,7 @@ export function toSendMember(
     lastName: member.lastName,
     firstNameKana: member.firstNameKana,
     lastNameKana: member.lastNameKana,
-    skills: member.skills ?? [],
+    skills: member.skills || [],
     graduationYear: member.graduationYear,
     slackName: member.slackName,
     iconUrl: member.iconUrl,
