@@ -32,6 +32,7 @@ export class PaymentRepository {
 
   static async confirme(
     c: CustomContext<'/api/user/:id/payment'>,
+    recipientUserId: number,
     payedUid: string,
     isConfirmed: boolean,
   ): Promise<PaymentTable | undefined> {
@@ -44,10 +45,9 @@ export class PaymentRepository {
       .set({
         updatedAt: now,
         isConfirmed: confirmNum,
+        payee: recipientUserId,
       })
-      .where(
-        and(eq(paymentTable.uid, payedUid)),
-      )
+      .where(and(eq(paymentTable.uid, payedUid)))
       .returning();
 
     return payment;

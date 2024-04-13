@@ -56,6 +56,18 @@ export class PaymentController {
       const err = ErrorService.request.invalidRequest('id', '数値');
       return c.json(err.err, err.status);
     }
+    
+    const recipientUser = await AuthService.getUser(c);
+    if (recipientUser === null) {
+      const err = ErrorService.auth.failedAuth();
+      return c.json(err.err, err.status);
+    }
+    console.log("okokokokokoko");
+    const { id: recipientUserId } = await UserRepository.getUserByUidWithPrivateInfo(
+      c,
+      recipientUser.uid,
+    );
+    console.log(recipientUserId);
 
     const payedUser = await UserRepository.getUserById(c, idNum);
     if (payedUser === undefined) {
@@ -63,7 +75,12 @@ export class PaymentController {
       return c.json(err.err, err.status);
     }
 
-    const payment = await PaymentRepository.confirme(c, payedUser.uid, true);
+    const payment = await PaymentRepository.confirme(
+      c,
+      recipientUserId,
+      payedUser.uid,
+      true,
+    );
     if (payment === undefined) {
       const err = ErrorService.payment.failedConfirme();
       return c.json(err.err, err.status);
@@ -87,7 +104,12 @@ export class PaymentController {
       return c.json(err.err, err.status);
     }
 
-    const payment = await PaymentRepository.confirme(c, payedUser.uid, false);
+    const payment = await PaymentRepository.confirme(
+      c,
+      0,
+      payedUser.uid,
+      false,
+    );
 
     return c.json({ ok: true, payment });
   }
